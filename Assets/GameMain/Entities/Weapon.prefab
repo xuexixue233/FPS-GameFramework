@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3913988967543117865
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3913988967543117866}
+  - component: {fileID: 7994461091895932203}
+  - component: {fileID: 8501666349935415673}
+  m_Layer: 9
+  m_Name: Weapon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3913988967543117866
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3913988967543117865}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7994461091895932203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3913988967543117865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a96003a06d6ef4cae225819ac241eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  ammo:
+  - data: {fileID: 11400000, guid: 3b4fe24b6064a1945ae19dd8350925f6, type: 2}
+    amount: 200
+  - data: {fileID: 11400000, guid: e8e0f7cd6e9f26f41a6cee6aabf290fe, type: 2}
+    amount: 50
+  - data: {fileID: 11400000, guid: 6dcff0833cc24c643b83d68e607e17e0, type: 2}
+    amount: 150
+  - data: {fileID: 11400000, guid: e587548615e6b32478c1492ff4b58779, type: 2}
+    amount: 8
+  - data: {fileID: 11400000, guid: 97c384192f972ea489f213e50d228475, type: 2}
+    amount: 5
+  maxSlots: 3
+  dropForce: 1
+  dropLocation: {fileID: 0}
+  toggleAim: 1
+  fireKey: 323
+  aimKey: 324
+  sprintKey: 304
+--- !u!114 &8501666349935415673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3913988967543117865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29252569f227b5545ae14df0efed459b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  range: 2
+  fieldOfInteractions: 0.5
+  interactableLayers:
+    serializedVersion: 2
+    m_Bits: 32768
+  HUDObject: {fileID: 0}
+  interactKeyText: {fileID: 0}
+  interactActionText: {fileID: 0}
