@@ -9,13 +9,21 @@ namespace FPS
     public class Player : Soldier
     {
         [SerializeField] private PlayerData m_PlayerData = null;
-        
-        private FirstPersonController m_FirstPersonController;
+
+        public PlayerCamera playerCamera;
+        public PlayerMovement playerMovement;
+        public PlayerCameraShaker playerCameraShaker;
+        private static readonly int Ammo = Animator.StringToHash("Ammo");
+        public float cameraShakeRoughness = 7;
+        public float cameraShakeFadeInTime = 0.2f;
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
-            m_FirstPersonController = GetComponentInChildren<FirstPersonController>();
+            playerCamera = GetComponentInChildren<PlayerCamera>();
+            playerMovement = GetComponentInChildren<PlayerMovement>();
+            playerCameraShaker = GetComponentInChildren<PlayerCameraShaker>();
+            playerMovement.player = this;
         }
 
         protected override void OnShow(object userData)
@@ -28,22 +36,20 @@ namespace FPS
                 return;
             }
 
-            StartCoroutine(WeaponStart());
-
+            playerCamera.OnStart();
+            playerMovement.OnStart();
             m_PlayerData.HP = 100;
-        }
-
-        public IEnumerator WeaponStart()
-        {
-            yield return new WaitForSecondsRealtime(1);
-            m_Weapons[0].inventory.Controller = m_FirstPersonController;
-            m_Weapons[0].inventory.OnStart();
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(elapseSeconds, realElapseSeconds);
-
+            playerCamera.OnUpdate();
+            playerMovement.OnUpdate();
+            if (Input.GetMouseButtonDown(0))
+            {
+                playerCameraShaker.Shake(1, cameraShakeRoughness, cameraShakeFadeInTime, 1);
+            }
         }
     }
 }

@@ -49,7 +49,7 @@ namespace FPSFramework
             }
         }
 
-        public void OnStart()
+        public void Start()
         {
             StartCoroutine(AddDefaultItems());
         }

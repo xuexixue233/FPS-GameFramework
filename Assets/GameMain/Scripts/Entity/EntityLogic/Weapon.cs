@@ -11,13 +11,16 @@ namespace FPS
         
         [SerializeField]
         private WeaponData m_WeaponData = null;
-
-        public Inventory inventory;
+        private WeaponExData m_WeaponExData;
+        public Animator weaponAnimator;
+        public int bulletNum;
+        public int leftBulletNum;
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
-            inventory = GetComponent<Inventory>();
+            m_WeaponExData = GetComponent<WeaponExData>();
+            weaponAnimator = GetComponent<Animator>();
         }
 
         protected override void OnShow(object userData)
@@ -34,11 +37,19 @@ namespace FPS
 
             if (parent==null)
             {
-                Log.Error("parent is invalid");
                 return;
             }
 
             GameEntry.Entity.AttachEntity(Entity,m_WeaponData.OwnerId, parent.soldierExData.WeaponTransform);
+            parent.showedWeapon = this;
+            transform.transform.localPosition = m_WeaponExData.CameraTransform.localPosition*-1;
+            transform.localScale=Vector3.one;
+        }
+
+        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        {
+            base.OnUpdate(elapseSeconds, realElapseSeconds);
+            
         }
 
         protected override void OnAttachTo(EntityLogic parentEntity, Transform parentTransform, object userData)

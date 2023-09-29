@@ -16,6 +16,7 @@ namespace FPS
         
         [SerializeField]
         protected List<Weapon> m_Weapons = new List<Weapon>();
+        public Weapon showedWeapon;
 
         protected override void OnInit(object userData)
         {
