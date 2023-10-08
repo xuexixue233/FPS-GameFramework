@@ -15,7 +15,19 @@ namespace FPS
         private int m_MaxHP = 0;
         
         [SerializeField]
-        private int speed = 0;
+        private float m_WalkingForwardSpeed = 0;
+        
+        [SerializeField]
+        private float m_WalkingBackSpeed = 0;
+        
+        [SerializeField]
+        private float m_WalkingStrafeSpeed = 0;
+        
+        [SerializeField]
+        private float m_RunningForwardSpeed = 0;
+        
+        [SerializeField]
+        private float m_RunningStrafeSpeed = 0;
         
         [SerializeField]
         private int m_DeadEffectId = 0;
@@ -25,20 +37,26 @@ namespace FPS
         
         protected SoldierData(int entityId, int typeId, CampType camp) : base(entityId, typeId, camp)
         {
-            IDataTable<DRSoldier> dtAircraft = GameEntry.DataTable.GetDataTable<DRSoldier>();
-            DRSoldier drAircraft = dtAircraft.GetDataRow(TypeId);
-            if (drAircraft == null)
+            IDataTable<DRSoldier> dtSoldier = GameEntry.DataTable.GetDataTable<DRSoldier>();
+            DRSoldier drSoldier = dtSoldier.GetDataRow(TypeId);
+            if (drSoldier == null)
             {
                 return;
             }
             
-            for (int index = 0, weaponId = 0; (weaponId = drAircraft.GetWeaponIdAt(index)) > 0; index++)
+            for (int index = 0, weaponId = 0; (weaponId = drSoldier.GetWeaponIdAt(index)) > 0; index++)
             {
                 AttachWeaponData(new WeaponData(GameEntry.Entity.GenerateSerialId(), weaponId, Id, Camp));
             }
+
+            m_WalkingForwardSpeed = drSoldier.WalkingForwardSpeed;
+            m_WalkingBackSpeed = drSoldier.WalkingBackSpeed;
+            m_WalkingStrafeSpeed = drSoldier.WalkingStrafeSpeed;
+            m_RunningForwardSpeed = drSoldier.RunningForwardSpeed;
+            m_RunningStrafeSpeed = drSoldier.RunningStrafeSpeed;
             
-            m_DeadEffectId = drAircraft.DeadEffectId;
-            m_DeadSoundId = drAircraft.DeadSoundId;
+            m_DeadEffectId = drSoldier.DeadEffectId;
+            m_DeadSoundId = drSoldier.DeadSoundId;
 
             HP = m_MaxHP;
         }
@@ -54,14 +72,43 @@ namespace FPS
             }
         }
         
-        /// <summary>
-        /// 速度。
-        /// </summary>
-        public float Speed
+        public float WalkingForwardSpeed
         {
             get
             {
-                return speed;
+                return m_WalkingForwardSpeed;
+            }
+        }
+        
+        public float WalkingBackSpeed
+        {
+            get
+            {
+                return m_WalkingBackSpeed;
+            }
+        }
+        
+        public float WalkingStrafeSpeed
+        {
+            get
+            {
+                return m_WalkingStrafeSpeed;
+            }
+        }
+        
+        public float RunningForwardSpeed
+        {
+            get
+            {
+                return m_RunningForwardSpeed;
+            }
+        }
+        
+        public float RunningStrafeSpeed
+        {
+            get
+            {
+                return m_RunningStrafeSpeed;
             }
         }
         

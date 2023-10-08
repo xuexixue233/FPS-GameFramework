@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2023-09-18 17:18:41.711
+// 生成时间：2023-10-05 20:01:34.352
 //------------------------------------------------------------
 
 using GameFramework;
@@ -73,6 +73,15 @@ namespace FPS
         }
 
         /// <summary>
+        /// 获取最大子弹数量。
+        /// </summary>
+        public int MaxBulletNum
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 获取子弹声音编号。
         /// </summary>
         public int BulletSoundId
@@ -97,6 +106,7 @@ namespace FPS
             AttackInterval = float.Parse(columnStrings[index++]);
             BulletId = int.Parse(columnStrings[index++]);
             BulletSpeed = float.Parse(columnStrings[index++]);
+            MaxBulletNum = int.Parse(columnStrings[index++]);
             BulletSoundId = int.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
@@ -114,6 +124,7 @@ namespace FPS
                     AttackInterval = binaryReader.ReadSingle();
                     BulletId = binaryReader.Read7BitEncodedInt32();
                     BulletSpeed = binaryReader.ReadSingle();
+                    MaxBulletNum = binaryReader.Read7BitEncodedInt32();
                     BulletSoundId = binaryReader.Read7BitEncodedInt32();
                 }
             }

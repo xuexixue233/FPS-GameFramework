@@ -40,10 +40,10 @@ namespace FPS
                 player.transform.position += move;
             }
 
-            if (player.playerCamera.yRotation!=0)
-            {
-                player.transform.Rotate(Vector3.up * player.playerCamera.yRotation);
-            }
+            // if (player.playerCamera.yRotation!=0)
+            // {
+            //     player.transform.Rotate(Vector3.up * player.playerCamera.yRotation);
+            // }
             // Changes the height position of the player..
             if (Input.GetButtonDown(jumpInputName) && groundedPlayer)
             {

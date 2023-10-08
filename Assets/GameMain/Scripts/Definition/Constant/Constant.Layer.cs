@@ -24,6 +24,9 @@ namespace FPS
 
             public const string TargetableObjectLayerName = "Targetable Object";
             public static readonly int TargetableObjectLayerId = LayerMask.NameToLayer(TargetableObjectLayerName);
+
+            public const string PlayerLayerName = "Player";
+            public static readonly int PlayerLayerId = LayerMask.NameToLayer(PlayerLayerName);
         }
     }
 }

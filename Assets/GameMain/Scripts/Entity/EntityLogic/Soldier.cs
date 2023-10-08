@@ -8,35 +8,34 @@ namespace FPS
 {
     public abstract class Soldier : TargetableObject
     {
-        [SerializeField] 
+        [HideInInspector]
         public SoldierExData soldierExData;
-        
-        [SerializeField]
+
+        [SerializeField] 
         private SoldierData m_SoldierData = null;
-        
-        [SerializeField]
-        protected List<Weapon> m_Weapons = new List<Weapon>();
+
+        protected Vector3 newSoldierRotation;
+
+        [SerializeField] protected List<Weapon> m_Weapons = new List<Weapon>();
         public Weapon showedWeapon;
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
-            soldierExData=GetComponent<SoldierExData>();
+            soldierExData = GetComponent<SoldierExData>();
         }
 
         protected override void OnShow(object userData)
         {
             base.OnShow(userData);
-            
-            m_SoldierData=userData as SoldierData;
+
+            m_SoldierData = userData as SoldierData;
 
             Name = Utility.Text.Format("Soldier ({0})", Id);
-            
+
             List<WeaponData> weaponDatas = m_SoldierData.GetAllWeaponDatas();
-            for (int i = 0; i < weaponDatas.Count; i++)
-            {
-                GameEntry.Entity.ShowWeapon(weaponDatas[i]);
-            }
+
+            GameEntry.Entity.ShowWeapon(weaponDatas[0]);
             
         }
 
@@ -64,7 +63,7 @@ namespace FPS
                 return;
             }
         }
-        
+
         public override ImpactData GetImpactData()
         {
             return new ImpactData(m_SoldierData.Camp, m_SoldierData.HP, 0);
