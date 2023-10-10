@@ -38,6 +38,7 @@ namespace FPS
         private Vector3 jumpingForce;
         private Vector3 jumpingForceVelocity;
         public bool isSprinting;
+        public bool isWalking;
 
         private float stanceCheckErrorMargin = 0.05f;
         private float cameraHeight;
@@ -216,12 +217,13 @@ namespace FPS
             }
 
             weaponAnimationSpeed = m_characterController.velocity.magnitude / (m_PlayerData.WalkingForwardSpeed*m_PlayerExData.playerSetting.SpeedEffector);
+            isWalking = weaponAnimationSpeed != 0;
             
             if (weaponAnimationSpeed > 1)
             {
                 weaponAnimationSpeed = 1;
             }
-            
+
             verticalSpeed *= m_PlayerExData.playerSetting.SpeedEffector;
             horizontalSpeed *= m_PlayerExData.playerSetting.SpeedEffector;
 
@@ -230,7 +232,6 @@ namespace FPS
                 ref newMovementSpeedVelocity, isGrounded? m_PlayerExData.playerSetting.MovementSmoothing : m_PlayerExData.playerSetting.FallingSmoothing);
 
             movementSpeed = m_characterController.transform.TransformDirection(newMovementSpeed);
-            
 
             if (isGrounded && movementSpeed.y < 0)
             {

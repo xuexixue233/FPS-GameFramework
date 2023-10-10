@@ -467,7 +467,7 @@ PrefabInstance:
     - target: {fileID: 5817537857732558725, guid: 0d369f7fcb0d66745b3de2b69c466e6b,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6627006682981033279, guid: 0d369f7fcb0d66745b3de2b69c466e6b,
         type: 3}
@@ -562,7 +562,7 @@ Camera:
   m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 22
+  m_FocalLength: 20.78461
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -571,7 +571,7 @@ Camera:
     height: 1
   near clip plane: 0.099999994
   far clip plane: 1000
-  field of view: 57.22092
+  field of view: 60.000004
   orthographic: 0
   orthographic size: 0.005454545
   m_Depth: 0

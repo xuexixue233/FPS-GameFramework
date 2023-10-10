@@ -52,6 +52,8 @@ namespace FPS
         [HideInInspector] 
         public bool isFire;
 
+        private static readonly int IsWalking = Animator.StringToHash("IsWalking");
+
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
@@ -200,6 +202,7 @@ namespace FPS
                 isGroundTrigger = false;
             }
             
+            weaponAnimator.SetBool(IsWalking,player.isWalking);
             weaponAnimator.SetBool(IsSprinting,player.isSprinting);
             weaponAnimator.SetFloat(WeaponAnimationSpeed,player.weaponAnimationSpeed);
         }
