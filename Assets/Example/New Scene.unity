@@ -464,6 +464,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weapon
       objectReference: {fileID: 0}
+    - target: {fileID: 5817537857732558725, guid: 0d369f7fcb0d66745b3de2b69c466e6b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6627006682981033279, guid: 0d369f7fcb0d66745b3de2b69c466e6b,
         type: 3}
       propertyPath: m_RootOrder

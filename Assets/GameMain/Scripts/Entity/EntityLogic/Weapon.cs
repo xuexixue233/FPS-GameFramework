@@ -49,8 +49,8 @@ namespace FPS
         private Vector3 weaponSwayPositionVelocity;
         [HideInInspector] 
         public bool isAimingIn;
-        
-        
+        [HideInInspector] 
+        public bool isFire;
 
         protected override void OnInit(object userData)
         {

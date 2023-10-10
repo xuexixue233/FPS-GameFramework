@@ -60,7 +60,9 @@ namespace FPS
         public float leanVelocity;
         private bool isLeaningLeft;
         private bool isLeaningRight;
-        
+
+        private bool isFire;
+
 
         protected override void OnInit(object userData)
         {
@@ -81,6 +83,9 @@ namespace FPS
             _defaultInput.Character.LeanLeftReleased.performed += e => { isLeaningLeft = false;};
             _defaultInput.Character.LeanRightPressed.performed += e => { isLeaningRight = true;};
             _defaultInput.Character.LeanRightReleased.performed += e => { isLeaningRight = false;};
+
+            _defaultInput.Weapon.FirePressed.performed += e => FireStart();
+            _defaultInput.Weapon.FireReleased.performed += e=> FireStop();
             
             _defaultInput.Enable();
             
@@ -116,7 +121,6 @@ namespace FPS
             CalculateMovement();
             CalculateJump();
             CalculateStance();
-            CalculateAim();
             CalculateLeaning();
         }
 
@@ -132,16 +136,32 @@ namespace FPS
         private void AimingIn()
         {
             isAimingIn = !isAimingIn;
-        }
-
-        private void CalculateAim()
-        {
             if (showedWeapon==null)
             {
                 return;
             }
 
             showedWeapon.isAimingIn = isAimingIn;
+        }
+
+        private void FireStart()
+        {
+            isFire = true;
+            if (showedWeapon==null)
+            {
+                return;
+            }
+            showedWeapon.isFire = isFire;
+        }
+        
+        private void FireStop()
+        {
+            isFire = false;
+            if (showedWeapon==null)
+            {
+                return;
+            }
+            showedWeapon.isFire = isFire;
         }
 
         private void CalculateView()
@@ -343,12 +363,12 @@ namespace FPS
             m_PlayerExData.playerStance = Scr_Models.PlayerStance.Prone;
         }
 
-        private bool StanceCheck(float stanceCheckheight)
+        private bool StanceCheck(float stanceCheckHeight)
         {
             var feetPosition = m_PlayerExData.feetTransform.position;
             var radius = m_characterController.radius;
             var start = new Vector3(feetPosition.x,feetPosition.y+radius+stanceCheckErrorMargin,feetPosition.z);
-            var end = new Vector3(feetPosition.x,feetPosition.y-radius-stanceCheckErrorMargin+stanceCheckheight,feetPosition.z);
+            var end = new Vector3(feetPosition.x,feetPosition.y-radius-stanceCheckErrorMargin+stanceCheckHeight,feetPosition.z);
             
             return Physics.CheckCapsule(start,end,radius,m_PlayerExData.playerMask);
         }
