@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace FPS
 {
@@ -10,6 +11,15 @@ namespace FPS
         public float swayAmountB=2;
         public float swayScale = 600;
         public float swayLerpSpeed = 14;
+        
+        [Header("Weapon Recoil")]
+        public float recoilX;
+        public float recoilY;
+        public float recoilZ;
+
+        public float kickBackZ;
+        public float snappiness;
+        public float returnAmount;
 
         public Transform sightTarget;
         public float sightOffset;

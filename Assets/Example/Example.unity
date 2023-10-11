@@ -507,6 +507,8 @@ MonoBehaviour:
     m_Depth: 0
   - m_Name: Player
     m_Depth: 0
+  - m_Name: Equipment
+    m_Depth: 0
 --- !u!114 &1146023962
 MonoBehaviour:
   m_ObjectHideFlags: 0

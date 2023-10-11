@@ -1,4 +1,5 @@
-﻿using FPSFramework;
+﻿using System.Collections.Generic;
+using FPSFramework;
 using GameFramework;
 using UnityEngine;
 using UnityGameFramework.Runtime;
@@ -9,7 +10,8 @@ namespace FPS
     {
         private const string AttachPoint = "Weapon Point";
 
-        [SerializeField] private WeaponData m_WeaponData = null;
+        [SerializeField]
+        private WeaponData m_WeaponData = null;
         private WeaponExData m_WeaponExData;
 
         public Soldier soldier;
@@ -53,6 +55,14 @@ namespace FPS
         [HideInInspector] 
         public bool isFire;
 
+        private Vector3 currentRotation;
+        private Vector3 targetRortation;
+        private Vector3 targetPosition;
+        private Vector3 currentPosition;
+        private Vector3 initialGunPosition;
+
+        public Dictionary<Mod, WeaponMod> weaponMods;
+
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
@@ -60,6 +70,7 @@ namespace FPS
             weaponAnimator = GetComponentInChildren<Animator>();
 
             newWeaponRotation = transform.localRotation.eulerAngles;
+            
         }
 
         protected override void OnShow(object userData)
@@ -83,6 +94,7 @@ namespace FPS
             soldier.showedWeapon = this;
             transform.transform.localPosition = m_WeaponExData.CameraTransform.localPosition * -1;
             transform.localScale = Vector3.one;
+            initialGunPosition = transform.localPosition;
         }
 
         public void Initialise(Player m_player)
@@ -176,7 +188,16 @@ namespace FPS
             newWeaponMovementRotation = Vector3.SmoothDamp(newWeaponMovementRotation, targetWeaponMovementRotation,
                 ref newWeaponRotationVelocity, m_WeaponExData.settings.MovementSwaySmoothing);
 
-            transform.localRotation = Quaternion.Euler(newWeaponRotation);
+            targetRortation = Vector3.Lerp(targetRortation, Vector3.zero, Time.deltaTime * m_WeaponExData.returnAmount);
+            currentRotation = Vector3.Slerp(currentRotation, targetRortation, Time.fixedDeltaTime * m_WeaponExData.snappiness);
+
+            transform.localRotation = Quaternion.Euler(newWeaponRotation+currentRotation);
+            if (isFire)
+            {
+                Recoil();
+            }
+
+            Back();
         }
 
         private void SetWeaponAnimations()
@@ -226,6 +247,19 @@ namespace FPS
         private Vector3 LissajousCurve(float Time, float A, float B)
         {
             return new Vector3(Mathf.Sin(Time), A * Mathf.Sin(B * Time + Mathf.PI));
+        }
+
+        public void Recoil()
+        {
+            targetPosition -= new Vector3(0, 0, m_WeaponExData.kickBackZ);
+            targetRortation += new Vector3(m_WeaponExData.recoilX, Random.Range(-m_WeaponExData.recoilY, m_WeaponExData.recoilY), Random.Range(-m_WeaponExData.recoilZ, m_WeaponExData.recoilZ));
+        }
+
+        private void Back()
+        {
+            targetPosition = Vector3.Lerp(targetPosition, initialGunPosition, Time.deltaTime * m_WeaponExData.returnAmount);
+            currentPosition = Vector3.Lerp(currentPosition, targetPosition, Time.fixedDeltaTime * m_WeaponExData.snappiness);
+            transform.localPosition = currentPosition;
         }
     }
 }

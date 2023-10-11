@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2023-10-05 20:01:34.352
+// 生成时间：2023-10-11 21:10:26.409
 //------------------------------------------------------------
 
 using GameFramework;
@@ -37,54 +37,108 @@ namespace FPS
         }
 
         /// <summary>
-        /// 获取攻击力。
+        /// 获取武器名字。
         /// </summary>
-        public int Attack
+        public string WeaponName
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取攻击间隔。
+        /// 获取重量。
         /// </summary>
-        public float AttackInterval
+        public float Weight
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取子弹编号。
+        /// 获取人机工效。
         /// </summary>
-        public int BulletId
+        public int Ergonomics
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取子弹速度。
+        /// 获取精准度。
         /// </summary>
-        public float BulletSpeed
+        public float Precision
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取最大子弹数量。
+        /// 获取射击场。
         /// </summary>
-        public int MaxBulletNum
+        public int ShootingGallery
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取子弹声音编号。
+        /// 获取垂直后坐力。
         /// </summary>
-        public int BulletSoundId
+        public int VerticalRecoil
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取水平后座力。
+        /// </summary>
+        public int HorizontalRecoil
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取膛口初速。
+        /// </summary>
+        public int MuzzleVelocity
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取开火模式。
+        /// </summary>
+        public string FiringMode
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取口径。
+        /// </summary>
+        public string Caliber
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取射速。
+        /// </summary>
+        public int FiringRate
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取有效射程。
+        /// </summary>
+        public int EffectiveFiringRange
         {
             get;
             private set;
@@ -102,12 +156,18 @@ namespace FPS
             index++;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
-            Attack = int.Parse(columnStrings[index++]);
-            AttackInterval = float.Parse(columnStrings[index++]);
-            BulletId = int.Parse(columnStrings[index++]);
-            BulletSpeed = float.Parse(columnStrings[index++]);
-            MaxBulletNum = int.Parse(columnStrings[index++]);
-            BulletSoundId = int.Parse(columnStrings[index++]);
+            WeaponName = columnStrings[index++];
+            Weight = float.Parse(columnStrings[index++]);
+            Ergonomics = int.Parse(columnStrings[index++]);
+            Precision = float.Parse(columnStrings[index++]);
+            ShootingGallery = int.Parse(columnStrings[index++]);
+            VerticalRecoil = int.Parse(columnStrings[index++]);
+            HorizontalRecoil = int.Parse(columnStrings[index++]);
+            MuzzleVelocity = int.Parse(columnStrings[index++]);
+            FiringMode = columnStrings[index++];
+            Caliber = columnStrings[index++];
+            FiringRate = int.Parse(columnStrings[index++]);
+            EffectiveFiringRange = int.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -120,12 +180,18 @@ namespace FPS
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    Attack = binaryReader.Read7BitEncodedInt32();
-                    AttackInterval = binaryReader.ReadSingle();
-                    BulletId = binaryReader.Read7BitEncodedInt32();
-                    BulletSpeed = binaryReader.ReadSingle();
-                    MaxBulletNum = binaryReader.Read7BitEncodedInt32();
-                    BulletSoundId = binaryReader.Read7BitEncodedInt32();
+                    WeaponName = binaryReader.ReadString();
+                    Weight = binaryReader.ReadSingle();
+                    Ergonomics = binaryReader.Read7BitEncodedInt32();
+                    Precision = binaryReader.ReadSingle();
+                    ShootingGallery = binaryReader.Read7BitEncodedInt32();
+                    VerticalRecoil = binaryReader.Read7BitEncodedInt32();
+                    HorizontalRecoil = binaryReader.Read7BitEncodedInt32();
+                    MuzzleVelocity = binaryReader.Read7BitEncodedInt32();
+                    FiringMode = binaryReader.ReadString();
+                    Caliber = binaryReader.ReadString();
+                    FiringRate = binaryReader.Read7BitEncodedInt32();
+                    EffectiveFiringRange = binaryReader.Read7BitEncodedInt32();
                 }
             }
 

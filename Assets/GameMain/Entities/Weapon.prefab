@@ -12340,6 +12340,12 @@ MonoBehaviour:
   swayAmountB: 2
   swayScale: 1000
   swayLerpSpeed: 14
+  recoilX: -0.5
+  recoilY: 2
+  recoilZ: 7
+  kickBackZ: 0.2
+  snappiness: 5
+  returnAmount: 8
   sightTarget: {fileID: 8673430033022414039}
   sightOffset: 0.14
   aimingInTime: 0.16
@@ -18295,6 +18301,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: weapon_colt_m4a1_556x45_model
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396520425764182066, guid: f41327406c86cd84c804c386ca7f8baf,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396520425764182066, guid: f41327406c86cd84c804c386ca7f8baf,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.0245
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396520425764182066, guid: f41327406c86cd84c804c386ca7f8baf,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f41327406c86cd84c804c386ca7f8baf, type: 3}
