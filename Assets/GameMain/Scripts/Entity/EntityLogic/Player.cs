@@ -219,7 +219,7 @@ namespace FPS
             weaponAnimationSpeed = m_characterController.velocity.magnitude / (m_PlayerData.WalkingForwardSpeed*m_PlayerExData.playerSetting.SpeedEffector);
             isWalking = weaponAnimationSpeed != 0;
             
-            if (weaponAnimationSpeed > 1)
+            if (weaponAnimationSpeed  > 1)
             {
                 weaponAnimationSpeed = 1;
             }

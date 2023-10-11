@@ -41,6 +41,7 @@ namespace FPS
         private static readonly int Land = Animator.StringToHash("Land");
         private static readonly int Falling = Animator.StringToHash("Falling");
         private static readonly int WeaponAnimationSpeed = Animator.StringToHash("WeaponAnimationSpeed");
+        private static readonly int IsWalking = Animator.StringToHash("IsWalking");
 
         private float swayTime;
         public Vector3 swayPosition;
@@ -51,8 +52,6 @@ namespace FPS
         public bool isAimingIn;
         [HideInInspector] 
         public bool isFire;
-
-        private static readonly int IsWalking = Animator.StringToHash("IsWalking");
 
         protected override void OnInit(object userData)
         {
