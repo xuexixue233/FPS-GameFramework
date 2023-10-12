@@ -17,6 +17,12 @@ namespace FPS
         [SerializeField]
         private string m_WeaponName;
         
+        /// <summary>
+        /// 玩家数据耐久度
+        /// </summary>
+        [SerializeField]
+        private float m_Durability;
+
         [SerializeField]
         private float m_Weight = 0f;
         
@@ -75,6 +81,8 @@ namespace FPS
         }
 
         public string WeaponName => m_WeaponName;
+
+        public float MDurability => m_Durability;
 
         public float Weight => m_Weight;
 

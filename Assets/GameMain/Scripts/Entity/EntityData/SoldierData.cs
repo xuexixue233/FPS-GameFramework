@@ -64,70 +64,22 @@ namespace FPS
         /// <summary>
         /// 最大生命。
         /// </summary>
-        public override int MaxHP
-        {
-            get
-            {
-                return m_MaxHP;
-            }
-        }
-        
-        public float WalkingForwardSpeed
-        {
-            get
-            {
-                return m_WalkingForwardSpeed;
-            }
-        }
-        
-        public float WalkingBackSpeed
-        {
-            get
-            {
-                return m_WalkingBackSpeed;
-            }
-        }
-        
-        public float WalkingStrafeSpeed
-        {
-            get
-            {
-                return m_WalkingStrafeSpeed;
-            }
-        }
-        
-        public float RunningForwardSpeed
-        {
-            get
-            {
-                return m_RunningForwardSpeed;
-            }
-        }
-        
-        public float RunningStrafeSpeed
-        {
-            get
-            {
-                return m_RunningStrafeSpeed;
-            }
-        }
-        
-        public int DeadEffectId
-        {
-            get
-            {
-                return m_DeadEffectId;
-            }
-        }
+        public override int MaxHP => m_MaxHP;
 
-        public int DeadSoundId
-        {
-            get
-            {
-                return m_DeadSoundId;
-            }
-        }
-        
+        public float WalkingForwardSpeed => m_WalkingForwardSpeed;
+
+        public float WalkingBackSpeed => m_WalkingBackSpeed;
+
+        public float WalkingStrafeSpeed => m_WalkingStrafeSpeed;
+
+        public float RunningForwardSpeed => m_RunningForwardSpeed;
+
+        public float RunningStrafeSpeed => m_RunningStrafeSpeed;
+
+        public int DeadEffectId => m_DeadEffectId;
+
+        public int DeadSoundId => m_DeadSoundId;
+
         public List<WeaponData> GetAllWeaponDatas()
         {
             return m_WeaponDatas;

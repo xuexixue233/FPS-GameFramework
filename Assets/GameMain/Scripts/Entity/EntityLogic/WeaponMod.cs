@@ -12,7 +12,7 @@ namespace FPS
         Mag,
         Muzzle,
         PistolGrip,
-        Reciever,
+        Receiver,
         Scope,
         Silencer,
         Stock,
@@ -21,6 +21,9 @@ namespace FPS
     
     public class WeaponMod: Entity
     {
+        private WeaponModData _weaponModData;
+        public Mod mod;
+
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);

@@ -1,0 +1,10 @@
+﻿{
+  "Name": "",
+  "Weapon": [
+    {
+      "TypeId": 30000,
+      "Durability": 80
+    }
+  ],
+  "Dollar": 1000
+}

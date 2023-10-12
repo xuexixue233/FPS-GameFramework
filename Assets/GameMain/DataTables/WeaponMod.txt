@@ -1,1 +1,16 @@
-﻿
+﻿#	武器配件表							
+#	Id		ModName	Weight	Recoil	Ergonomics	Precision	MuzzleVelocity
+#	int		string	float	int	int	float	float
+#	配件编号	备注	配件名称	重量	后坐力	人机工效	精准度	枪口初速
+	40001		barrel_ar15_508mm_LOD0	0	-6	-29	1.1	-3.1
+	40001		charge_ar15_geissele_ach_LOD0	0	0	3	0	0
+	40001		gas_block_ar15_ba_lo_pro_LOD0	0	-3	1	0	0
+	40001		handguard_ar15_sai_qd_rail_long_LOD0	0	-3	12	0	0
+	40001		mag_stanag_magpul_pmag_gen_m3_window_556x45_30_LOD0	0	0	-3	0	0
+	40001		muzzle_ar15_silencerco_asr_flash_hider_556x45_LOD0	0	-9	0	3	1
+	40001		pistolgrip_ar15_naroh_arms_gral_s_LOD0	0	0	15	0	0
+	40001		reciever_ar15_vltor_mur-1s_LOD0	0	-4	8	0	0
+	40001		scope_all_eotech_xps3_LOD0	0	0	-2	0	0
+	40001		silencer_asr_silencerco_saker_556_556x45_LOD0	0	-14	-22	-1	0
+	40001		stock_ar15_magpul_prs_gen3_LOD0	0	-34	3	0	0
+	40001		stock_ar15_strike_industries_advanced_receiver_extension_LOD0	0	-4	2	0	0

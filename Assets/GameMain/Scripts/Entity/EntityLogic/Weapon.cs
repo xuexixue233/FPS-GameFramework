@@ -11,7 +11,7 @@ namespace FPS
         private const string AttachPoint = "Weapon Point";
 
         [SerializeField]
-        private WeaponData m_WeaponData = null;
+        public WeaponData m_WeaponData = null;
         private WeaponExData m_WeaponExData;
 
         public Soldier soldier;

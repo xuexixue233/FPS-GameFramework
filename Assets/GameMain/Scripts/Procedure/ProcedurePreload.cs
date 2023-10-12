@@ -17,6 +17,7 @@ namespace FPS
             "Entity",
             "Soldier",
             "Weapon",
+            
         };
 
         private Dictionary<string, bool> m_LoadedFlag = new Dictionary<string, bool>();

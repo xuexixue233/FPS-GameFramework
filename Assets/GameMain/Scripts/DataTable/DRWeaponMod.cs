@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2023-10-11 23:39:59.076
+// 生成时间：2023-10-11 23:39:59.102
 //------------------------------------------------------------
 
 using GameFramework;
@@ -19,14 +19,14 @@ using UnityGameFramework.Runtime;
 namespace FPS
 {
     /// <summary>
-    /// 场景配置表。
+    /// 武器配件表。
     /// </summary>
-    public class DRScene : DataRowBase
+    public class DRWeaponMod : DataRowBase
     {
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取场景编号。
+        /// 获取配件编号。
         /// </summary>
         public override int Id
         {
@@ -37,18 +37,54 @@ namespace FPS
         }
 
         /// <summary>
-        /// 获取资源名称。
+        /// 获取配件名称。
         /// </summary>
-        public string AssetName
+        public string ModName
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取背景音乐编号。
+        /// 获取重量。
         /// </summary>
-        public int BackgroundMusicId
+        public float Weight
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取后坐力。
+        /// </summary>
+        public int Recoil
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取人机工效。
+        /// </summary>
+        public int Ergonomics
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取精准度。
+        /// </summary>
+        public float Precision
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取枪口初速。
+        /// </summary>
+        public float MuzzleVelocity
         {
             get;
             private set;
@@ -66,8 +102,12 @@ namespace FPS
             index++;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
-            AssetName = columnStrings[index++];
-            BackgroundMusicId = int.Parse(columnStrings[index++]);
+            ModName = columnStrings[index++];
+            Weight = float.Parse(columnStrings[index++]);
+            Recoil = int.Parse(columnStrings[index++]);
+            Ergonomics = int.Parse(columnStrings[index++]);
+            Precision = float.Parse(columnStrings[index++]);
+            MuzzleVelocity = float.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -80,8 +120,12 @@ namespace FPS
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    AssetName = binaryReader.ReadString();
-                    BackgroundMusicId = binaryReader.Read7BitEncodedInt32();
+                    ModName = binaryReader.ReadString();
+                    Weight = binaryReader.ReadSingle();
+                    Recoil = binaryReader.Read7BitEncodedInt32();
+                    Ergonomics = binaryReader.Read7BitEncodedInt32();
+                    Precision = binaryReader.ReadSingle();
+                    MuzzleVelocity = binaryReader.ReadSingle();
                 }
             }
 

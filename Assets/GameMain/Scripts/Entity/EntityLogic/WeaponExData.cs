@@ -26,5 +26,12 @@ namespace FPS
         public float aimingInTime;
         public Transform CameraTransform;
         public Scr_Models.WeaponSettingsModel settings;
+
+        [Header("Mods TransForms")] 
+        public Transform barrelTransform;
+        public Transform magTransform;
+        public Transform pistolGripTransform;
+        public Transform handGuardTransform;
+        public Transform receiverTransform;
     }
 }

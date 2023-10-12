@@ -1,4 +1,5 @@
 ﻿using GameFramework.Event;
+using UnityEngine;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
 
@@ -6,8 +7,8 @@ namespace FPS
 {
     public class ProcedureMenu : ProcedureBase
     {
-        private bool m_StartGame = false;
-
+        private string SceneName;
+        private bool _ChangeScene;
 
         public override bool UseNativeDialog
         {
@@ -17,11 +18,6 @@ namespace FPS
             }
         }
 
-        public void StartGame()
-        {
-            m_StartGame = true;
-        }
-
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
@@ -29,7 +25,7 @@ namespace FPS
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenMenuFormSuccess);
             GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId, ChangeSceneSuccess);
 
-            m_StartGame = false;
+            _ChangeScene = false;
             GameEntry.UI.OpenUIForm(UIFormId.MenuForm, this);
         }
 
@@ -47,9 +43,9 @@ namespace FPS
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
 
-            if (m_StartGame)
+            if (_ChangeScene)
             {
-                procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
+                procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt(SceneName));
                 procedureOwner.SetData<VarByte>("GameMode", (byte)GameMode.Survival);
                 ChangeState<ProcedureChangeScene>(procedureOwner);
             }
@@ -71,7 +67,13 @@ namespace FPS
             if (ne == null)
                 return;
 
-            m_StartGame = true;
+            SceneName = ne.SceneId switch
+            {
+                2 => "Scene.Main",
+                3 => "Scene.Equipment",
+                _ => SceneName
+            };
+            _ChangeScene = true;
         }
     }
 }

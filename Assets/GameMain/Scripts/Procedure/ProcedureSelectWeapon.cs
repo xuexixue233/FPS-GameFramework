@@ -1,36 +1,78 @@
-﻿using GameFramework.Fsm;
+﻿using GameFramework.Event;
+using GameFramework.Fsm;
 using GameFramework.Procedure;
+using UnityGameFramework.Runtime;
 
 namespace FPS
 {
     public class ProcedureSelectWeapon : ProcedureBase
     {
+        private EquipmentForm equipmentForm;
+        private Weapon weapon;
         public override bool UseNativeDialog { get; }
-        
-        
-        protected override void OnInit(IFsm<IProcedureManager> procedureOwner)
+
+        private bool _BackMenu;
+
+        private void ReadUserData()
         {
-            base.OnInit(procedureOwner);
+            //Todo:读取玩家数据
         }
 
         protected override void OnEnter(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnEnter(procedureOwner);
+            GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenEquipmentFormSuccess);
+            GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
+            GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId, ChangeSceneSuccess);
+
+            _BackMenu = false;
+            GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), 30000, 0, CampType.Unknown));
         }
 
         protected override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
+            if (_BackMenu)
+            {
+                procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Menu"));
+                ChangeState<ProcedureChangeScene>(procedureOwner);
+            }
         }
 
         protected override void OnLeave(IFsm<IProcedureManager> procedureOwner, bool isShutdown)
         {
             base.OnLeave(procedureOwner, isShutdown);
+            GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenEquipmentFormSuccess);
+            GameEntry.Event.Unsubscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
+            GameEntry.Event.Unsubscribe(ChangeSceneEventArgs.EventId, ChangeSceneSuccess);
+            
+            GameEntry.UI.CloseAllLoadedUIForms();
+            equipmentForm=null;
+        }
+        
+        private void OnOpenEquipmentFormSuccess(object sender, GameEventArgs e)
+        {
+            OpenUIFormSuccessEventArgs ne = (OpenUIFormSuccessEventArgs)e;
+            equipmentForm=(EquipmentForm)ne.UIForm.Logic;
+        }
+        
+        private void ChangeSceneSuccess(object sender, GameEventArgs e)
+        {
+            ChangeSceneEventArgs ne = (ChangeSceneEventArgs)e;
+            if (ne == null)
+                return;
+
+            _BackMenu = true;
         }
 
-        protected override void OnDestroy(IFsm<IProcedureManager> procedureOwner)
+        private void OnShowEntitySuccess(object sender, GameEventArgs e)
         {
-            base.OnDestroy(procedureOwner);
+            ShowEntitySuccessEventArgs ne = (ShowEntitySuccessEventArgs)e;
+            if (ne.EntityLogicType == typeof(Weapon))
+            {
+                weapon = (Weapon)ne.Entity.Logic;
+            }
+            GameEntry.UI.OpenUIForm(UIFormId.EquipmentForm,weapon);
         }
     }
 }

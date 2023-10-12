@@ -18,6 +18,7 @@ namespace FPS
         // private GameObject m_QuitButton = null;
 
         public Button StartButton;
+        public Button EquipmentButton;
         public Button QuitButton;
 
         public void OnStartButtonClick()
@@ -36,6 +37,11 @@ namespace FPS
             });
         }
 
+        public void EquipmentButtonClick()
+        {
+            GameEntry.Event.Fire(this,ChangeSceneEventArgs.Create(3));
+        }
+
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
@@ -44,6 +50,9 @@ namespace FPS
             
             QuitButton.onClick.RemoveAllListeners();
             QuitButton.onClick.AddListener(OnQuitButtonClick);
+            
+            EquipmentButton.onClick.RemoveAllListeners();
+            EquipmentButton.onClick.AddListener(EquipmentButtonClick);
         }
 
         protected override void OnOpen(object userData)
