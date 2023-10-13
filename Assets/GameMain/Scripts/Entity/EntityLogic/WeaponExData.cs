@@ -20,7 +20,7 @@ namespace FPS
         public float kickBackZ;
         public float snappiness;
         public float returnAmount;
-
+        
         public Transform sightTarget;
         public float sightOffset;
         public float aimingInTime;
@@ -28,10 +28,7 @@ namespace FPS
         public Scr_Models.WeaponSettingsModel settings;
 
         [Header("Mods TransForms")] 
-        public Transform barrelTransform;
-        public Transform magTransform;
-        public Transform pistolGripTransform;
-        public Transform handGuardTransform;
-        public Transform receiverTransform;
+        public Camera previewCamera;
+        public SerializableDictionary<Mod, Transform> nextModsTransforms;
     }
 }

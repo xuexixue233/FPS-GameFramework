@@ -1615,7 +1615,11 @@ MonoBehaviour:
   caliberText: {fileID: 4487831106809794842}
   firingRateText: {fileID: 8287787804526847116}
   effectiveFiringRange: {fileID: 4880784277328070821}
-  modUI: {fileID: 0}
+  modUIItemTemplate: {fileID: 6492493685294389622, guid: f57c9000de50f23499c36696c37f51a9,
+    type: 3}
+  circleGameObject: {fileID: 2221212047131583570, guid: 4b929be43a44fe849b28b029d5be8d30,
+    type: 3}
+  previewRect: {fileID: 9017886284259524869}
 --- !u!1 &2699552732338681995
 GameObject:
   m_ObjectHideFlags: 0

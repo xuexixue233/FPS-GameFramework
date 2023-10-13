@@ -12363,6 +12363,13 @@ MonoBehaviour:
     MovementSwayXInverted: 1
     MovementSwayYInverted: 0
     MovementSwaySmoothing: 0.2
+  previewCamera: {fileID: 0}
+  nextModsTransforms: []
+  chargeTransform: {fileID: 0}
+  magTransform: {fileID: 0}
+  pistolGripTransform: {fileID: 0}
+  receiverTransform: {fileID: 0}
+  stockTransform: {fileID: 0}
 --- !u!1 &5831735597709917460
 GameObject:
   m_ObjectHideFlags: 0
@@ -18234,21 +18241,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5014567085002131611, guid: f41327406c86cd84c804c386ca7f8baf,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 820.71356
-      objectReference: {fileID: 0}
-    - target: {fileID: 5014567085002131611, guid: f41327406c86cd84c804c386ca7f8baf,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 820.71356
-      objectReference: {fileID: 0}
-    - target: {fileID: 5014567085002131611, guid: f41327406c86cd84c804c386ca7f8baf,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 820.71356
-      objectReference: {fileID: 0}
-    - target: {fileID: 5014567085002131611, guid: f41327406c86cd84c804c386ca7f8baf,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.1
       objectReference: {fileID: 0}
@@ -18301,21 +18293,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: weapon_colt_m4a1_556x45_model
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396520425764182066, guid: f41327406c86cd84c804c386ca7f8baf,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396520425764182066, guid: f41327406c86cd84c804c386ca7f8baf,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.0245
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396520425764182066, guid: f41327406c86cd84c804c386ca7f8baf,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f41327406c86cd84c804c386ca7f8baf, type: 3}

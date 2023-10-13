@@ -1,6 +1,7 @@
 ﻿using GameFramework.Event;
 using GameFramework.Fsm;
 using GameFramework.Procedure;
+using UnityEngine;
 using UnityGameFramework.Runtime;
 
 namespace FPS
@@ -68,11 +69,22 @@ namespace FPS
         private void OnShowEntitySuccess(object sender, GameEventArgs e)
         {
             ShowEntitySuccessEventArgs ne = (ShowEntitySuccessEventArgs)e;
+            
             if (ne.EntityLogicType == typeof(Weapon))
             {
                 weapon = (Weapon)ne.Entity.Logic;
+                weapon.transform.localScale = new Vector3(100, 100, 100);
+                GameEntry.UI.OpenUIForm(UIFormId.EquipmentForm,weapon);
             }
-            GameEntry.UI.OpenUIForm(UIFormId.EquipmentForm,weapon);
+            else if (ne.EntityLogicType == typeof(WeaponMod))
+            {
+                var mod = (WeaponMod)ne.Entity.Logic;
+                foreach (var nextMod in mod.weaponModData.NextModType)
+                {
+                    equipmentForm.ShowModUIItem(nextMod);
+                    MathUtilities.GetRectFormEllipse(600,300,0,equipmentForm.activeModUIItemRect.ToArray());
+                }
+            }
         }
     }
 }

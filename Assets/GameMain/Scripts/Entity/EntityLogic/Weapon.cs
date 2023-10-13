@@ -12,7 +12,7 @@ namespace FPS
 
         [SerializeField]
         public WeaponData m_WeaponData = null;
-        private WeaponExData m_WeaponExData;
+        public WeaponExData m_WeaponExData;
 
         public Soldier soldier;
         public Player player;
@@ -61,7 +61,8 @@ namespace FPS
         private Vector3 currentPosition;
         private Vector3 initialGunPosition;
 
-        public Dictionary<Mod, WeaponMod> weaponMods;
+        public Dictionary<Mod, WeaponMod> weaponMods = new Dictionary<Mod, WeaponMod>();
+
 
         protected override void OnInit(object userData)
         {
@@ -70,7 +71,6 @@ namespace FPS
             weaponAnimator = GetComponentInChildren<Animator>();
 
             newWeaponRotation = transform.localRotation.eulerAngles;
-            
         }
 
         protected override void OnShow(object userData)
@@ -117,6 +117,26 @@ namespace FPS
             CalculateWeaponSway();
             CalculateAimingIn();
         }
+
+        protected override void OnAttached(EntityLogic childEntity, Transform parentTransform, object userData)
+        {
+            base.OnAttached(childEntity, parentTransform, userData);
+            if (childEntity is WeaponMod entity)
+            {
+                weaponMods.Add(entity.weaponModData.ModType,entity);
+                foreach (var next in entity.modExData.nextModsTransforms)
+                {
+                    m_WeaponExData.nextModsTransforms.Add(next);
+                }
+                return;
+            }
+        }
+
+        protected override void OnDetached(EntityLogic childEntity, object userData)
+        {
+            base.OnDetached(childEntity, userData);
+        }
+        
 
         private void CalculateAimingIn()
         {
@@ -261,5 +281,7 @@ namespace FPS
             currentPosition = Vector3.Lerp(currentPosition, targetPosition, Time.fixedDeltaTime * m_WeaponExData.snappiness);
             transform.localPosition = currentPosition;
         }
+        
+        
     }
 }

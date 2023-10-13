@@ -1,16 +1,16 @@
-﻿#	武器配件表							
-#	Id		ModName	Weight	Recoil	Ergonomics	Precision	MuzzleVelocity
-#	int		string	float	int	int	float	float
-#	配件编号	备注	配件名称	重量	后坐力	人机工效	精准度	枪口初速
-	40001		barrel_ar15_508mm_LOD0	0	-6	-29	1.1	-3.1
-	40001		charge_ar15_geissele_ach_LOD0	0	0	3	0	0
-	40001		gas_block_ar15_ba_lo_pro_LOD0	0	-3	1	0	0
-	40001		handguard_ar15_sai_qd_rail_long_LOD0	0	-3	12	0	0
-	40001		mag_stanag_magpul_pmag_gen_m3_window_556x45_30_LOD0	0	0	-3	0	0
-	40001		muzzle_ar15_silencerco_asr_flash_hider_556x45_LOD0	0	-9	0	3	1
-	40001		pistolgrip_ar15_naroh_arms_gral_s_LOD0	0	0	15	0	0
-	40001		reciever_ar15_vltor_mur-1s_LOD0	0	-4	8	0	0
-	40001		scope_all_eotech_xps3_LOD0	0	0	-2	0	0
-	40001		silencer_asr_silencerco_saker_556_556x45_LOD0	0	-14	-22	-1	0
-	40001		stock_ar15_magpul_prs_gen3_LOD0	0	-34	3	0	0
-	40001		stock_ar15_strike_industries_advanced_receiver_extension_LOD0	0	-4	2	0	0
+﻿#	武器配件表											
+#	Id		ModName	Weight	Recoil	Ergonomics	Precision	MuzzleVelocity	ModType	NextModType1	NextModType2	NextModType3
+#	int		string	float	int	int	float	float	string	string	string	string
+#	配件编号	备注	配件名称	重量	后坐力	人机工效	精准度	枪口初速	配件类型	下一个配件类型1	下一个配件类型2	下一个配件类型3
+	40001	枪管	barrel_ar15_508mm_LOD0	0	-6	-29	1.1	-3.1	Barrel	Muzzle	GasBlock	None
+	40002	拉机柄	charge_ar15_geissele_ach_LOD0	0	0	3	0	0	Charge	None	None	None
+	40003	导气箍	gas_block_ar15_ba_lo_pro_LOD0	0	-3	1	0	0	GasBlock	None	None	None
+	40004	护木	handguard_ar15_sai_qd_rail_long_LOD0	0	-3	12	0	0	HandGuard	None	None	None
+	40005	弹匣	mag_stanag_magpul_pmag_gen_m3_window_556x45_30_LOD0	0	0	-3	0	0	Mag	None	None	None
+	40006	枪口	muzzle_ar15_silencerco_asr_flash_hider_556x45_LOD0	0	-9	0	3	1	Muzzle	Silencer	None	None
+	40007	手枪式握把	pistolgrip_ar15_naroh_arms_gral_s_LOD0	0	0	15	0	0	PistolGrip	None	None	None
+	40008	上机匣	reciever_ar15_vltor_mur-1s_LOD0	0	-4	8	0	0	Receiver	Barrel	HandGuard	Scope
+	40009	瞄准镜	scope_all_eotech_xps3_LOD0	0	0	-2	0	0	Scope	None	None	None
+	40010	消音器	silencer_asr_silencerco_saker_556_556x45_LOD0	0	-14	-22	-1	0	Silencer	None	None	None
+	40011	后托	stock_ar15_magpul_prs_gen3_LOD0	0	-34	3	0	0	StockLast	None	None	None
+	40012	后托	stock_ar15_strike_industries_advanced_receiver_extension_LOD0	0	-4	2	0	0	Stock	StockLast	None	None

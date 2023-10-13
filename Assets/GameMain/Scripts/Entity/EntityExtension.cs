@@ -56,6 +56,11 @@ namespace FPS
             entityComponent.ShowEntity(typeof(Weapon), "Weapon", Constant.AssetPriority.WeaponAsset, data);
         }
 
+        public static void ShowWeaponMod(this EntityComponent entityComponent, WeaponModData data)
+        {
+            entityComponent.ShowEntity(typeof(WeaponMod), "WeaponMod", Constant.AssetPriority.WeaponModAsset, data);
+        }
+
         private static void ShowEntity(this EntityComponent entityComponent, Type logicType, string entityGroup, int priority, EntityData data)
         {
             if (data == null)
@@ -74,7 +79,6 @@ namespace FPS
 
             entityComponent.ShowEntity(data.Id, logicType, AssetUtility.GetEntityAsset(drEntity.AssetName), entityGroup, priority, data);
         }
-        
         
 
         public static int GenerateSerialId(this EntityComponent entityComponent)

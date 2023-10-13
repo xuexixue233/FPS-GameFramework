@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2023-10-11 23:39:59.102
+// 生成时间：2023-10-13 15:00:38.740
 //------------------------------------------------------------
 
 using GameFramework;
@@ -90,6 +90,42 @@ namespace FPS
             private set;
         }
 
+        /// <summary>
+        /// 获取配件类型。
+        /// </summary>
+        public string ModType
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取下一个配件类型1。
+        /// </summary>
+        public string NextModType1
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取下一个配件类型2。
+        /// </summary>
+        public string NextModType2
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取下一个配件类型3。
+        /// </summary>
+        public string NextModType3
+        {
+            get;
+            private set;
+        }
+
         public override bool ParseDataRow(string dataRowString, object userData)
         {
             string[] columnStrings = dataRowString.Split(DataTableExtension.DataSplitSeparators);
@@ -108,6 +144,10 @@ namespace FPS
             Ergonomics = int.Parse(columnStrings[index++]);
             Precision = float.Parse(columnStrings[index++]);
             MuzzleVelocity = float.Parse(columnStrings[index++]);
+            ModType = columnStrings[index++];
+            NextModType1 = columnStrings[index++];
+            NextModType2 = columnStrings[index++];
+            NextModType3 = columnStrings[index++];
 
             GeneratePropertyArray();
             return true;
@@ -126,6 +166,10 @@ namespace FPS
                     Ergonomics = binaryReader.Read7BitEncodedInt32();
                     Precision = binaryReader.ReadSingle();
                     MuzzleVelocity = binaryReader.ReadSingle();
+                    ModType = binaryReader.ReadString();
+                    NextModType1 = binaryReader.ReadString();
+                    NextModType2 = binaryReader.ReadString();
+                    NextModType3 = binaryReader.ReadString();
                 }
             }
 
@@ -133,9 +177,47 @@ namespace FPS
             return true;
         }
 
+        private KeyValuePair<int, string>[] m_NextModType = null;
+
+        public int NextModTypeCount
+        {
+            get
+            {
+                return m_NextModType.Length;
+            }
+        }
+
+        public string GetNextModType(int id)
+        {
+            foreach (KeyValuePair<int, string> i in m_NextModType)
+            {
+                if (i.Key == id)
+                {
+                    return i.Value;
+                }
+            }
+
+            throw new GameFrameworkException(Utility.Text.Format("GetNextModType with invalid id '{0}'.", id));
+        }
+
+        public string GetNextModTypeAt(int index)
+        {
+            if (index < 0 || index >= m_NextModType.Length)
+            {
+                throw new GameFrameworkException(Utility.Text.Format("GetNextModTypeAt with invalid index '{0}'.", index));
+            }
+
+            return m_NextModType[index].Value;
+        }
+
         private void GeneratePropertyArray()
         {
-
+            m_NextModType = new KeyValuePair<int, string>[]
+            {
+                new KeyValuePair<int, string>(1, NextModType1),
+                new KeyValuePair<int, string>(2, NextModType2),
+                new KeyValuePair<int, string>(3, NextModType3),
+            };
         }
     }
 }

@@ -7,6 +7,7 @@
 
 using GameFramework.DataTable;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FPS
@@ -55,7 +56,10 @@ namespace FPS
         
         [SerializeField]
         private int m_EffectiveFiringRange;
-        
+
+        [SerializeField] 
+        private List<Mod> _nextMods;
+
         public WeaponData(int entityId, int typeId, int ownerId, CampType ownerCamp)
             : base(entityId, typeId, ownerId, ownerCamp)
         {
@@ -78,6 +82,14 @@ namespace FPS
             m_Caliber = drWeapon.Caliber;
             m_FiringRate = drWeapon.FiringRate;
             m_EffectiveFiringRange = drWeapon.EffectiveFiringRange;
+
+            _nextMods = new List<Mod>();
+            var modName="";
+            for (var index = 0; index<5 && (modName = drWeapon.GetNextModTypeAt(index)) != "None"; index++)
+            {
+                var modType=(Mod)Enum.Parse(typeof(Mod),modName);
+                _nextMods.Add(modType);
+            }
         }
 
         public string WeaponName => m_WeaponName;
@@ -105,5 +117,7 @@ namespace FPS
         public int FiringRate => m_FiringRate;
 
         public int EffectiveFiringRange => m_EffectiveFiringRange;
+
+        public List<Mod> NextMods => _nextMods;
     }
 }

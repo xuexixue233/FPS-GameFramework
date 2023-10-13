@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using GameFramework.ObjectPool;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
@@ -55,27 +56,45 @@ namespace FPS
         public TMP_Text effectiveFiringRange;
 
         public ModUIItem modUIItemTemplate;
+        public GameObject circleGameObject;
+        public RectTransform previewRect;
 
         public Dictionary<Mod,ModUIItem> activeModUIItem;
+        public List<RectTransform> activeModUIItemRect=new List<RectTransform>();
 
-        private void ShowModUIItem(Mod mod)
+        public void ShowModUIItem(Mod mod)
         {
-            
+            ModUIItem modUIItem = GetActiveModUIItem(mod);
+            if (modUIItem==null)
+            {
+                modUIItem = CreateModUIItem(mod);
+                activeModUIItem.Add(mod,modUIItem);
+                activeModUIItemRect.Add(modUIItem.transform as RectTransform);
+            }
+            modUIItem.Init(mod,showedWeapon);
         }
         
-        private void HideModUIItem(Mod mod)
+        public void HideModUIItem(Mod  mod)
         {
-            
+            if (activeModUIItem.TryGetValue(mod,out var modUIItem))
+            {
+                activeModUIItem.Remove(mod);
+                _objectPool.Unspawn(modUIItem);
+            }
         }
         
-        private ModUIItem GetActiveModUIItem(Mod mod)
+        public ModUIItem GetActiveModUIItem(Mod mod)
         {
-            
+            if (activeModUIItem.TryGetValue(mod,out var modUIItem))
+            {
+                return modUIItem;
+            }
 
             return null;
+
         }
 
-        private ModUIItem CreateModUIItem(Mod mod)
+        public ModUIItem CreateModUIItem(Mod mod)
         {
             ModUIItem modUIItem = null;
             ModUIItemObject modUIItemObject = _objectPool.Spawn();
@@ -86,8 +105,10 @@ namespace FPS
             else
             {
                 modUIItem = Instantiate(modUIItemTemplate);
-                Transform transform = modUIItem.GetComponent<Transform>();
+                Transform modUITransform = modUIItem.GetComponent<Transform>();
                 //TODO:设置位置
+                modUITransform.SetParent(previewRect);
+                
                 _objectPool.Register(ModUIItemObject.Create(modUIItem),true);
             }
 
@@ -113,7 +134,8 @@ namespace FPS
                 showImage.gameObject.SetActive(!showImage.gameObject.activeSelf);
                 hideImage.gameObject.SetActive(!hideImage.gameObject.activeSelf);
             }));
-            _objectPool = GameEntry.ObjectPool.CreateMultiSpawnObjectPool<ModUIItemObject>("ModUIItem", 10);
+            _objectPool = GameEntry.ObjectPool.CreateSingleSpawnObjectPool<ModUIItemObject>("ModUIItem", 10);
+            activeModUIItem = new Dictionary<Mod, ModUIItem>();
         }
 
         protected override void OnOpen(object userData)
@@ -124,6 +146,26 @@ namespace FPS
             durabilityText.text = "100/100(100)";
             OpenText();
             OpenImage();
+            foreach (var mod in showedWeapon.m_WeaponData.NextMods)
+            {
+                ShowModUIItem(mod);
+            }
+
+            UITransformToModTransform();
+            MathUtilities.GetRectFormEllipse(600,300,0,activeModUIItemRect.ToArray());
+        }
+
+        private void UITransformToModTransform()
+        {
+            var newTransform = new List<Transform>();
+
+            foreach (var mod in showedWeapon.m_WeaponData.NextMods)
+            {
+                var temp = showedWeapon.m_WeaponExData.previewCamera.WorldToScreenPoint(showedWeapon.m_WeaponExData.nextModsTransforms[mod].position);
+                var modUIItem = Instantiate(circleGameObject, previewRect, true);
+                modUIItem.GetComponent<RectTransform>().anchoredPosition=new Vector2(temp.x,temp.y);
+            }
+            
         }
 
         private void OpenText()
