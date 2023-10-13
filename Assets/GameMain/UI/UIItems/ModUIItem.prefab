@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 439701940114770121}
   - component: {fileID: 5223974870091671748}
   - component: {fileID: 1984601863316981302}
-  - component: {fileID: -9135042190016023003}
   m_Layer: 5
   m_Name: ModUIItem
   m_TagString: Untagged
@@ -123,20 +122,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4698829592019173065}
   m_CullTransparentMesh: 1
---- !u!114 &-9135042190016023003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4698829592019173065}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9201596067b4e0299ee2b331cea0cf5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  modButton: {fileID: 5223974870091671748}
-  modImage: {fileID: 439701940114770121}
 --- !u!1 &6372358714702859190
 GameObject:
   m_ObjectHideFlags: 0

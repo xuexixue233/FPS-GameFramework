@@ -1,7 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
+using GameFramework.ObjectPool;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Pool;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
@@ -16,7 +18,7 @@ namespace FPS
     
     public class EquipmentForm : UGuiForm
     {
-        private ObjectPool<ModUIItem> _objectPool;
+        private IObjectPool<ModUIItemObject> _objectPool;
 
         public Weapon showedWeapon;
         public GameObject attributeList;
@@ -52,27 +54,44 @@ namespace FPS
         public TMP_Text firingRateText;
         public TMP_Text effectiveFiringRange;
 
-        public ModUIItem modUI;
+        public ModUIItem modUIItemTemplate;
 
-        private ModUIItem CreateFunc()
+        public Dictionary<Mod,ModUIItem> activeModUIItem;
+
+        private void ShowModUIItem(Mod mod)
         {
-            var modUiItem = Instantiate(modUI);
-            return modUiItem.GetComponent<ModUIItem>();
+            
+        }
+        
+        private void HideModUIItem(Mod mod)
+        {
+            
+        }
+        
+        private ModUIItem GetActiveModUIItem(Mod mod)
+        {
+            
+
+            return null;
         }
 
-        private void Get(ModUIItem modUI)
+        private ModUIItem CreateModUIItem(Mod mod)
         {
-            modUI.gameObject.SetActive(true);
-        }
+            ModUIItem modUIItem = null;
+            ModUIItemObject modUIItemObject = _objectPool.Spawn();
+            if (modUIItemObject!=null)
+            {
+                modUIItem = (ModUIItem)modUIItemObject.Target;
+            }
+            else
+            {
+                modUIItem = Instantiate(modUIItemTemplate);
+                Transform transform = modUIItem.GetComponent<Transform>();
+                //TODO:设置位置
+                _objectPool.Register(ModUIItemObject.Create(modUIItem),true);
+            }
 
-        private void Release(ModUIItem modUI)
-        {
-            modUI.gameObject.SetActive(false);
-        }
-
-        private void Destory(ModUIItem modUI)
-        {
-            Destory(this.modUI);
+            return modUIItem;
         }
 
         private void BackToMenu()
@@ -83,7 +102,7 @@ namespace FPS
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
-            _objectPool = new ObjectPool<ModUIItem>(CreateFunc, Get, Release, Destory, true, 4, 10);
+            
             backButton.onClick.RemoveAllListeners();
             backButton.onClick.AddListener(BackToMenu);
             
@@ -94,11 +113,13 @@ namespace FPS
                 showImage.gameObject.SetActive(!showImage.gameObject.activeSelf);
                 hideImage.gameObject.SetActive(!hideImage.gameObject.activeSelf);
             }));
+            _objectPool = GameEntry.ObjectPool.CreateMultiSpawnObjectPool<ModUIItemObject>("ModUIItem", 10);
         }
 
         protected override void OnOpen(object userData)
         {
             base.OnOpen(userData);
+            
             showedWeapon = (Weapon)userData;
             durabilityText.text = "100/100(100)";
             OpenText();

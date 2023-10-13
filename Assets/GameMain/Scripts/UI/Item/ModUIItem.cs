@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GameFramework.ObjectPool;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace FPS
@@ -7,11 +8,11 @@ namespace FPS
     {
         public Button modButton;
         public Image modImage;
+        private Entity m_Owner = null;
+        
+        public Entity Owner => m_Owner;
+
         
         
-        public void ChangeImage()
-        {
-            
-        }
     }
 }
