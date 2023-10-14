@@ -28,6 +28,7 @@ namespace FPS
             public const int SoldierAsset = 80;
             public const int ThrusterAsset = 30;
             public const int WeaponAsset = 30;
+            public const int WeaponModAsset = 20;
             public const int ArmorAsset = 30;
             public const int BulletAsset = 80;
             public const int AsteroiAsset = 80;

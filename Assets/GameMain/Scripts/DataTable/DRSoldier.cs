@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2023-09-18 17:18:41.707
+// 生成时间：2023-10-13 15:00:38.734
 //------------------------------------------------------------
 
 using GameFramework;
@@ -81,6 +81,51 @@ namespace FPS
             private set;
         }
 
+        /// <summary>
+        /// 获取行走前进速度。
+        /// </summary>
+        public float WalkingForwardSpeed
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取行走后退速度。
+        /// </summary>
+        public float WalkingBackSpeed
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取行走平移速度。
+        /// </summary>
+        public float WalkingStrafeSpeed
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取奔跑前进速度。
+        /// </summary>
+        public float RunningForwardSpeed
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取奔跑平移速度。
+        /// </summary>
+        public float RunningStrafeSpeed
+        {
+            get;
+            private set;
+        }
+
         public override bool ParseDataRow(string dataRowString, object userData)
         {
             string[] columnStrings = dataRowString.Split(DataTableExtension.DataSplitSeparators);
@@ -98,6 +143,11 @@ namespace FPS
             WeaponId2 = int.Parse(columnStrings[index++]);
             DeadEffectId = int.Parse(columnStrings[index++]);
             DeadSoundId = int.Parse(columnStrings[index++]);
+            WalkingForwardSpeed = float.Parse(columnStrings[index++]);
+            WalkingBackSpeed = float.Parse(columnStrings[index++]);
+            WalkingStrafeSpeed = float.Parse(columnStrings[index++]);
+            RunningForwardSpeed = float.Parse(columnStrings[index++]);
+            RunningStrafeSpeed = float.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -115,6 +165,11 @@ namespace FPS
                     WeaponId2 = binaryReader.Read7BitEncodedInt32();
                     DeadEffectId = binaryReader.Read7BitEncodedInt32();
                     DeadSoundId = binaryReader.Read7BitEncodedInt32();
+                    WalkingForwardSpeed = binaryReader.ReadSingle();
+                    WalkingBackSpeed = binaryReader.ReadSingle();
+                    WalkingStrafeSpeed = binaryReader.ReadSingle();
+                    RunningForwardSpeed = binaryReader.ReadSingle();
+                    RunningStrafeSpeed = binaryReader.ReadSingle();
                 }
             }
 

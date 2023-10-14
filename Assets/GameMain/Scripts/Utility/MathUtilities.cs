@@ -84,5 +84,19 @@ namespace FPS
 
             return result;
         }
+
+        public static void GetRectFormEllipse(float a, float b, float offset, RectTransform[] rectTransforms)
+        {
+            float deltaAngle = 360f / rectTransforms.Length;
+            for (int i = 0; i < rectTransforms.Length; i++)
+            {
+                float angle = i * deltaAngle + offset;
+                float x = Mathf.Cos(angle * Mathf.Deg2Rad) * a;
+                float y = Mathf.Sin(angle * Mathf.Deg2Rad) * b;
+                rectTransforms[i].anchoredPosition = new Vector2(x, y);
+            }
+        }
+
     }
+    
 }

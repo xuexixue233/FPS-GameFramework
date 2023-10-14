@@ -126,6 +126,32 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &282907763 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4293565981314446398, guid: 2a8d36980e27f5043ac94d7b0de91454,
+    type: 3}
+  m_PrefabInstance: {fileID: 8877742400341915968}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &282907765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 282907763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1001 &457599990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -206,6 +232,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b9015533f83d97449fdeea0b552d358, type: 3}
+--- !u!1 &511897523 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8877742400978586585, guid: 2a8d36980e27f5043ac94d7b0de91454,
+    type: 3}
+  m_PrefabInstance: {fileID: 8877742400341915968}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &511897525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511897523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1001 &1210383324
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -236,7 +288,7 @@ PrefabInstance:
     - target: {fileID: 5635042164496053227, guid: 1ba665d86e726e94fa1a7ff2eb72639c,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 14.315001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5635042164496053227, guid: 1ba665d86e726e94fa1a7ff2eb72639c,
         type: 3}
@@ -266,7 +318,7 @@ PrefabInstance:
     - target: {fileID: 6718739588049582155, guid: 1ba665d86e726e94fa1a7ff2eb72639c,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 19.315
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6718739588049582155, guid: 1ba665d86e726e94fa1a7ff2eb72639c,
         type: 3}
@@ -291,7 +343,7 @@ PrefabInstance:
     - target: {fileID: 8186695455061292825, guid: 1ba665d86e726e94fa1a7ff2eb72639c,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 70.445
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8186695455061292825, guid: 1ba665d86e726e94fa1a7ff2eb72639c,
         type: 3}
@@ -370,6 +422,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ba665d86e726e94fa1a7ff2eb72639c, type: 3}
+--- !u!1 &1341055766 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4293565980316861028, guid: 2a8d36980e27f5043ac94d7b0de91454,
+    type: 3}
+  m_PrefabInstance: {fileID: 8877742400341915968}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1341055768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341055766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1001 &5887309621988166907
 PrefabInstance:
   m_ObjectHideFlags: 0

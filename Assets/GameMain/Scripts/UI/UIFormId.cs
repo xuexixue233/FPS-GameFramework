@@ -42,6 +42,11 @@ namespace FPS
         /// <summary>
         /// 玩家UI
         /// </summary>
-        PlayerForm=200
+        PlayerForm=200,
+        
+        /// <summary>
+        /// 装备界面
+        /// </summary>
+        EquipmentForm = 201
     }
 }

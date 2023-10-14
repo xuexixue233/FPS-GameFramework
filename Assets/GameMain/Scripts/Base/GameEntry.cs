@@ -17,6 +17,7 @@ namespace FPS
         private void Start()
         {
             InitBuiltinComponents();
+            InitCustomComponents();
         }
     }
 }

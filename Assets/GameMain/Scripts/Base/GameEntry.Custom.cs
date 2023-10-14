@@ -14,9 +14,15 @@ namespace FPS
     /// </summary>
     public partial class GameEntry : MonoBehaviour
     {
+        public static UserDataComponent UserData
+        {
+            get;
+            private set;
+        }
+        
         private static void InitCustomComponents()
         {
-            
+            UserData=UnityGameFramework.Runtime.GameEntry.GetComponent<UserDataComponent>();
         }
     }
 }

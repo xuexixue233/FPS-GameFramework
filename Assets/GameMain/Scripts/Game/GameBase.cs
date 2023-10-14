@@ -42,7 +42,7 @@ namespace FPS
             GameEntry.Entity.ShowPlayer(new PlayerData(GameEntry.Entity.GenerateSerialId(), 10000)
             {
                 Name = "Player",
-                Position = Vector3.zero,
+                Position = new Vector3(0,0,0)
             });
 
             GameOver = false;

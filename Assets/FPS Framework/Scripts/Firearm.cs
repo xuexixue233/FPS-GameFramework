@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 namespace FPSFramework
 {
@@ -270,7 +272,7 @@ namespace FPSFramework
                 if (Inventory.Controller.tacticalSprintAmount > 0 && !Motion.isAiming && !IsFiring) TacticalSprintAmount = Mathf.Lerp(TacticalSprintAmount, Inventory.Controller.tacticalSprintAmount, Time.deltaTime * Motion.sprintSpeed / 1.3f);
                 if (Inventory.Controller.tacticalSprintAmount <= 0 && !Motion.isAiming && !IsFiring) TacticalSprintAmount = Mathf.Lerp(TacticalSprintAmount, Inventory.Controller.tacticalSprintAmount, Time.deltaTime * Motion.sprintSpeed * 5);
                 if (Motion.isAiming || IsFiring) TacticalSprintAmount = Mathf.Lerp(TacticalSprintAmount, 0, Time.deltaTime * Motion.sprintSpeed * 5);
-
+                
                 Animator.SetFloat("Sprint Amount", TacticalSprintAmount);
             }
 
@@ -536,7 +538,7 @@ namespace FPSFramework
         /// </summary>
         private void ApplyRecoil()
         {
-
+            Debug.Log(2);
             if (Motion)
             {
 
@@ -748,6 +750,7 @@ namespace FPSFramework
         {
             //use this if you want to use the built-in save and load system for the attachemnts
             //SaveAttachments();
+            
         }
 
 

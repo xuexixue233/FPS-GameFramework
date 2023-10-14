@@ -185,8 +185,9 @@ namespace FPSFramework
 
         public void ShakeCameras(float multipler, float fadeOutTime)
         {
+            
             if (!Use_CameraShake) return;
-
+            Debug.Log(1);
             if(mainCameraShaker)
             mainCameraShaker.Shake(mainCameraShakeMagnitude * multipler, cameraShakeRoughness, cameraShakeFadeInTime, fadeOutTime);
         }
