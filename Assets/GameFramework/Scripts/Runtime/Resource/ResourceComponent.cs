@@ -11,7 +11,6 @@ using GameFramework.FileSystem;
 using GameFramework.ObjectPool;
 using GameFramework.Resource;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityGameFramework.Runtime
@@ -33,7 +32,7 @@ namespace UnityGameFramework.Runtime
         private bool m_PreorderUnloadUnusedAssets = false;
         private bool m_PerformGCCollect = false;
         private AsyncOperation m_AsyncOperation = null;
-        private float m_LastUnloadUnusedAssetsOperationElapseSeconds = 0f;
+        private float m_LastOperationElapse = 0f;
         private ResourceHelperBase m_ResourceHelper = null;
 
         [SerializeField]
@@ -43,10 +42,7 @@ namespace UnityGameFramework.Runtime
         private ReadWritePathType m_ReadWritePathType = ReadWritePathType.Unspecified;
 
         [SerializeField]
-        private float m_MinUnloadUnusedAssetsInterval = 60f;
-
-        [SerializeField]
-        private float m_MaxUnloadUnusedAssetsInterval = 300f;
+        private float m_UnloadUnusedAssetsInterval = 60f;
 
         [SerializeField]
         private float m_AssetAutoReleaseInterval = 60f;
@@ -210,43 +206,17 @@ namespace UnityGameFramework.Runtime
         }
 
         /// <summary>
-        /// 获取无用资源释放的等待时长，以秒为单位。
+        /// 获取或设置无用资源释放间隔时间。
         /// </summary>
-        public float LastUnloadUnusedAssetsOperationElapseSeconds
+        public float UnloadUnusedAssetsInterval
         {
             get
             {
-                return m_LastUnloadUnusedAssetsOperationElapseSeconds;
-            }
-        }
-
-        /// <summary>
-        /// 获取或设置无用资源释放的最小间隔时间，以秒为单位。
-        /// </summary>
-        public float MinUnloadUnusedAssetsInterval
-        {
-            get
-            {
-                return m_MinUnloadUnusedAssetsInterval;
+                return m_UnloadUnusedAssetsInterval;
             }
             set
             {
-                m_MinUnloadUnusedAssetsInterval = value;
-            }
-        }
-
-        /// <summary>
-        /// 获取或设置无用资源释放的最大间隔时间，以秒为单位。
-        /// </summary>
-        public float MaxUnloadUnusedAssetsInterval
-        {
-            get
-            {
-                return m_MaxUnloadUnusedAssetsInterval;
-            }
-            set
-            {
-                m_MaxUnloadUnusedAssetsInterval = value;
+                m_UnloadUnusedAssetsInterval = value;
             }
         }
 
@@ -395,17 +365,6 @@ namespace UnityGameFramework.Runtime
         }
 
         /// <summary>
-        /// 获取使用时下载的等待更新资源数量。
-        /// </summary>
-        public int UpdateWaitingWhilePlayingCount
-        {
-            get
-            {
-                return m_ResourceManager.UpdateWaitingWhilePlayingCount;
-            }
-        }
-
-        /// <summary>
         /// 获取候选更新资源数量。
         /// </summary>
         public int UpdateCandidateCount
@@ -413,6 +372,17 @@ namespace UnityGameFramework.Runtime
             get
             {
                 return m_ResourceManager.UpdateCandidateCount;
+            }
+        }
+
+        /// <summary>
+        /// 获取正在更新资源数量。
+        /// </summary>
+        public int UpdatingCount
+        {
+            get
+            {
+                return m_ResourceManager.UpdatingCount;
             }
         }
 
@@ -618,7 +588,6 @@ namespace UnityGameFramework.Runtime
             m_ResourceManager.ResourceUpdateChanged += OnResourceUpdateChanged;
             m_ResourceManager.ResourceUpdateSuccess += OnResourceUpdateSuccess;
             m_ResourceManager.ResourceUpdateFailure += OnResourceUpdateFailure;
-            m_ResourceManager.ResourceUpdateAllComplete += OnResourceUpdateAllComplete;
 
             m_ResourceManager.SetReadOnlyPath(Application.streamingAssetsPath);
             if (m_ReadWritePathType == ReadWritePathType.TemporaryCache)
@@ -688,13 +657,13 @@ namespace UnityGameFramework.Runtime
 
         private void Update()
         {
-            m_LastUnloadUnusedAssetsOperationElapseSeconds += Time.unscaledDeltaTime;
-            if (m_AsyncOperation == null && (m_ForceUnloadUnusedAssets || m_LastUnloadUnusedAssetsOperationElapseSeconds >= m_MaxUnloadUnusedAssetsInterval || m_PreorderUnloadUnusedAssets && m_LastUnloadUnusedAssetsOperationElapseSeconds >= m_MinUnloadUnusedAssetsInterval))
+            m_LastOperationElapse += Time.unscaledDeltaTime;
+            if (m_AsyncOperation == null && (m_ForceUnloadUnusedAssets || m_PreorderUnloadUnusedAssets && m_LastOperationElapse >= m_UnloadUnusedAssetsInterval))
             {
                 Log.Info("Unload unused assets...");
                 m_ForceUnloadUnusedAssets = false;
                 m_PreorderUnloadUnusedAssets = false;
-                m_LastUnloadUnusedAssetsOperationElapseSeconds = 0f;
+                m_LastOperationElapse = 0f;
                 m_AsyncOperation = Resources.UnloadUnusedAssets();
             }
 
@@ -821,12 +790,12 @@ namespace UnityGameFramework.Runtime
         /// </summary>
         /// <param name="versionListLength">版本资源列表大小。</param>
         /// <param name="versionListHashCode">版本资源列表哈希值。</param>
-        /// <param name="versionListCompressedLength">版本资源列表压缩后大小。</param>
-        /// <param name="versionListCompressedHashCode">版本资源列表压缩后哈希值。</param>
+        /// <param name="versionListZipLength">版本资源列表压缩后大小。</param>
+        /// <param name="versionListZipHashCode">版本资源列表压缩后哈希值。</param>
         /// <param name="updateVersionListCallbacks">版本资源列表更新回调函数集。</param>
-        public void UpdateVersionList(int versionListLength, int versionListHashCode, int versionListCompressedLength, int versionListCompressedHashCode, UpdateVersionListCallbacks updateVersionListCallbacks)
+        public void UpdateVersionList(int versionListLength, int versionListHashCode, int versionListZipLength, int versionListZipHashCode, UpdateVersionListCallbacks updateVersionListCallbacks)
         {
-            m_ResourceManager.UpdateVersionList(versionListLength, versionListHashCode, versionListCompressedLength, versionListCompressedHashCode, updateVersionListCallbacks);
+            m_ResourceManager.UpdateVersionList(versionListLength, versionListHashCode, versionListZipLength, versionListZipHashCode, updateVersionListCallbacks);
         }
 
         /// <summary>
@@ -878,14 +847,6 @@ namespace UnityGameFramework.Runtime
         }
 
         /// <summary>
-        /// 停止更新资源。
-        /// </summary>
-        public void StopUpdateResources()
-        {
-            m_ResourceManager.StopUpdateResources();
-        }
-
-        /// <summary>
         /// 校验资源包。
         /// </summary>
         /// <param name="resourcePackPath">要校验的资源包路径。</param>
@@ -893,24 +854,6 @@ namespace UnityGameFramework.Runtime
         public bool VerifyResourcePack(string resourcePackPath)
         {
             return m_ResourceManager.VerifyResourcePack(resourcePackPath);
-        }
-
-        /// <summary>
-        /// 获取所有加载资源任务的信息。
-        /// </summary>
-        /// <returns>所有加载资源任务的信息。</returns>
-        public TaskInfo[] GetAllLoadAssetInfos()
-        {
-            return m_ResourceManager.GetAllLoadAssetInfos();
-        }
-
-        /// <summary>
-        /// 获取所有加载资源任务的信息。
-        /// </summary>
-        /// <param name="results">所有加载资源任务的信息。</param>
-        public void GetAllLoadAssetInfos(List<TaskInfo> results)
-        {
-            m_ResourceManager.GetAllLoadAssetInfos(results);
         }
 
         /// <summary>
@@ -1362,41 +1305,12 @@ namespace UnityGameFramework.Runtime
         }
 
         /// <summary>
-        /// 获取所有资源组。
+        /// 获取所有加载资源任务的信息。
         /// </summary>
-        /// <returns>所有资源组。</returns>
-        public IResourceGroup[] GetAllResourceGroups()
+        /// <returns>所有加载资源任务的信息。</returns>
+        public TaskInfo[] GetAllLoadAssetInfos()
         {
-            return m_ResourceManager.GetAllResourceGroups();
-        }
-
-        /// <summary>
-        /// 获取所有资源组。
-        /// </summary>
-        /// <param name="results">所有资源组。</param>
-        public void GetAllResourceGroups(List<IResourceGroup> results)
-        {
-            m_ResourceManager.GetAllResourceGroups(results);
-        }
-
-        /// <summary>
-        /// 获取资源组集合。
-        /// </summary>
-        /// <param name="resourceGroupNames">要获取的资源组名称的集合。</param>
-        /// <returns>要获取的资源组集合。</returns>
-        public IResourceGroupCollection GetResourceGroupCollection(params string[] resourceGroupNames)
-        {
-            return m_ResourceManager.GetResourceGroupCollection(resourceGroupNames);
-        }
-
-        /// <summary>
-        /// 获取资源组集合。
-        /// </summary>
-        /// <param name="resourceGroupNames">要获取的资源组名称的集合。</param>
-        /// <returns>要获取的资源组集合。</returns>
-        public IResourceGroupCollection GetResourceGroupCollection(List<string> resourceGroupNames)
-        {
-            return m_ResourceManager.GetResourceGroupCollection(resourceGroupNames);
+            return m_ResourceManager.GetAllLoadAssetInfos();
         }
 
         /// <summary>
@@ -1448,11 +1362,6 @@ namespace UnityGameFramework.Runtime
         private void OnResourceUpdateFailure(object sender, GameFramework.Resource.ResourceUpdateFailureEventArgs e)
         {
             m_EventComponent.Fire(this, ResourceUpdateFailureEventArgs.Create(e));
-        }
-
-        private void OnResourceUpdateAllComplete(object sender, GameFramework.Resource.ResourceUpdateAllCompleteEventArgs e)
-        {
-            m_EventComponent.Fire(this, ResourceUpdateAllCompleteEventArgs.Create(e));
         }
     }
 }

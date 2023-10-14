@@ -34,7 +34,6 @@ namespace UnityGameFramework.Editor.ResourceTools
         private readonly Dictionary<string, IFileSystem> m_OutputPackageFileSystems;
         private readonly Dictionary<string, IFileSystem> m_OutputPackedFileSystems;
         private readonly BuildReport m_BuildReport;
-        private readonly List<string> m_CompressionHelperTypeNames;
         private readonly List<string> m_BuildEventHandlerTypeNames;
         private IBuildEventHandler m_BuildEventHandler;
         private IFileSystemManager m_FileSystemManager;
@@ -44,6 +43,8 @@ namespace UnityGameFramework.Editor.ResourceTools
             m_ConfigurationPath = Type.GetConfigurationPath<ResourceBuilderConfigPathAttribute>() ?? Utility.Path.GetRegularPath(Path.Combine(Application.dataPath, "GameFramework/Configs/ResourceBuilder.xml"));
 
             m_ResourceCollection = new ResourceCollection();
+            Utility.Zip.SetZipHelper(new DefaultZipHelper());
+
             m_ResourceCollection.OnLoadingResource += delegate (int index, int count)
             {
                 if (OnLoadingResource != null)
@@ -91,29 +92,22 @@ namespace UnityGameFramework.Editor.ResourceTools
             m_OutputPackedFileSystems = new Dictionary<string, IFileSystem>(StringComparer.Ordinal);
             m_BuildReport = new BuildReport();
 
-            m_CompressionHelperTypeNames = new List<string>
-            {
-                NoneOptionName
-            };
-
             m_BuildEventHandlerTypeNames = new List<string>
             {
                 NoneOptionName
             };
 
-            m_CompressionHelperTypeNames.AddRange(Type.GetRuntimeOrEditorTypeNames(typeof(Utility.Compression.ICompressionHelper)));
-            m_BuildEventHandlerTypeNames.AddRange(Type.GetRuntimeOrEditorTypeNames(typeof(IBuildEventHandler)));
+            m_BuildEventHandlerTypeNames.AddRange(Type.GetEditorTypeNames(typeof(IBuildEventHandler)));
             m_BuildEventHandler = null;
             m_FileSystemManager = null;
 
             Platforms = Platform.Undefined;
-            AssetBundleCompression = AssetBundleCompressionType.LZ4;
-            CompressionHelperTypeName = string.Empty;
-            AdditionalCompressionSelected = false;
-            ForceRebuildAssetBundleSelected = false;
+            ZipSelected = true;
+            DeterministicAssetBundleSelected = ChunkBasedCompressionSelected = true;
+            UncompressedAssetBundleSelected = DisableWriteTypeTreeSelected = ForceRebuildAssetBundleSelected = IgnoreTypeTreeChangesSelected = AppendHashToAssetBundleNameSelected = false;
+            OutputPackageSelected = OutputFullSelected = OutputPackedSelected = true;
             BuildEventHandlerTypeName = string.Empty;
             OutputDirectory = string.Empty;
-            OutputPackageSelected = OutputFullSelected = OutputPackedSelected = true;
         }
 
         public string ProductName
@@ -180,19 +174,25 @@ namespace UnityGameFramework.Editor.ResourceTools
             set;
         }
 
-        public AssetBundleCompressionType AssetBundleCompression
+        public bool ZipSelected
         {
             get;
             set;
         }
 
-        public string CompressionHelperTypeName
+        public bool UncompressedAssetBundleSelected
         {
             get;
             set;
         }
 
-        public bool AdditionalCompressionSelected
+        public bool DisableWriteTypeTreeSelected
+        {
+            get;
+            set;
+        }
+
+        public bool DeterministicAssetBundleSelected
         {
             get;
             set;
@@ -204,13 +204,19 @@ namespace UnityGameFramework.Editor.ResourceTools
             set;
         }
 
-        public string BuildEventHandlerTypeName
+        public bool IgnoreTypeTreeChangesSelected
         {
             get;
             set;
         }
 
-        public string OutputDirectory
+        public bool AppendHashToAssetBundleNameSelected
+        {
+            get;
+            set;
+        }
+
+        public bool ChunkBasedCompressionSelected
         {
             get;
             set;
@@ -229,6 +235,18 @@ namespace UnityGameFramework.Editor.ResourceTools
         }
 
         public bool OutputPackedSelected
+        {
+            get;
+            set;
+        }
+
+        public string BuildEventHandlerTypeName
+        {
+            get;
+            set;
+        }
+
+        public string OutputDirectory
         {
             get;
             set;
@@ -367,28 +385,52 @@ namespace UnityGameFramework.Editor.ResourceTools
                             Platforms = (Platform)int.Parse(xmlNode.InnerText);
                             break;
 
-                        case "AssetBundleCompression":
-                            AssetBundleCompression = (AssetBundleCompressionType)byte.Parse(xmlNode.InnerText);
+                        case "ZipSelected":
+                            ZipSelected = bool.Parse(xmlNode.InnerText);
                             break;
 
-                        case "CompressionHelperTypeName":
-                            CompressionHelperTypeName = xmlNode.InnerText;
+                        case "UncompressedAssetBundleSelected":
+                            UncompressedAssetBundleSelected = bool.Parse(xmlNode.InnerText);
+                            if (UncompressedAssetBundleSelected)
+                            {
+                                ChunkBasedCompressionSelected = false;
+                            }
                             break;
 
-                        case "AdditionalCompressionSelected":
-                            AdditionalCompressionSelected = bool.Parse(xmlNode.InnerText);
+                        case "DisableWriteTypeTreeSelected":
+                            DisableWriteTypeTreeSelected = bool.Parse(xmlNode.InnerText);
+                            if (DisableWriteTypeTreeSelected)
+                            {
+                                IgnoreTypeTreeChangesSelected = false;
+                            }
+                            break;
+
+                        case "DeterministicAssetBundleSelected":
+                            DeterministicAssetBundleSelected = bool.Parse(xmlNode.InnerText);
                             break;
 
                         case "ForceRebuildAssetBundleSelected":
                             ForceRebuildAssetBundleSelected = bool.Parse(xmlNode.InnerText);
                             break;
 
-                        case "BuildEventHandlerTypeName":
-                            BuildEventHandlerTypeName = xmlNode.InnerText;
+                        case "IgnoreTypeTreeChangesSelected":
+                            IgnoreTypeTreeChangesSelected = bool.Parse(xmlNode.InnerText);
+                            if (IgnoreTypeTreeChangesSelected)
+                            {
+                                DisableWriteTypeTreeSelected = false;
+                            }
                             break;
 
-                        case "OutputDirectory":
-                            OutputDirectory = xmlNode.InnerText;
+                        case "AppendHashToAssetBundleNameSelected":
+                            AppendHashToAssetBundleNameSelected = false;
+                            break;
+
+                        case "ChunkBasedCompressionSelected":
+                            ChunkBasedCompressionSelected = bool.Parse(xmlNode.InnerText);
+                            if (ChunkBasedCompressionSelected)
+                            {
+                                UncompressedAssetBundleSelected = false;
+                            }
                             break;
 
                         case "OutputPackageSelected":
@@ -401,6 +443,15 @@ namespace UnityGameFramework.Editor.ResourceTools
 
                         case "OutputPackedSelected":
                             OutputPackedSelected = bool.Parse(xmlNode.InnerText);
+                            break;
+
+                        case "BuildEventHandlerTypeName":
+                            BuildEventHandlerTypeName = xmlNode.InnerText;
+                            RefreshBuildEventHandler();
+                            break;
+
+                        case "OutputDirectory":
+                            OutputDirectory = xmlNode.InnerText;
                             break;
                     }
                 }
@@ -438,23 +489,29 @@ namespace UnityGameFramework.Editor.ResourceTools
                 xmlElement = xmlDocument.CreateElement("Platforms");
                 xmlElement.InnerText = ((int)Platforms).ToString();
                 xmlSettings.AppendChild(xmlElement);
-                xmlElement = xmlDocument.CreateElement("AssetBundleCompression");
-                xmlElement.InnerText = ((byte)AssetBundleCompression).ToString();
+                xmlElement = xmlDocument.CreateElement("ZipSelected");
+                xmlElement.InnerText = ZipSelected.ToString();
                 xmlSettings.AppendChild(xmlElement);
-                xmlElement = xmlDocument.CreateElement("CompressionHelperTypeName");
-                xmlElement.InnerText = CompressionHelperTypeName;
+                xmlElement = xmlDocument.CreateElement("UncompressedAssetBundleSelected");
+                xmlElement.InnerText = UncompressedAssetBundleSelected.ToString();
                 xmlSettings.AppendChild(xmlElement);
-                xmlElement = xmlDocument.CreateElement("AdditionalCompressionSelected");
-                xmlElement.InnerText = AdditionalCompressionSelected.ToString();
+                xmlElement = xmlDocument.CreateElement("DisableWriteTypeTreeSelected");
+                xmlElement.InnerText = DisableWriteTypeTreeSelected.ToString();
+                xmlSettings.AppendChild(xmlElement);
+                xmlElement = xmlDocument.CreateElement("DeterministicAssetBundleSelected");
+                xmlElement.InnerText = DeterministicAssetBundleSelected.ToString();
                 xmlSettings.AppendChild(xmlElement);
                 xmlElement = xmlDocument.CreateElement("ForceRebuildAssetBundleSelected");
                 xmlElement.InnerText = ForceRebuildAssetBundleSelected.ToString();
                 xmlSettings.AppendChild(xmlElement);
-                xmlElement = xmlDocument.CreateElement("BuildEventHandlerTypeName");
-                xmlElement.InnerText = BuildEventHandlerTypeName;
+                xmlElement = xmlDocument.CreateElement("IgnoreTypeTreeChangesSelected");
+                xmlElement.InnerText = IgnoreTypeTreeChangesSelected.ToString();
                 xmlSettings.AppendChild(xmlElement);
-                xmlElement = xmlDocument.CreateElement("OutputDirectory");
-                xmlElement.InnerText = OutputDirectory;
+                xmlElement = xmlDocument.CreateElement("AppendHashToAssetBundleNameSelected");
+                xmlElement.InnerText = AppendHashToAssetBundleNameSelected.ToString();
+                xmlSettings.AppendChild(xmlElement);
+                xmlElement = xmlDocument.CreateElement("ChunkBasedCompressionSelected");
+                xmlElement.InnerText = ChunkBasedCompressionSelected.ToString();
                 xmlSettings.AppendChild(xmlElement);
                 xmlElement = xmlDocument.CreateElement("OutputPackageSelected");
                 xmlElement.InnerText = OutputPackageSelected.ToString();
@@ -464,6 +521,12 @@ namespace UnityGameFramework.Editor.ResourceTools
                 xmlSettings.AppendChild(xmlElement);
                 xmlElement = xmlDocument.CreateElement("OutputPackedSelected");
                 xmlElement.InnerText = OutputPackedSelected.ToString();
+                xmlSettings.AppendChild(xmlElement);
+                xmlElement = xmlDocument.CreateElement("BuildEventHandlerTypeName");
+                xmlElement.InnerText = BuildEventHandlerTypeName;
+                xmlSettings.AppendChild(xmlElement);
+                xmlElement = xmlDocument.CreateElement("OutputDirectory");
+                xmlElement.InnerText = OutputDirectory;
                 xmlSettings.AppendChild(xmlElement);
 
                 string configurationDirectoryName = Path.GetDirectoryName(m_ConfigurationPath);
@@ -487,9 +550,9 @@ namespace UnityGameFramework.Editor.ResourceTools
             }
         }
 
-        public string[] GetCompressionHelperTypeNames()
+        public void SetBuildEventHandler(IBuildEventHandler buildEventHandler)
         {
-            return m_CompressionHelperTypeNames.ToArray();
+            m_BuildEventHandler = buildEventHandler;
         }
 
         public string[] GetBuildEventHandlerTypeNames()
@@ -514,32 +577,6 @@ namespace UnityGameFramework.Editor.ResourceTools
             }
         }
 
-        public bool RefreshCompressionHelper()
-        {
-            bool retVal = false;
-            if (!string.IsNullOrEmpty(CompressionHelperTypeName) && m_CompressionHelperTypeNames.Contains(CompressionHelperTypeName))
-            {
-                System.Type compressionHelperType = Utility.Assembly.GetType(CompressionHelperTypeName);
-                if (compressionHelperType != null)
-                {
-                    Utility.Compression.ICompressionHelper compressionHelper = (Utility.Compression.ICompressionHelper)Activator.CreateInstance(compressionHelperType);
-                    if (compressionHelper != null)
-                    {
-                        Utility.Compression.SetCompressionHelper(compressionHelper);
-                        return true;
-                    }
-                }
-            }
-            else
-            {
-                retVal = true;
-            }
-
-            CompressionHelperTypeName = string.Empty;
-            Utility.Compression.SetCompressionHelper(null);
-            return retVal;
-        }
-
         public bool RefreshBuildEventHandler()
         {
             bool retVal = false;
@@ -551,7 +588,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                     IBuildEventHandler buildEventHandler = (IBuildEventHandler)Activator.CreateInstance(buildEventHandlerType);
                     if (buildEventHandler != null)
                     {
-                        m_BuildEventHandler = buildEventHandler;
+                        SetBuildEventHandler(buildEventHandler);
                         return true;
                     }
                 }
@@ -562,7 +599,7 @@ namespace UnityGameFramework.Editor.ResourceTools
             }
 
             BuildEventHandlerTypeName = string.Empty;
-            m_BuildEventHandler = null;
+            SetBuildEventHandler(null);
             return retVal;
         }
 
@@ -603,7 +640,7 @@ namespace UnityGameFramework.Editor.ResourceTools
 
             BuildAssetBundleOptions buildAssetBundleOptions = GetBuildAssetBundleOptions();
             m_BuildReport.Initialize(BuildReportPath, ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion,
-                Platforms, AssetBundleCompression, CompressionHelperTypeName, AdditionalCompressionSelected, ForceRebuildAssetBundleSelected, BuildEventHandlerTypeName, OutputDirectory, buildAssetBundleOptions, m_ResourceDatas);
+                Platforms, ZipSelected, (int)buildAssetBundleOptions, m_ResourceDatas);
 
             try
             {
@@ -612,9 +649,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                 if (m_BuildEventHandler != null)
                 {
                     m_BuildReport.LogInfo("Execute build event handler 'OnPreprocessAllPlatforms'...");
-                    m_BuildEventHandler.OnPreprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion,
-                        Platforms, AssetBundleCompression, CompressionHelperTypeName, AdditionalCompressionSelected, ForceRebuildAssetBundleSelected, BuildEventHandlerTypeName, OutputDirectory, buildAssetBundleOptions,
-                        WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
+                    m_BuildEventHandler.OnPreprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion, buildAssetBundleOptions, ZipSelected, OutputDirectory, WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
                 }
 
                 m_BuildReport.LogInfo("Start prepare resource collection...");
@@ -625,9 +660,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                     if (m_BuildEventHandler != null)
                     {
                         m_BuildReport.LogInfo("Execute build event handler 'OnPostprocessAllPlatforms'...");
-                        m_BuildEventHandler.OnPostprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion,
-                            Platforms, AssetBundleCompression, CompressionHelperTypeName, AdditionalCompressionSelected, ForceRebuildAssetBundleSelected, BuildEventHandlerTypeName, OutputDirectory, buildAssetBundleOptions,
-                            WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
+                        m_BuildEventHandler.OnPostprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion, buildAssetBundleOptions, ZipSelected, OutputDirectory, WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
                     }
 
                     m_BuildReport.SaveReport();
@@ -641,9 +674,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                     if (m_BuildEventHandler != null)
                     {
                         m_BuildReport.LogInfo("Execute build event handler 'OnPostprocessAllPlatforms'...");
-                        m_BuildEventHandler.OnPostprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion,
-                            Platforms, AssetBundleCompression, CompressionHelperTypeName, AdditionalCompressionSelected, ForceRebuildAssetBundleSelected, BuildEventHandlerTypeName, OutputDirectory, buildAssetBundleOptions,
-                            WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
+                        m_BuildEventHandler.OnPostprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion, buildAssetBundleOptions, ZipSelected, OutputDirectory, WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
                     }
 
                     m_BuildReport.SaveReport();
@@ -668,9 +699,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                     if (m_BuildEventHandler != null)
                     {
                         m_BuildReport.LogInfo("Execute build event handler 'OnPostprocessAllPlatforms'...");
-                        m_BuildEventHandler.OnPostprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion,
-                            Platforms, AssetBundleCompression, CompressionHelperTypeName, AdditionalCompressionSelected, ForceRebuildAssetBundleSelected, BuildEventHandlerTypeName, OutputDirectory, buildAssetBundleOptions,
-                            WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
+                        m_BuildEventHandler.OnPostprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion, buildAssetBundleOptions, ZipSelected, OutputDirectory, WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
                     }
 
                     m_BuildReport.SaveReport();
@@ -722,9 +751,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                 if (m_BuildEventHandler != null)
                 {
                     m_BuildReport.LogInfo("Execute build event handler 'OnPostprocessAllPlatforms'...");
-                    m_BuildEventHandler.OnPostprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion,
-                        Platforms, AssetBundleCompression, CompressionHelperTypeName, AdditionalCompressionSelected, ForceRebuildAssetBundleSelected, BuildEventHandlerTypeName, OutputDirectory, buildAssetBundleOptions,
-                        WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
+                    m_BuildEventHandler.OnPostprocessAllPlatforms(ProductName, CompanyName, GameIdentifier, GameFrameworkVersion, UnityVersion, ApplicableGameVersion, InternalResourceVersion, buildAssetBundleOptions, ZipSelected, OutputDirectory, WorkingPath, OutputPackageSelected, OutputPackagePath, OutputFullSelected, OutputFullPath, OutputPackedSelected, OutputPackedPath, BuildReportPath);
                 }
 
                 m_BuildReport.LogInfo("Build resources for selected platforms complete.");
@@ -806,7 +833,7 @@ namespace UnityGameFramework.Editor.ResourceTools
             List<string> validNames = new List<string>();
             foreach (ResourceData assetBundleResourceData in assetBundleResourceDatas)
             {
-                validNames.Add(GetResourceFullName(assetBundleResourceData.Name, assetBundleResourceData.Variant).ToLowerInvariant());
+                validNames.Add(GetResourceFullName(assetBundleResourceData.Name, assetBundleResourceData.Variant).ToLower());
             }
 
             if (Directory.Exists(workingPath))
@@ -911,7 +938,7 @@ namespace UnityGameFramework.Editor.ResourceTools
 
                 m_BuildReport.LogInfo("Start process asset bundle '{0}' for '{1}'...", fullName, platformName);
 
-                if (!ProcessAssetBundle(platform, workingPath, outputPackagePath, outputFullPath, outputPackedPath, AdditionalCompressionSelected, assetBundleResourceDatas[i].Name, assetBundleResourceDatas[i].Variant, assetBundleResourceDatas[i].FileSystem))
+                if (!ProcessAssetBundle(platform, workingPath, outputPackagePath, outputFullPath, outputPackedPath, ZipSelected, assetBundleResourceDatas[i].Name, assetBundleResourceDatas[i].Variant, assetBundleResourceDatas[i].FileSystem))
                 {
                     return false;
                 }
@@ -941,7 +968,7 @@ namespace UnityGameFramework.Editor.ResourceTools
 
                 m_BuildReport.LogInfo("Start process binary '{0}' for '{1}'...", fullName, platformName);
 
-                if (!ProcessBinary(platform, workingPath, outputPackagePath, outputFullPath, outputPackedPath, AdditionalCompressionSelected, binaryResourceDatas[i].Name, binaryResourceDatas[i].Variant, binaryResourceDatas[i].FileSystem))
+                if (!ProcessBinary(platform, workingPath, outputPackagePath, outputFullPath, outputPackedPath, ZipSelected, binaryResourceDatas[i].Name, binaryResourceDatas[i].Variant, binaryResourceDatas[i].FileSystem))
                 {
                     return false;
                 }
@@ -958,18 +985,18 @@ namespace UnityGameFramework.Editor.ResourceTools
             if (OutputFullSelected)
             {
                 VersionListData versionListData = ProcessUpdatableVersionList(outputFullPath, platform);
-                m_BuildReport.LogInfo("Process updatable version list for '{0}' complete, updatable version list path is '{1}', length is '{2}', hash code is '{3}[0x{3:X8}]', compressed length is '{4}', compressed hash code is '{5}[0x{5:X8}]'.", platformName, versionListData.Path, versionListData.Length.ToString(), versionListData.HashCode, versionListData.CompressedLength.ToString(), versionListData.CompressedHashCode);
+                m_BuildReport.LogInfo("Process updatable version list for '{0}' complete, updatable version list path is '{1}', length is '{2}', hash code is '{3}[0x{3:X8}]', zip length is '{4}', zip hash code is '{5}[0x{5:X8}]'.", platformName, versionListData.Path, versionListData.Length.ToString(), versionListData.HashCode, versionListData.ZipLength.ToString(), versionListData.ZipHashCode);
                 if (m_BuildEventHandler != null)
                 {
                     m_BuildReport.LogInfo("Execute build event handler 'OnOutputUpdatableVersionListData' for '{0}'...", platformName);
-                    m_BuildEventHandler.OnOutputUpdatableVersionListData(platform, versionListData.Path, versionListData.Length, versionListData.HashCode, versionListData.CompressedLength, versionListData.CompressedHashCode);
+                    m_BuildEventHandler.OnOutputUpdatableVersionListData(platform, versionListData.Path, versionListData.Length, versionListData.HashCode, versionListData.ZipLength, versionListData.ZipHashCode);
                 }
             }
 
             if (OutputPackedSelected)
             {
                 ProcessReadOnlyVersionList(outputPackedPath, platform);
-                m_BuildReport.LogInfo("Process read-only version list for '{0}' complete.", platformName);
+                m_BuildReport.LogInfo("Process read only version list for '{0}' complete.", platformName);
             }
 
             if (m_BuildEventHandler != null)
@@ -987,17 +1014,17 @@ namespace UnityGameFramework.Editor.ResourceTools
             return true;
         }
 
-        private bool ProcessAssetBundle(Platform platform, string workingPath, string outputPackagePath, string outputFullPath, string outputPackedPath, bool additionalCompressionSelected, string name, string variant, string fileSystem)
+        private bool ProcessAssetBundle(Platform platform, string workingPath, string outputPackagePath, string outputFullPath, string outputPackedPath, bool zip, string name, string variant, string fileSystem)
         {
             string fullName = GetResourceFullName(name, variant);
             ResourceData resourceData = m_ResourceDatas[fullName];
-            string workingName = Utility.Path.GetRegularPath(Path.Combine(workingPath, fullName.ToLowerInvariant()));
+            string workingName = Utility.Path.GetRegularPath(Path.Combine(workingPath, fullName.ToLower()));
 
             byte[] bytes = File.ReadAllBytes(workingName);
             int length = bytes.Length;
             int hashCode = Utility.Verifier.GetCrc32(bytes);
-            int compressedLength = length;
-            int compressedHashCode = hashCode;
+            int zipLength = length;
+            int zipHashCode = hashCode;
 
             byte[] hashBytes = Utility.Converter.GetBytes(hashCode);
             if (resourceData.LoadType == LoadType.LoadFromMemoryAndQuickDecrypt)
@@ -1009,10 +1036,10 @@ namespace UnityGameFramework.Editor.ResourceTools
                 bytes = Utility.Encryption.GetXorBytes(bytes, hashBytes);
             }
 
-            return ProcessOutput(platform, outputPackagePath, outputFullPath, outputPackedPath, additionalCompressionSelected, name, variant, fileSystem, resourceData, bytes, length, hashCode, compressedLength, compressedHashCode);
+            return ProcessOutput(platform, outputPackagePath, outputFullPath, outputPackedPath, zip, name, variant, fileSystem, resourceData, bytes, length, hashCode, zipLength, zipHashCode);
         }
 
-        private bool ProcessBinary(Platform platform, string workingPath, string outputPackagePath, string outputFullPath, string outputPackedPath, bool additionalCompressionSelected, string name, string variant, string fileSystem)
+        private bool ProcessBinary(Platform platform, string workingPath, string outputPackagePath, string outputFullPath, string outputPackedPath, bool zip, string name, string variant, string fileSystem)
         {
             string fullName = GetResourceFullName(name, variant);
             ResourceData resourceData = m_ResourceDatas[fullName];
@@ -1022,8 +1049,8 @@ namespace UnityGameFramework.Editor.ResourceTools
             byte[] bytes = File.ReadAllBytes(assetPath);
             int length = bytes.Length;
             int hashCode = Utility.Verifier.GetCrc32(bytes);
-            int compressedLength = length;
-            int compressedHashCode = hashCode;
+            int zipLength = length;
+            int zipHashCode = hashCode;
 
             byte[] hashBytes = Utility.Converter.GetBytes(hashCode);
             if (resourceData.LoadType == LoadType.LoadFromBinaryAndQuickDecrypt)
@@ -1035,7 +1062,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                 bytes = Utility.Encryption.GetXorBytes(bytes, hashBytes);
             }
 
-            return ProcessOutput(platform, outputPackagePath, outputFullPath, outputPackedPath, additionalCompressionSelected, name, variant, fileSystem, resourceData, bytes, length, hashCode, compressedLength, compressedHashCode);
+            return ProcessOutput(platform, outputPackagePath, outputFullPath, outputPackedPath, zip, name, variant, fileSystem, resourceData, bytes, length, hashCode, zipLength, zipHashCode);
         }
 
         private void ProcessPackageVersionList(string outputPackagePath, Platform platform)
@@ -1104,7 +1131,7 @@ namespace UnityGameFramework.Editor.ResourceTools
             foreach (ResourceData resourceData in resourceDatas)
             {
                 ResourceCode resourceCode = resourceData.GetCode(platform);
-                resources[index++] = new UpdatableVersionList.Resource(resourceData.Name, resourceData.Variant, GetExtension(resourceData), (byte)resourceData.LoadType, resourceCode.Length, resourceCode.HashCode, resourceCode.CompressedLength, resourceCode.CompressedHashCode, GetAssetIndexes(resourceData));
+                resources[index++] = new UpdatableVersionList.Resource(resourceData.Name, resourceData.Variant, GetExtension(resourceData), (byte)resourceData.LoadType, resourceCode.Length, resourceCode.HashCode, resourceCode.ZipLength, resourceCode.ZipHashCode, GetAssetIndexes(resourceData));
             }
 
             string[] fileSystemNames = GetFileSystemNames(resourceDatas);
@@ -1138,16 +1165,16 @@ namespace UnityGameFramework.Editor.ResourceTools
             byte[] bytes = File.ReadAllBytes(updatableVersionListPath);
             int length = bytes.Length;
             int hashCode = Utility.Verifier.GetCrc32(bytes);
-            bytes = Utility.Compression.Compress(bytes);
-            int compressedLength = bytes.Length;
+            bytes = Utility.Zip.Compress(bytes);
+            int zipLength = bytes.Length;
             File.WriteAllBytes(updatableVersionListPath, bytes);
-            int compressedHashCode = Utility.Verifier.GetCrc32(bytes);
+            int zipHashCode = Utility.Verifier.GetCrc32(bytes);
             int dotPosition = RemoteVersionListFileName.LastIndexOf('.');
             string versionListFullNameWithCrc32 = Utility.Text.Format("{0}.{2:x8}.{1}", RemoteVersionListFileName.Substring(0, dotPosition), RemoteVersionListFileName.Substring(dotPosition + 1), hashCode);
             string updatableVersionListPathWithCrc32 = Utility.Path.GetRegularPath(Path.Combine(outputFullPath, versionListFullNameWithCrc32));
             File.Move(updatableVersionListPath, updatableVersionListPathWithCrc32);
 
-            return new VersionListData(updatableVersionListPathWithCrc32, length, hashCode, compressedLength, compressedHashCode);
+            return new VersionListData(updatableVersionListPathWithCrc32, length, hashCode, zipLength, zipHashCode);
         }
 
         private void ProcessReadOnlyVersionList(string outputPackedPath, Platform platform)
@@ -1179,7 +1206,7 @@ namespace UnityGameFramework.Editor.ResourceTools
             {
                 if (!serializer.Serialize(fileStream, versionList))
                 {
-                    throw new GameFrameworkException("Serialize read-only version list failure.");
+                    throw new GameFrameworkException("Serialize read only version list failure.");
                 }
             }
         }
@@ -1333,7 +1360,7 @@ namespace UnityGameFramework.Editor.ResourceTools
             }
         }
 
-        private bool ProcessOutput(Platform platform, string outputPackagePath, string outputFullPath, string outputPackedPath, bool additionalCompressionSelected, string name, string variant, string fileSystem, ResourceData resourceData, byte[] bytes, int length, int hashCode, int compressedLength, int compressedHashCode)
+        private bool ProcessOutput(Platform platform, string outputPackagePath, string outputFullPath, string outputPackedPath, bool zip, string name, string variant, string fileSystem, ResourceData resourceData, byte[] bytes, int length, int hashCode, int zipLength, int zipHashCode)
         {
             string fullNameWithExtension = Utility.Text.Format("{0}.{1}", GetResourceFullName(name, variant), GetExtension(resourceData));
 
@@ -1391,12 +1418,12 @@ namespace UnityGameFramework.Editor.ResourceTools
                     Directory.CreateDirectory(fullDirectoryName);
                 }
 
-                if (additionalCompressionSelected)
+                if (zip)
                 {
-                    byte[] compressedBytes = Utility.Compression.Compress(bytes);
-                    compressedLength = compressedBytes.Length;
-                    compressedHashCode = Utility.Verifier.GetCrc32(compressedBytes);
-                    File.WriteAllBytes(fullPath, compressedBytes);
+                    byte[] zipBytes = Utility.Zip.Compress(bytes);
+                    zipLength = zipBytes.Length;
+                    zipHashCode = Utility.Verifier.GetCrc32(zipBytes);
+                    File.WriteAllBytes(fullPath, zipBytes);
                 }
                 else
                 {
@@ -1404,24 +1431,45 @@ namespace UnityGameFramework.Editor.ResourceTools
                 }
             }
 
-            resourceData.AddCode(platform, length, hashCode, compressedLength, compressedHashCode);
+            resourceData.AddCode(platform, length, hashCode, zipLength, zipHashCode);
             return true;
         }
 
         private BuildAssetBundleOptions GetBuildAssetBundleOptions()
         {
-            BuildAssetBundleOptions buildOptions = BuildAssetBundleOptions.DeterministicAssetBundle;
+            BuildAssetBundleOptions buildOptions = BuildAssetBundleOptions.None;
+
+            if (UncompressedAssetBundleSelected)
+            {
+                buildOptions |= BuildAssetBundleOptions.UncompressedAssetBundle;
+            }
+
+            if (DisableWriteTypeTreeSelected)
+            {
+                buildOptions |= BuildAssetBundleOptions.DisableWriteTypeTree;
+            }
+
+            if (DeterministicAssetBundleSelected)
+            {
+                buildOptions |= BuildAssetBundleOptions.DeterministicAssetBundle;
+            }
 
             if (ForceRebuildAssetBundleSelected)
             {
                 buildOptions |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
             }
 
-            if (AssetBundleCompression == AssetBundleCompressionType.Uncompressed)
+            if (IgnoreTypeTreeChangesSelected)
             {
-                buildOptions |= BuildAssetBundleOptions.UncompressedAssetBundle;
+                buildOptions |= BuildAssetBundleOptions.IgnoreTypeTreeChanges;
             }
-            else if (AssetBundleCompression == AssetBundleCompressionType.LZ4)
+
+            if (AppendHashToAssetBundleNameSelected)
+            {
+                buildOptions |= BuildAssetBundleOptions.AppendHashToAssetBundleName;
+            }
+
+            if (ChunkBasedCompressionSelected)
             {
                 buildOptions |= BuildAssetBundleOptions.ChunkBasedCompression;
             }

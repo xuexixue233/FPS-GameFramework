@@ -14,16 +14,16 @@ namespace UnityGameFramework.Editor.ResourceTools
             private readonly Platform m_Platform;
             private readonly int m_Length;
             private readonly int m_HashCode;
-            private readonly int m_CompressedLength;
-            private readonly int m_CompressedHashCode;
+            private readonly int m_ZipLength;
+            private readonly int m_ZipHashCode;
 
-            public ResourceCode(Platform platform, int length, int hashCode, int compressedLength, int compressedHashCode)
+            public ResourceCode(Platform platform, int length, int hashCode, int zipLength, int zipHashCode)
             {
                 m_Platform = platform;
                 m_Length = length;
                 m_HashCode = hashCode;
-                m_CompressedLength = compressedLength;
-                m_CompressedHashCode = compressedHashCode;
+                m_ZipLength = zipLength;
+                m_ZipHashCode = zipHashCode;
             }
 
             public Platform Platform
@@ -50,19 +50,19 @@ namespace UnityGameFramework.Editor.ResourceTools
                 }
             }
 
-            public int CompressedLength
+            public int ZipLength
             {
                 get
                 {
-                    return m_CompressedLength;
+                    return m_ZipLength;
                 }
             }
 
-            public int CompressedHashCode
+            public int ZipHashCode
             {
                 get
                 {
-                    return m_CompressedHashCode;
+                    return m_ZipHashCode;
                 }
             }
         }
