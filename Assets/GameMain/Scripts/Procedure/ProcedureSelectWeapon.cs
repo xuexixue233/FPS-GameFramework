@@ -83,6 +83,8 @@ namespace FPS
                 {
                     equipmentForm.ShowModUIItem(nextMod);
                     MathUtilities.GetRectFormEllipse(600,300,0,equipmentForm.activeModUIItemRect.ToArray());
+                    equipmentForm.RefreshText();
+                    equipmentForm.RefreshImage();
                 }
             }
         }

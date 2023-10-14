@@ -13,7 +13,8 @@ namespace FPS
         [SerializeField]
         public WeaponData m_WeaponData = null;
         public WeaponExData m_WeaponExData;
-
+        public WeaponAttribute weaponAttribute;
+        
         public Soldier soldier;
         public Player player;
         private bool isPlayerWeapon;
@@ -83,6 +84,8 @@ namespace FPS
                 return;
             }
 
+            weaponAttribute = new WeaponAttribute();
+            weaponAttribute.Init(m_WeaponData);
             soldier = GameEntry.Entity.GetGameEntity(m_WeaponData.OwnerId) as Soldier;
 
             if (soldier == null)
@@ -128,6 +131,8 @@ namespace FPS
                 {
                     m_WeaponExData.nextModsTransforms.Add(next);
                 }
+
+                weaponAttribute.AddModToRefresh(entity);
                 return;
             }
         }

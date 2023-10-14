@@ -144,8 +144,8 @@ namespace FPS
             
             showedWeapon = (Weapon)userData;
             durabilityText.text = "100/100(100)";
-            OpenText();
-            OpenImage();
+            RefreshText();
+            RefreshImage();
             foreach (var mod in showedWeapon.m_WeaponData.NextMods)
             {
                 ShowModUIItem(mod);
@@ -168,31 +168,31 @@ namespace FPS
             
         }
 
-        private void OpenText()
+        public void RefreshText()
         {
-            weightText.text = showedWeapon.m_WeaponData.Weight.ToString(CultureInfo.InvariantCulture);
-            ergonomicsText.text = showedWeapon.m_WeaponData.Ergonomics.ToString();
-            precisionText.text = showedWeapon.m_WeaponData.Precision.ToString(CultureInfo.InvariantCulture);
-            shootingGalleryText.text = showedWeapon.m_WeaponData.ShootingGallery.ToString();
-            verticalRecoilText.text = showedWeapon.m_WeaponData.VerticalRecoil.ToString();
-            horizontalRecoilText.text = showedWeapon.m_WeaponData.HorizontalRecoil.ToString();
-            muzzleVelocityText.text = showedWeapon.m_WeaponData.MuzzleVelocity.ToString();
+            weightText.text = showedWeapon.weaponAttribute.Weight.ToString(CultureInfo.InvariantCulture);
+            ergonomicsText.text = showedWeapon.weaponAttribute.Ergonomics.ToString();
+            precisionText.text = showedWeapon.weaponAttribute.Precision.ToString(CultureInfo.InvariantCulture);
+            shootingGalleryText.text = showedWeapon.weaponAttribute.ShootingGallery.ToString();
+            verticalRecoilText.text = showedWeapon.weaponAttribute.VerticalRecoil.ToString();
+            horizontalRecoilText.text = showedWeapon.weaponAttribute.HorizontalRecoil.ToString();
+            muzzleVelocityText.text = showedWeapon.weaponAttribute.MuzzleVelocity.ToString();
             
-            firingModeText.text = showedWeapon.m_WeaponData.FiringMode;
-            caliberText.text = showedWeapon.m_WeaponData.Caliber;
-            firingRateText.text = showedWeapon.m_WeaponData.FiringRate.ToString();
-            effectiveFiringRange.text = showedWeapon.m_WeaponData.EffectiveFiringRange.ToString();
+            firingModeText.text = showedWeapon.weaponAttribute.FiringMode;
+            caliberText.text = showedWeapon.weaponAttribute.Caliber;
+            firingRateText.text = showedWeapon.weaponAttribute.FiringRate.ToString();
+            effectiveFiringRange.text = showedWeapon.weaponAttribute.EffectiveFiringRange.ToString();
         }
 
-        private void OpenImage()
+        public void RefreshImage()
         {
-            weightImage.fillAmount = showedWeapon.m_WeaponData.Weight / 20;
-            ergonomicsImage.fillAmount = (float)showedWeapon.m_WeaponData.Ergonomics / 100;
-            precisionImage.fillAmount = 1-showedWeapon.m_WeaponData.Precision / 50;
-            shootingGalleryImage.fillAmount = (float)showedWeapon.m_WeaponData.ShootingGallery / 10000;
-            verticalRecoilImage.fillAmount = (float)showedWeapon.m_WeaponData.VerticalRecoil / 500;
-            horizontalRecoilImage.fillAmount = (float)showedWeapon.m_WeaponData.HorizontalRecoil / 500;
-            muzzleVelocityImage.fillAmount = (float)showedWeapon.m_WeaponData.MuzzleVelocity / 2000;
+            weightImage.fillAmount = showedWeapon.weaponAttribute.Weight / 20;
+            ergonomicsImage.fillAmount = (float)showedWeapon.weaponAttribute.Ergonomics / 100;
+            precisionImage.fillAmount = 1-showedWeapon.weaponAttribute.Precision / 50;
+            shootingGalleryImage.fillAmount = (float)showedWeapon.weaponAttribute.ShootingGallery / 10000;
+            verticalRecoilImage.fillAmount = (float)showedWeapon.weaponAttribute.VerticalRecoil / 500;
+            horizontalRecoilImage.fillAmount = (float)showedWeapon.weaponAttribute.HorizontalRecoil / 500;
+            muzzleVelocityImage.fillAmount = (float)showedWeapon.weaponAttribute.MuzzleVelocity / 2000;
         }
 
         protected override void OnClose(bool isShutdown, object userData)

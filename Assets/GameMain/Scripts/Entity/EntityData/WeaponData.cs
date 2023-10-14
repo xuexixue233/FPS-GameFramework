@@ -94,7 +94,7 @@ namespace FPS
 
         public string WeaponName => m_WeaponName;
 
-        public float MDurability => m_Durability;
+        public float Durability => m_Durability;
 
         public float Weight => m_Weight;
 
