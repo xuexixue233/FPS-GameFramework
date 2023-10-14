@@ -161,7 +161,8 @@ namespace FPS
 
             foreach (var mod in showedWeapon.m_WeaponData.NextMods)
             {
-                var temp = showedWeapon.m_WeaponExData.previewCamera.WorldToScreenPoint(showedWeapon.m_WeaponExData.nextModsTransforms[mod].position);
+                if (Camera.main == null) continue;
+                var temp = Camera.main.WorldToScreenPoint(showedWeapon.m_WeaponExData.nextModsTransforms[mod].position);
                 var modUIItem = Instantiate(circleGameObject, previewRect, true);
                 modUIItem.GetComponent<RectTransform>().anchoredPosition=new Vector2(temp.x,temp.y);
             }

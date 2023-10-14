@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,9 @@ namespace FPS
         public Image modImage;
         public TMP_Text modText;
         public Mod _mod;
+        public GameObject modList;
+        public GameObject showImage;
+        public GameObject hideImage;
         private Entity m_Owner = null;
         public Entity Owner => m_Owner;
 
@@ -21,12 +25,15 @@ namespace FPS
             modButton.onClick.RemoveAllListeners();
             modButton.onClick.AddListener((() =>
             {
-                GameEntry.Entity.ShowWeaponMod(new WeaponModData(GameEntry.Entity.GenerateSerialId(),(int)_mod,entity.Id,CampType.Unknown));
-                modText.text = _mod.ToString();
+                modList.SetActive(!modList.activeSelf);
+                showImage.SetActive(!showImage.activeSelf);
+                hideImage.SetActive(!hideImage.activeSelf);
             }));
         }
-        
-        
-        
+
+        public void Reset()
+        {
+            
+        }
     }
 }
