@@ -1,0 +1,6 @@
+#	动态加载资源配置表		
+#	Id		Name
+#	int		string
+#	配置编号	策划备注	物体名字
+	1001	ModUI按钮	ItemModUI
+	1002	Mod选择按钮	ItemModSelect

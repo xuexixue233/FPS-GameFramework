@@ -146,9 +146,13 @@ namespace FPS
             durabilityText.text = "100/100(100)";
             RefreshText();
             RefreshImage();
+            // foreach (var mod in showedWeapon.m_WeaponData.NextMods)
+            // {
+            //     ShowModUIItem(mod);
+            // }
             foreach (var mod in showedWeapon.m_WeaponData.NextMods)
             {
-                ShowModUIItem(mod);
+                GameEntry.Item.ShowItemModUI();
             }
 
             UITransformToModTransform();

@@ -6,6 +6,7 @@
 //------------------------------------------------------------
 
 using UnityEngine;
+using UnityGameFramework.Runtime;
 
 namespace FPS
 {
@@ -19,10 +20,17 @@ namespace FPS
             get;
             private set;
         }
+
+        public static ItemComponent Item
+        {
+            get;
+            private set;
+        }
         
         private static void InitCustomComponents()
         {
             UserData=UnityGameFramework.Runtime.GameEntry.GetComponent<UserDataComponent>();
+            Item=UnityGameFramework.Runtime.GameEntry.GetComponent<ItemComponent>();
         }
     }
 }

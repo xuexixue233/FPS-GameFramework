@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2023-10-14 20:58:49.229
+// 生成时间：2023-10-14 20:58:49.247
 //------------------------------------------------------------
 
 using GameFramework;
@@ -19,14 +19,14 @@ using UnityGameFramework.Runtime;
 namespace FPS
 {
     /// <summary>
-    /// 界面配置表。
+    /// 鍔ㄦ佸姞杞借祫婧愰厤缃?〃。
     /// </summary>
-    public class DRUIForm : DataRowBase
+    public class DRItem : DataRowBase
     {
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取界面编号。
+        /// 获取閰嶇疆缂栧彿。
         /// </summary>
         public override int Id
         {
@@ -37,36 +37,9 @@ namespace FPS
         }
 
         /// <summary>
-        /// 获取资源名称。
+        /// 获取鐗╀綋鍚嶅瓧。
         /// </summary>
-        public string AssetName
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 获取界面组名称。
-        /// </summary>
-        public string UIGroupName
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 获取是否允许多个界面实例。
-        /// </summary>
-        public bool AllowMultiInstance
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 获取是否暂停被其覆盖的界面。
-        /// </summary>
-        public bool PauseCoveredUIForm
+        public string Name
         {
             get;
             private set;
@@ -84,10 +57,7 @@ namespace FPS
             index++;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
-            AssetName = columnStrings[index++];
-            UIGroupName = columnStrings[index++];
-            AllowMultiInstance = bool.Parse(columnStrings[index++]);
-            PauseCoveredUIForm = bool.Parse(columnStrings[index++]);
+            Name = columnStrings[index++];
 
             GeneratePropertyArray();
             return true;
@@ -100,10 +70,7 @@ namespace FPS
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    AssetName = binaryReader.ReadString();
-                    UIGroupName = binaryReader.ReadString();
-                    AllowMultiInstance = binaryReader.ReadBoolean();
-                    PauseCoveredUIForm = binaryReader.ReadBoolean();
+                    Name = binaryReader.ReadString();
                 }
             }
 

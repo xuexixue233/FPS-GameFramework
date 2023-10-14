@@ -6,6 +6,7 @@
 //------------------------------------------------------------
 
 using GameFramework;
+using UnityEngine;
 
 namespace FPS
 {
@@ -59,6 +60,11 @@ namespace FPS
         public static string GetUISoundAsset(string assetName)
         {
             return Utility.Text.Format("Assets/GameMain/UI/UISounds/{0}.wav", assetName);
+        }
+
+        public static string GetItemAsset(string assetName)
+        {
+            return Utility.Text.Format("Assets/GameMain/Item/{0}.prefab", assetName);
         }
     }
 }
