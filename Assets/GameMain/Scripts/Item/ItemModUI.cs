@@ -8,7 +8,7 @@ namespace FPS
     public class ItemModUI : ItemLogic
     {
         public Button modButton;
-        public RawImage modImage;
+        public GameObject circleGameObject;
         public TMP_Text modText;
         public Mod _mod;
         public GameObject modList;
@@ -46,7 +46,7 @@ namespace FPS
             if (GameEntry.Procedure.CurrentProcedure is ProcedureSelectWeapon procedure)
             {
                 procedure.ShowAllSelectButton(_mod);
-                procedure.equipmentForm.showedItem = this;
+                procedure.showedItem = this;
             }
             isOpened = true;
         }
@@ -75,6 +75,7 @@ namespace FPS
         {
             base.OnShow(userData);
             _mod = userData is Mod mod ? mod : Mod.None;
+            modText.text = _mod.ToString();
         }
         
     }

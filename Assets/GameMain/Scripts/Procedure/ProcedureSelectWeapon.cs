@@ -1,85 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameFramework.DataTable;
 using GameFramework.Event;
 using GameFramework.Fsm;
 using GameFramework.Procedure;
 using UnityEngine;
 using UnityGameFramework.Runtime;
-using Object = UnityEngine.Object;
 
 namespace FPS
 {
     public class ProcedureSelectWeapon : ProcedureBase
     {
-        public EquipmentForm equipmentForm;
+        private EquipmentForm equipmentForm;
         private Weapon weapon;
         private List<RenderTexture> modTextures = new List<RenderTexture>();
         private List<WeaponMod> previewMods = new List<WeaponMod>();
-        public Dictionary<Mod,WeaponMod> currentMods = new Dictionary<Mod,WeaponMod>();
+        private Dictionary<Mod,WeaponMod> currentMods = new Dictionary<Mod,WeaponMod>();
+        private List<ItemModSelect> activeSelects = new List<ItemModSelect>();
+        private Dictionary<Mod,ItemModUI> activeModUIItem=new Dictionary<Mod, ItemModUI>();
+        public ItemModUI showedItem;
 
         public override bool UseNativeDialog { get; }
 
         private bool _BackMenu;
 
         private Dictionary<Mod, List<DRWeaponMod>> modItemsDictionary = new Dictionary<Mod, List<DRWeaponMod>>();
-
-        private void ReadUserData()
-        {
-            //Todo:读取玩家数据
-        }
-
-        public void HideItemModUI(Mod mod)
-        {
-            if (equipmentForm.activeModUIItem.TryGetValue(mod,out var item))
-            {
-                GameEntry.Item.HideItem(item.Item);
-                equipmentForm.activeModUIItem.Remove(mod);
-            }
-        }
-
-        public void ShowAllSelectButton(Mod mod)
-        {
-            HideAllSelectButton();
-            int i = 1;
-            if (modItemsDictionary.TryGetValue(mod, out var list))
-            {
-                foreach (var data in list)
-                {
-                    GameEntry.Entity.ShowWeaponMod(
-                        new WeaponModData(GameEntry.Entity.GenerateSerialId(), data.Id, 0, CampType.Unknown)
-                        {
-                            Position = new Vector3(i * 100, 0, 0)
-                        });
-                }
-            }
-            GameEntry.Item.ShowItemModSelect(GameEntry.Item.GenerateSerialId(),mod);
-        }
-
-        public void HideAllSelectButton()
-        {
-            foreach (var select in equipmentForm.activeSelects)
-            {
-                GameEntry.Item.HideItem(select.Item);
-            }
-
-            foreach (var mod in previewMods)
-            {
-                GameEntry.Entity.HideEntity(mod);
-            }
-
-            if (equipmentForm.showedItem)
-            {
-                equipmentForm.showedItem.OutCloseList();
-                equipmentForm.showedItem = null;
-            }
-
-            equipmentForm.activeSelects.Clear();
-            previewMods.Clear();
-            modTextures.Clear();
-        }
-
-
+        
         private void ReadAllModWeaponsData()
         {
             IDataTable<DRWeaponMod> dtItem = GameEntry.DataTable.GetDataTable<DRWeaponMod>();
@@ -192,18 +139,12 @@ namespace FPS
                     currentMods.Add(mod.weaponModData.ModType,mod);
                     foreach (var nextMod in mod.weaponModData.NextModType)
                     {
-                        GameEntry.Item.ShowItemModUI(GameEntry.Item.GenerateSerialId(), nextMod);
+                        ShowItemModUI(nextMod);
                         equipmentForm.RefreshText();
                         equipmentForm.RefreshImage();
                     }
                 }
             }
-        }
-
-        private void OnHideEntityComplete(object sender, GameEventArgs e)
-        {
-            HideEntityCompleteEventArgs ne = (HideEntityCompleteEventArgs)e;
-            
         }
 
         private void OnShowItemSuccess(object sender, GameEventArgs e)
@@ -212,10 +153,10 @@ namespace FPS
             if (ne.ItemLogicType == typeof(ItemModUI))
             {
                 var item = (ItemModUI)ne.Item.Logic;
-                equipmentForm.activeModUIItem.Add(item._mod, item);
+                activeModUIItem.Add(item._mod, item);
                 item.transform.SetParent(equipmentForm.previewRect);
-                equipmentForm.activeModUIItemRect.Add(item.transform as RectTransform);
-                MathUtilities.GetRectFormEllipse(600, 300, 0, equipmentForm.activeModUIItemRect.ToArray());
+                var rects = activeModUIItem.Values.Select(rect => rect.transform as RectTransform).ToList();
+                MathUtilities.GetRectFormEllipse(600, 300, 0, rects.ToArray());
             }
             else if (ne.ItemLogicType == typeof(ItemModSelect))
             {
@@ -223,19 +164,93 @@ namespace FPS
                 item.modImage.texture = modTextures[^1];
                 if (ne.UserData is WeaponModData data)
                 {
-                    if (equipmentForm.activeModUIItem.TryGetValue(data.ModType, out var modUI))
+                    if (activeModUIItem.TryGetValue(data.ModType, out var modUI))
                     {
                         item.transform.SetParent(modUI.modList.transform);
                     }
                 }
                 else if (ne.UserData is Mod mod)
                 {
-                    if (equipmentForm.activeModUIItem.TryGetValue(mod, out var modUI))
+                    if (activeModUIItem.TryGetValue(mod, out var modUI))
                     {
                         item.transform.SetParent(modUI.modList.transform);
                     }
                 }
-                equipmentForm.activeSelects.Add(item);
+                activeSelects.Add(item);
+            }
+        }
+        
+        public void HideAllSelectButton()
+        {
+            foreach (var select in activeSelects)
+            {
+                GameEntry.Item.HideItem(select.Item);
+            }
+
+            foreach (var mod in previewMods)
+            {
+                GameEntry.Entity.HideEntity(mod);
+            }
+
+            if (showedItem)
+            {
+                showedItem.OutCloseList();
+                showedItem = null;
+            }
+
+            activeSelects.Clear();
+            previewMods.Clear();
+            modTextures.Clear();
+        }
+        
+        public void ShowAllSelectButton(Mod mod)
+        {
+            HideAllSelectButton();
+            int i = 1;
+            if (modItemsDictionary.TryGetValue(mod, out var list))
+            {
+                foreach (var data in list)
+                {
+                    GameEntry.Entity.ShowWeaponMod(
+                        new WeaponModData(GameEntry.Entity.GenerateSerialId(), data.Id, 0, CampType.Unknown)
+                        {
+                            Position = new Vector3(i * 100, 0, 0)
+                        });
+                }
+            }
+            GameEntry.Item.ShowItemModSelect(GameEntry.Item.GenerateSerialId(),mod);
+        }
+
+        public void ShowItemModUI(Mod mod)
+        {
+            GameEntry.Item.ShowItemModUI(GameEntry.Item.GenerateSerialId(),mod);
+        }
+
+        public void HideItemModUI(Mod mod)
+        {
+            if (currentMods.TryGetValue(mod,out var weaponMod))
+            {
+                foreach (var modType in weaponMod.weaponModData.NextModType)
+                {
+                    if (activeModUIItem.TryGetValue(modType,out var itemModUI))
+                    {
+                        HideItemModUI(modType);
+                        GameEntry.Item.HideItem(itemModUI.Item);
+                        activeModUIItem.Remove(modType);
+                    }
+                }
+                GameEntry.Entity.HideEntity(weaponMod);
+                currentMods.Remove(mod);
+            }
+            var rects = activeModUIItem.Values.Select(rect => rect.transform as RectTransform).ToList();
+            MathUtilities.GetRectFormEllipse(600, 300, 0, rects.ToArray());
+        }
+
+        public void ShowWeaponMod(Mod mod,int typeId, int ownerId)
+        {
+            if (!currentMods.TryGetValue(mod,out var weaponMod))
+            {
+                GameEntry.Entity.ShowWeaponMod(new WeaponModData(GameEntry.Entity.GenerateSerialId(),typeId,ownerId,CampType.Unknown));
             }
         }
     }

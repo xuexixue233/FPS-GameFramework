@@ -19,8 +19,7 @@ namespace FPS
             selectButton.onClick.RemoveAllListeners();
             selectButton.onClick.AddListener((() =>
             {
-                GameEntry.Entity.ShowWeaponMod(new WeaponModData(GameEntry.Entity.GenerateSerialId(),modId,_equipmentForm.showedWeapon.Id,CampType.Unknown));
-                
+                _equipmentForm.procedureSelectWeapon.ShowWeaponMod(mod, modId, _equipmentForm.showedWeapon.Id);
                 _equipmentForm.procedureSelectWeapon.HideAllSelectButton();
             }));
         }
@@ -36,8 +35,7 @@ namespace FPS
                 selectButton.onClick.RemoveAllListeners();
                 selectButton.onClick.AddListener((() =>
                 {
-                    GameEntry.Entity.HideEntity(_equipmentForm.procedureSelectWeapon.currentMods[mod]);
-                    _equipmentForm.procedureSelectWeapon.currentMods.Remove(mod);
+                    _equipmentForm.procedureSelectWeapon.HideItemModUI(mod);
                     _equipmentForm.procedureSelectWeapon.HideAllSelectButton();
                 }));
                 return;

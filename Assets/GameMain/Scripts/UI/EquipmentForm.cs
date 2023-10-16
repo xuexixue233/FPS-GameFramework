@@ -17,6 +17,8 @@ namespace FPS
         public Weapon showedWeapon;
         public GameObject attributeList;
 
+        #region Reference
+
         [Header("Button")] 
         public Button backButton;
         public Button listButton;
@@ -47,15 +49,11 @@ namespace FPS
         public TMP_Text caliberText;
         public TMP_Text firingRateText;
         public TMP_Text effectiveFiringRange;
-
-        public ItemModUI modUIItemTemplate;
+        
         public GameObject circleGameObject;
         public RectTransform previewRect;
-
-        public Dictionary<Mod,ItemModUI> activeModUIItem;
-        public ItemModUI showedItem;
-        public List<ItemModSelect> activeSelects = new List<ItemModSelect>();
-        public List<RectTransform> activeModUIItemRect=new List<RectTransform>();
+        
+        #endregion
 
         private void BackToMenu()
         {
@@ -86,11 +84,14 @@ namespace FPS
             durabilityText.text = "100/100(100)";
             RefreshText();
             RefreshImage();
-            activeModUIItem = new Dictionary<Mod, ItemModUI>();
-            
+            procedureSelectWeapon=GameEntry.Procedure.CurrentProcedure as ProcedureSelectWeapon;
+            if (procedureSelectWeapon==null)
+            {
+                return;
+            }
             foreach (var mod in showedWeapon.m_WeaponData.NextMods)
             {
-                GameEntry.Item.ShowItemModUI(GameEntry.Item.GenerateSerialId(),mod);
+                procedureSelectWeapon.ShowItemModUI(mod);
             }
 
             UITransformToModTransform();
@@ -99,8 +100,6 @@ namespace FPS
 
         private void UITransformToModTransform()
         {
-            var newTransform = new List<Transform>();
-
             foreach (var mod in showedWeapon.m_WeaponData.NextMods)
             {
                 if (Camera.main == null) continue;
@@ -108,7 +107,6 @@ namespace FPS
                 var modUIItem = Instantiate(circleGameObject, previewRect, true);
                 modUIItem.GetComponent<RectTransform>().anchoredPosition=new Vector2(temp.x,temp.y);
             }
-            
         }
 
         public void RefreshText()
