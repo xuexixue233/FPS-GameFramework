@@ -11,9 +11,14 @@ namespace FPS
     {
         private static int s_SerialId = 345;
 
-        public static void ShowItemModUI(this ItemComponent itemComponent)
+        public static void ShowItemModUI(this ItemComponent itemComponent,int itemId,object userData=null)
         {
-            itemComponent.ShowItem<ItemModUI>(GenerateSerialId(itemComponent),EnumItem.ItemModUI,"ItemModUI",Constant.AssetPriority.ItemModUIAsset);
+            itemComponent.ShowItem<ItemModUI>(itemId,EnumItem.ItemModUI,"ItemModUI",Constant.AssetPriority.ItemModUIAsset,userData);
+        }
+
+        public static void ShowItemModSelect(this ItemComponent itemComponent,int itemId, object userData=null)
+        {
+            itemComponent.ShowItem<ItemModSelect>(itemId,EnumItem.ItemModSelect,"ItemModSelect",Constant.AssetPriority.ItemModUIAsset,userData);
         }
 
         #region ShowItem

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using GameFramework.Event;
 using GameFramework.ObjectPool;
 using TMPro;
 using Unity.VisualScripting;
@@ -19,8 +20,6 @@ namespace FPS
     
     public class EquipmentForm : UGuiForm
     {
-        private IObjectPool<ModUIItemObject> _objectPool;
-
         public Weapon showedWeapon;
         public GameObject attributeList;
 
@@ -55,65 +54,14 @@ namespace FPS
         public TMP_Text firingRateText;
         public TMP_Text effectiveFiringRange;
 
-        public ModUIItem modUIItemTemplate;
+        public ItemModUI modUIItemTemplate;
         public GameObject circleGameObject;
         public RectTransform previewRect;
 
-        public Dictionary<Mod,ModUIItem> activeModUIItem;
+        public Dictionary<Mod,ItemModUI> activeModUIItem;
+        public ItemModUI showedItem;
+        public List<ItemModSelect> activeSelects = new List<ItemModSelect>();
         public List<RectTransform> activeModUIItemRect=new List<RectTransform>();
-
-        public void ShowModUIItem(Mod mod)
-        {
-            ModUIItem modUIItem = GetActiveModUIItem(mod);
-            if (modUIItem==null)
-            {
-                modUIItem = CreateModUIItem(mod);
-                activeModUIItem.Add(mod,modUIItem);
-                activeModUIItemRect.Add(modUIItem.transform as RectTransform);
-            }
-            modUIItem.Init(mod,showedWeapon);
-        }
-        
-        public void HideModUIItem(Mod  mod)
-        {
-            if (activeModUIItem.TryGetValue(mod,out var modUIItem))
-            {
-                activeModUIItem.Remove(mod);
-                _objectPool.Unspawn(modUIItem);
-            }
-        }
-        
-        public ModUIItem GetActiveModUIItem(Mod mod)
-        {
-            if (activeModUIItem.TryGetValue(mod,out var modUIItem))
-            {
-                return modUIItem;
-            }
-
-            return null;
-
-        }
-
-        public ModUIItem CreateModUIItem(Mod mod)
-        {
-            ModUIItem modUIItem = null;
-            ModUIItemObject modUIItemObject = _objectPool.Spawn();
-            if (modUIItemObject!=null)
-            {
-                modUIItem = (ModUIItem)modUIItemObject.Target;
-            }
-            else
-            {
-                modUIItem = Instantiate(modUIItemTemplate);
-                Transform modUITransform = modUIItem.GetComponent<Transform>();
-                //TODO:设置位置
-                modUITransform.SetParent(previewRect);
-                
-                _objectPool.Register(ModUIItemObject.Create(modUIItem),true);
-            }
-
-            return modUIItem;
-        }
 
         private void BackToMenu()
         {
@@ -134,8 +82,6 @@ namespace FPS
                 showImage.gameObject.SetActive(!showImage.gameObject.activeSelf);
                 hideImage.gameObject.SetActive(!hideImage.gameObject.activeSelf);
             }));
-            _objectPool = GameEntry.ObjectPool.CreateSingleSpawnObjectPool<ModUIItemObject>("ModUIItem", 10);
-            activeModUIItem = new Dictionary<Mod, ModUIItem>();
         }
 
         protected override void OnOpen(object userData)
@@ -146,18 +92,16 @@ namespace FPS
             durabilityText.text = "100/100(100)";
             RefreshText();
             RefreshImage();
-            // foreach (var mod in showedWeapon.m_WeaponData.NextMods)
-            // {
-            //     ShowModUIItem(mod);
-            // }
+            activeModUIItem = new Dictionary<Mod, ItemModUI>();
+            
             foreach (var mod in showedWeapon.m_WeaponData.NextMods)
             {
-                GameEntry.Item.ShowItemModUI();
+                GameEntry.Item.ShowItemModUI(GameEntry.Item.GenerateSerialId(),mod);
             }
 
             UITransformToModTransform();
-            MathUtilities.GetRectFormEllipse(600,300,0,activeModUIItemRect.ToArray());
         }
+        
 
         private void UITransformToModTransform()
         {
@@ -203,6 +147,7 @@ namespace FPS
         protected override void OnClose(bool isShutdown, object userData)
         {
             base.OnClose(isShutdown, userData);
+            
         }
         
     }

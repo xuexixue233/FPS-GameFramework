@@ -35,6 +35,7 @@ namespace FPS
             public const int EffectAsset = 80;
 
             public const int ItemModUIAsset = 10;
+            public const int ItemModSelectAsset = 10;
         }
     }
 }
