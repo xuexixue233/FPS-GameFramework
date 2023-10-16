@@ -11,15 +11,9 @@ using UnityGameFramework.Runtime;
 
 namespace FPS
 {
-    public class WeaponModUI
-    {
-        public Mod mod;
-        public string Name;
-        public Image modImage;
-    }
-    
     public class EquipmentForm : UGuiForm
     {
+        public ProcedureSelectWeapon procedureSelectWeapon;
         public Weapon showedWeapon;
         public GameObject attributeList;
 

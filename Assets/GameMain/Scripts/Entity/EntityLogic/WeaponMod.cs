@@ -63,6 +63,7 @@ namespace FPS
         protected override void OnHide(bool isShutdown, object userData)
         {
             base.OnHide(isShutdown, userData);
+            
         }
 
         protected override void OnAttached(EntityLogic childEntity, Transform parentTransform, object userData)

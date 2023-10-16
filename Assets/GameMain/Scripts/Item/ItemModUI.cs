@@ -8,7 +8,7 @@ namespace FPS
     public class ItemModUI : ItemLogic
     {
         public Button modButton;
-        public Image modImage;
+        public RawImage modImage;
         public TMP_Text modText;
         public Mod _mod;
         public GameObject modList;

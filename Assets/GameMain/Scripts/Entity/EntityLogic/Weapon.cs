@@ -140,6 +140,16 @@ namespace FPS
         protected override void OnDetached(EntityLogic childEntity, object userData)
         {
             base.OnDetached(childEntity, userData);
+            if (childEntity is WeaponMod entity)
+            {
+                weaponAttribute.RemoveToRefresh(entity);
+                foreach (var next in entity.modExData.nextModsTransforms)
+                {
+                    m_WeaponExData.nextModsTransforms.Remove(next);
+                }
+                weaponMods.Remove(entity.weaponModData.ModType);
+                return;
+            }
         }
         
 
@@ -174,6 +184,8 @@ namespace FPS
             Name = Utility.Text.Format("Weapon of {0}", parentEntity.Name);
             CachedTransform.localPosition = Vector3.zero;
         }
+        
+        
 
         private void CalculateWeaponRotation()
         {

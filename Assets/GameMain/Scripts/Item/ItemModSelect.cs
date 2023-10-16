@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
@@ -19,20 +20,30 @@ namespace FPS
             selectButton.onClick.AddListener((() =>
             {
                 GameEntry.Entity.ShowWeaponMod(new WeaponModData(GameEntry.Entity.GenerateSerialId(),modId,_equipmentForm.showedWeapon.Id,CampType.Unknown));
+                
+                _equipmentForm.procedureSelectWeapon.HideAllSelectButton();
             }));
         }
 
         protected override void OnShow(object userData)
         {
             base.OnShow(userData);
-            var data = userData as WeaponModData;
-            if (data==null)
+            _equipmentForm = GameEntry.UI.GetUIForm(UIFormId.EquipmentForm) as EquipmentForm;
+            if (userData is not WeaponModData data)
             {
+                mod = userData is Mod mod1 ? mod1 : Mod.None;
+                modImage.color = Color.clear;
+                selectButton.onClick.RemoveAllListeners();
+                selectButton.onClick.AddListener((() =>
+                {
+                    GameEntry.Entity.HideEntity(_equipmentForm.procedureSelectWeapon.currentMods[mod]);
+                    _equipmentForm.procedureSelectWeapon.currentMods.Remove(mod);
+                    _equipmentForm.procedureSelectWeapon.HideAllSelectButton();
+                }));
                 return;
             }
             mod = data.ModType;
             modId = data.TypeId;
-            _equipmentForm = GameEntry.UI.GetUIForm(UIFormId.EquipmentForm) as EquipmentForm;
         }
 
         protected override void OnHide(bool isShutdown, object userData)

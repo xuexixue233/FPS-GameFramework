@@ -67,5 +67,15 @@ namespace FPS
             Precision += mod.weaponModData.Precision;
             MuzzleVelocity += (int)mod.weaponModData.MuzzleVelocity;
         }
+
+        public void RemoveToRefresh(WeaponMod mod)
+        {
+            Weight -= mod.weaponModData.Weight;
+            VerticalRecoil = (int)(VerticalRecoil/(100f + mod.weaponModData.Recoil) / 100f);
+            HorizontalRecoil = (int)(HorizontalRecoil/(100f + mod.weaponModData.Recoil) / 100f);
+            Ergonomics-=mod.weaponModData.Ergonomics;
+            Precision -= mod.weaponModData.Precision;
+            MuzzleVelocity -= (int)mod.weaponModData.MuzzleVelocity;
+        }
     }
 }

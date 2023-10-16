@@ -16,7 +16,8 @@ namespace FPS
         private Weapon weapon;
         private List<RenderTexture> modTextures = new List<RenderTexture>();
         private List<WeaponMod> previewMods = new List<WeaponMod>();
-        private List<Camera> Cameras = new List<Camera>();
+        public Dictionary<Mod,WeaponMod> currentMods = new Dictionary<Mod,WeaponMod>();
+
         public override bool UseNativeDialog { get; }
 
         private bool _BackMenu;
@@ -28,8 +29,13 @@ namespace FPS
             //Todo:读取玩家数据
         }
 
-        public void ShowAllWeaponMod(Mod mod)
+        public void HideItemModUI(Mod mod)
         {
+            if (equipmentForm.activeModUIItem.TryGetValue(mod,out var item))
+            {
+                GameEntry.Item.HideItem(item.Item);
+                equipmentForm.activeModUIItem.Remove(mod);
+            }
         }
 
         public void ShowAllSelectButton(Mod mod)
@@ -47,6 +53,7 @@ namespace FPS
                         });
                 }
             }
+            GameEntry.Item.ShowItemModSelect(GameEntry.Item.GenerateSerialId(),mod);
         }
 
         public void HideAllSelectButton()
@@ -130,7 +137,13 @@ namespace FPS
         private void OnOpenEquipmentFormSuccess(object sender, GameEventArgs e)
         {
             OpenUIFormSuccessEventArgs ne = (OpenUIFormSuccessEventArgs)e;
+            if (ne ==null)
+            {
+                return;
+            }
             equipmentForm = (EquipmentForm)ne.UIForm.Logic;
+
+            equipmentForm.procedureSelectWeapon = this;
         }
 
         private void ChangeSceneSuccess(object sender, GameEventArgs e)
@@ -159,7 +172,8 @@ namespace FPS
                 if (mod.weaponModData.OwnerId == 0)
                 {
 
-                    var gameObject = Object.Instantiate(new GameObject(), mod.transform, true);
+                    var gameObject = new GameObject();
+                    gameObject.transform.SetParent(mod.transform); 
                     var camera = gameObject.AddComponent<Camera>();
                     camera.nearClipPlane = 0.001f;
                     camera.transform.localPosition = Vector3.zero;
@@ -175,6 +189,7 @@ namespace FPS
                 }
                 else
                 {
+                    currentMods.Add(mod.weaponModData.ModType,mod);
                     foreach (var nextMod in mod.weaponModData.NextModType)
                     {
                         GameEntry.Item.ShowItemModUI(GameEntry.Item.GenerateSerialId(), nextMod);
@@ -183,6 +198,12 @@ namespace FPS
                     }
                 }
             }
+        }
+
+        private void OnHideEntityComplete(object sender, GameEventArgs e)
+        {
+            HideEntityCompleteEventArgs ne = (HideEntityCompleteEventArgs)e;
+            
         }
 
         private void OnShowItemSuccess(object sender, GameEventArgs e)
@@ -200,10 +221,19 @@ namespace FPS
             {
                 var item = (ItemModSelect)ne.Item.Logic;
                 item.modImage.texture = modTextures[^1];
-                if (ne.UserData is not WeaponModData data) return;
-                if (equipmentForm.activeModUIItem.TryGetValue(data.ModType, out var modUI))
+                if (ne.UserData is WeaponModData data)
                 {
-                    item.transform.SetParent(modUI.modList.transform);
+                    if (equipmentForm.activeModUIItem.TryGetValue(data.ModType, out var modUI))
+                    {
+                        item.transform.SetParent(modUI.modList.transform);
+                    }
+                }
+                else if (ne.UserData is Mod mod)
+                {
+                    if (equipmentForm.activeModUIItem.TryGetValue(mod, out var modUI))
+                    {
+                        item.transform.SetParent(modUI.modList.transform);
+                    }
                 }
                 equipmentForm.activeSelects.Add(item);
             }
