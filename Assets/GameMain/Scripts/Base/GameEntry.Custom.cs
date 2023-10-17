@@ -6,6 +6,7 @@
 //------------------------------------------------------------
 
 using UnityEngine;
+using UnityGameFramework.Runtime;
 
 namespace FPS
 {
@@ -14,7 +15,8 @@ namespace FPS
     /// </summary>
     public partial class GameEntry : MonoBehaviour
     {
-        public static UserDataComponent UserData
+
+        public static ItemComponent Item
         {
             get;
             private set;
@@ -22,7 +24,8 @@ namespace FPS
         
         private static void InitCustomComponents()
         {
-            UserData=UnityGameFramework.Runtime.GameEntry.GetComponent<UserDataComponent>();
+            Item=UnityGameFramework.Runtime.GameEntry.GetComponent<ItemComponent>();
+            
         }
     }
 }

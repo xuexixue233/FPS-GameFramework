@@ -23,8 +23,7 @@ namespace UnityGameFramework.Editor
 
         private SerializedProperty m_ResourceMode = null;
         private SerializedProperty m_ReadWritePathType = null;
-        private SerializedProperty m_MinUnloadUnusedAssetsInterval = null;
-        private SerializedProperty m_MaxUnloadUnusedAssetsInterval = null;
+        private SerializedProperty m_UnloadUnusedAssetsInterval = null;
         private SerializedProperty m_AssetAutoReleaseInterval = null;
         private SerializedProperty m_AssetCapacity = null;
         private SerializedProperty m_AssetExpireTime = null;
@@ -76,36 +75,22 @@ namespace UnityGameFramework.Editor
                     }
                 }
 
-                m_ReadWritePathType.enumValueIndex = (int)(ReadWritePathType)EditorGUILayout.EnumPopup("Read-Write Path Type", t.ReadWritePathType);
+                m_ReadWritePathType.enumValueIndex = (int)(ReadWritePathType)EditorGUILayout.EnumPopup("Read Write Path Type", t.ReadWritePathType);
             }
             EditorGUI.EndDisabledGroup();
 
-            float minUnloadUnusedAssetsInterval = EditorGUILayout.Slider("Min Unload Unused Assets Interval", m_MinUnloadUnusedAssetsInterval.floatValue, 0f, 3600f);
-            if (minUnloadUnusedAssetsInterval != m_MinUnloadUnusedAssetsInterval.floatValue)
+            float unloadUnusedAssetsInterval = EditorGUILayout.Slider("Unload Unused Assets Interval", m_UnloadUnusedAssetsInterval.floatValue, 0f, 3600f);
+            if (unloadUnusedAssetsInterval != m_UnloadUnusedAssetsInterval.floatValue)
             {
                 if (EditorApplication.isPlaying)
                 {
-                    t.MinUnloadUnusedAssetsInterval = minUnloadUnusedAssetsInterval;
+                    t.UnloadUnusedAssetsInterval = unloadUnusedAssetsInterval;
                 }
                 else
                 {
-                    m_MinUnloadUnusedAssetsInterval.floatValue = minUnloadUnusedAssetsInterval;
+                    m_UnloadUnusedAssetsInterval.floatValue = unloadUnusedAssetsInterval;
                 }
             }
-
-            float maxUnloadUnusedAssetsInterval = EditorGUILayout.Slider("Max Unload Unused Assets Interval", m_MaxUnloadUnusedAssetsInterval.floatValue, 0f, 3600f);
-            if (maxUnloadUnusedAssetsInterval != m_MaxUnloadUnusedAssetsInterval.floatValue)
-            {
-                if (EditorApplication.isPlaying)
-                {
-                    t.MaxUnloadUnusedAssetsInterval = maxUnloadUnusedAssetsInterval;
-                }
-                else
-                {
-                    m_MaxUnloadUnusedAssetsInterval.floatValue = maxUnloadUnusedAssetsInterval;
-                }
-            }
-
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying && isEditorResourceMode);
             {
                 float assetAutoReleaseInterval = EditorGUILayout.DelayedFloatField("Asset Auto Release Interval", m_AssetAutoReleaseInterval.floatValue);
@@ -227,7 +212,7 @@ namespace UnityGameFramework.Editor
                         }
                     }
 
-                    int generateReadWriteVersionListLength = EditorGUILayout.DelayedIntField("Generate Read-Write Version List Length", m_GenerateReadWriteVersionListLength.intValue);
+                    int generateReadWriteVersionListLength = EditorGUILayout.DelayedIntField("Generate Read Write Version List Length", m_GenerateReadWriteVersionListLength.intValue);
                     if (generateReadWriteVersionListLength != m_GenerateReadWriteVersionListLength.intValue)
                     {
                         if (EditorApplication.isPlaying)
@@ -268,9 +253,8 @@ namespace UnityGameFramework.Editor
 
             if (EditorApplication.isPlaying && IsPrefabInHierarchy(t.gameObject))
             {
-                EditorGUILayout.LabelField("Unload Unused Assets", Utility.Text.Format("{0} / {1}", t.LastUnloadUnusedAssetsOperationElapseSeconds.ToString("F2"), t.MaxUnloadUnusedAssetsInterval.ToString("F2")));
-                EditorGUILayout.LabelField("Read-Only Path", t.ReadOnlyPath.ToString());
-                EditorGUILayout.LabelField("Read-Write Path", t.ReadWritePath.ToString());
+                EditorGUILayout.LabelField("Read Only Path", t.ReadOnlyPath.ToString());
+                EditorGUILayout.LabelField("Read Write Path", t.ReadWritePath.ToString());
                 EditorGUILayout.LabelField("Current Variant", t.CurrentVariant ?? "<Unknwon>");
                 EditorGUILayout.LabelField("Applicable Game Version", isEditorResourceMode ? "N/A" : t.ApplicableGameVersion ?? "<Unknwon>");
                 EditorGUILayout.LabelField("Internal Resource Version", isEditorResourceMode ? "N/A" : t.InternalResourceVersion.ToString());
@@ -283,8 +267,8 @@ namespace UnityGameFramework.Editor
                     EditorGUILayout.LabelField("Apply Waiting Count", isEditorResourceMode ? "N/A" : t.ApplyWaitingCount.ToString());
                     EditorGUILayout.LabelField("Updating Resource Group", isEditorResourceMode ? "N/A" : t.UpdatingResourceGroup != null ? t.UpdatingResourceGroup.Name : "<Unknwon>");
                     EditorGUILayout.LabelField("Update Waiting Count", isEditorResourceMode ? "N/A" : t.UpdateWaitingCount.ToString());
-                    EditorGUILayout.LabelField("Update Waiting While Playing Count", isEditorResourceMode ? "N/A" : t.UpdateWaitingWhilePlayingCount.ToString());
                     EditorGUILayout.LabelField("Update Candidate Count", isEditorResourceMode ? "N/A" : t.UpdateCandidateCount.ToString());
+                    EditorGUILayout.LabelField("Updating Count", isEditorResourceMode ? "N/A" : t.UpdatingCount.ToString());
                 }
                 EditorGUILayout.LabelField("Load Total Agent Count", isEditorResourceMode ? "N/A" : t.LoadTotalAgentCount.ToString());
                 EditorGUILayout.LabelField("Load Free Agent Count", isEditorResourceMode ? "N/A" : t.LoadFreeAgentCount.ToString());
@@ -352,8 +336,7 @@ namespace UnityGameFramework.Editor
         {
             m_ResourceMode = serializedObject.FindProperty("m_ResourceMode");
             m_ReadWritePathType = serializedObject.FindProperty("m_ReadWritePathType");
-            m_MinUnloadUnusedAssetsInterval = serializedObject.FindProperty("m_MinUnloadUnusedAssetsInterval");
-            m_MaxUnloadUnusedAssetsInterval = serializedObject.FindProperty("m_MaxUnloadUnusedAssetsInterval");
+            m_UnloadUnusedAssetsInterval = serializedObject.FindProperty("m_UnloadUnusedAssetsInterval");
             m_AssetAutoReleaseInterval = serializedObject.FindProperty("m_AssetAutoReleaseInterval");
             m_AssetCapacity = serializedObject.FindProperty("m_AssetCapacity");
             m_AssetExpireTime = serializedObject.FindProperty("m_AssetExpireTime");

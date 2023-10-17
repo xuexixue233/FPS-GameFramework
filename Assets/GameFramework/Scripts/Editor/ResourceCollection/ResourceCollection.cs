@@ -282,7 +282,7 @@ namespace UnityGameFramework.Editor.ResourceTools
             }
 
             Resource resource = null;
-            if (m_Resources.TryGetValue(GetResourceFullName(name, variant).ToLowerInvariant(), out resource))
+            if (m_Resources.TryGetValue(GetResourceFullName(name, variant).ToLower(), out resource))
             {
                 return resource;
             }
@@ -297,7 +297,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                 return false;
             }
 
-            return m_Resources.ContainsKey(GetResourceFullName(name, variant).ToLowerInvariant());
+            return m_Resources.ContainsKey(GetResourceFullName(name, variant).ToLower());
         }
 
         public bool AddResource(string name, string variant, string fileSystem, LoadType loadType, bool packed)
@@ -323,7 +323,7 @@ namespace UnityGameFramework.Editor.ResourceTools
             }
 
             Resource resource = Resource.Create(name, variant, fileSystem, loadType, packed, resourceGroups);
-            m_Resources.Add(resource.FullName.ToLowerInvariant(), resource);
+            m_Resources.Add(resource.FullName.ToLower(), resource);
 
             return true;
         }
@@ -351,9 +351,9 @@ namespace UnityGameFramework.Editor.ResourceTools
                 return false;
             }
 
-            m_Resources.Remove(resource.FullName.ToLowerInvariant());
+            m_Resources.Remove(resource.FullName.ToLower());
             resource.Rename(newName, newVariant);
-            m_Resources.Add(resource.FullName.ToLowerInvariant(), resource);
+            m_Resources.Add(resource.FullName.ToLower(), resource);
 
             return true;
         }
@@ -373,7 +373,7 @@ namespace UnityGameFramework.Editor.ResourceTools
 
             Asset[] assets = resource.GetAssets();
             resource.Clear();
-            m_Resources.Remove(resource.FullName.ToLowerInvariant());
+            m_Resources.Remove(resource.FullName.ToLower());
             foreach (Asset asset in assets)
             {
                 m_Assets.Remove(asset.Guid);
@@ -500,7 +500,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                     continue;
                 }
 
-                if (assetInResource.Name.ToLowerInvariant() == assetName.ToLowerInvariant())
+                if (assetInResource.Name.ToLower() == assetName.ToLower())
                 {
                     return false;
                 }
@@ -617,7 +617,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                 string[] pathNames = resource.Name.Split('/');
                 for (int i = 0; i < foundPathNames.Length - 1 && i < pathNames.Length - 1; i++)
                 {
-                    if (foundPathNames[i].ToLowerInvariant() != pathNames[i].ToLowerInvariant())
+                    if (foundPathNames[i].ToLower() != pathNames[i].ToLower())
                     {
                         break;
                     }

@@ -77,10 +77,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f432b6520d5430cad6dfbcf10d68f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modTransform: {fileID: 6779580994642856992}
   nextModsTransforms:
     list:
     - Key: 40010
       Value: {fileID: 6779580994642856992}
+  previewPosition: {x: 0.025, y: 0.018, z: 0.12}
+  previewRotation: {x: 0, y: 0, z: -45}
 --- !u!1 &8931419858233767781
 GameObject:
   m_ObjectHideFlags: 0

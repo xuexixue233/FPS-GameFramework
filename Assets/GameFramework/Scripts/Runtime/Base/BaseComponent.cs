@@ -37,7 +37,7 @@ namespace UnityGameFramework.Runtime
         private string m_LogHelperTypeName = "UnityGameFramework.Runtime.DefaultLogHelper";
 
         [SerializeField]
-        private string m_CompressionHelperTypeName = "UnityGameFramework.Runtime.DefaultCompressionHelper";
+        private string m_ZipHelperTypeName = "UnityGameFramework.Runtime.DefaultZipHelper";
 
         [SerializeField]
         private string m_JsonHelperTypeName = "UnityGameFramework.Runtime.DefaultJsonHelper";
@@ -190,7 +190,7 @@ namespace UnityGameFramework.Runtime
             Log.Info("Unity Version: {0}", Application.unityVersion);
 
 #if UNITY_5_3_OR_NEWER || UNITY_5_3
-            InitCompressionHelper();
+            InitZipHelper();
             InitJsonHelper();
 
             Utility.Converter.ScreenDpi = Screen.dpi;
@@ -329,28 +329,28 @@ namespace UnityGameFramework.Runtime
             GameFrameworkLog.SetLogHelper(logHelper);
         }
 
-        private void InitCompressionHelper()
+        private void InitZipHelper()
         {
-            if (string.IsNullOrEmpty(m_CompressionHelperTypeName))
+            if (string.IsNullOrEmpty(m_ZipHelperTypeName))
             {
                 return;
             }
 
-            Type compressionHelperType = Utility.Assembly.GetType(m_CompressionHelperTypeName);
-            if (compressionHelperType == null)
+            Type zipHelperType = Utility.Assembly.GetType(m_ZipHelperTypeName);
+            if (zipHelperType == null)
             {
-                Log.Error("Can not find compression helper type '{0}'.", m_CompressionHelperTypeName);
+                Log.Error("Can not find Zip helper type '{0}'.", m_ZipHelperTypeName);
                 return;
             }
 
-            Utility.Compression.ICompressionHelper compressionHelper = (Utility.Compression.ICompressionHelper)Activator.CreateInstance(compressionHelperType);
-            if (compressionHelper == null)
+            Utility.Zip.IZipHelper zipHelper = (Utility.Zip.IZipHelper)Activator.CreateInstance(zipHelperType);
+            if (zipHelper == null)
             {
-                Log.Error("Can not create compression helper instance '{0}'.", m_CompressionHelperTypeName);
+                Log.Error("Can not create Zip helper instance '{0}'.", m_ZipHelperTypeName);
                 return;
             }
 
-            Utility.Compression.SetCompressionHelper(compressionHelper);
+            Utility.Zip.SetZipHelper(zipHelper);
         }
 
         private void InitJsonHelper()

@@ -10,7 +10,7 @@ using System;
 namespace UnityGameFramework.Editor.ResourceTools
 {
     [Flags]
-    public enum Platform : int
+    public enum Platform : byte
     {
         Undefined = 0,
 

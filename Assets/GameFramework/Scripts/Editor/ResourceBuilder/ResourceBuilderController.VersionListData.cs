@@ -11,13 +11,13 @@ namespace UnityGameFramework.Editor.ResourceTools
     {
         private sealed class VersionListData
         {
-            public VersionListData(string path, int length, int hashCode, int compressedLength, int compressedHashCode)
+            public VersionListData(string path, int length, int hashCode, int zipLength, int zipHashCode)
             {
                 Path = path;
                 Length = length;
                 HashCode = hashCode;
-                CompressedLength = compressedLength;
-                CompressedHashCode = compressedHashCode;
+                ZipLength = zipLength;
+                ZipHashCode = zipHashCode;
             }
 
             public string Path
@@ -38,13 +38,13 @@ namespace UnityGameFramework.Editor.ResourceTools
                 private set;
             }
 
-            public int CompressedLength
+            public int ZipLength
             {
                 get;
                 private set;
             }
 
-            public int CompressedHashCode
+            public int ZipHashCode
             {
                 get;
                 private set;

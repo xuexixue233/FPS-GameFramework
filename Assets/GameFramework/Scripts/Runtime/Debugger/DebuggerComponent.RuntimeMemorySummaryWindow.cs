@@ -20,7 +20,6 @@ namespace UnityGameFramework.Runtime
         private sealed partial class RuntimeMemorySummaryWindow : ScrollableDebuggerWindowBase
         {
             private readonly List<Record> m_Records = new List<Record>();
-            private readonly Comparison<Record> m_RecordComparer = RecordComparer;
             private DateTime m_SampleTime = DateTime.MinValue;
             private int m_SampleCount = 0;
             private long m_SampleSize = 0L;
@@ -106,10 +105,10 @@ namespace UnityGameFramework.Runtime
                     record.Size += sampleSize;
                 }
 
-                m_Records.Sort(m_RecordComparer);
+                m_Records.Sort(RecordComparer);
             }
 
-            private static int RecordComparer(Record a, Record b)
+            private int RecordComparer(Record a, Record b)
             {
                 int result = b.Size.CompareTo(a.Size);
                 if (result != 0)

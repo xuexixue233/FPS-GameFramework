@@ -6,7 +6,6 @@
 //------------------------------------------------------------
 
 using GameFramework;
-using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,17 +25,20 @@ namespace UnityGameFramework.Editor.ResourceTools
         private string[] m_VersionNamesForTargetDisplay = null;
         private string[] m_VersionNamesForSourceDisplay = null;
         private int m_PlatformIndex = 0;
-        private int m_CompressionHelperTypeNameIndex = 0;
         private int m_LengthLimitIndex = 0;
         private int m_TargetVersionIndex = 0;
         private bool[] m_SourceVersionIndexes = null;
         private int m_SourceVersionCount = 0;
 
-        [MenuItem("Game Framework/Resource Tools/Resource Pack Builder", false, 43)]
+        [MenuItem("Game Framework/Resource Tools/Resource Pack Builder", false, 44)]
         private static void Open()
         {
             ResourcePackBuilder window = GetWindow<ResourcePackBuilder>("Resource Pack Builder", true);
-            window.minSize = new Vector2(800f, 400f);
+#if UNITY_2019_3_OR_NEWER
+            window.minSize = new Vector2(800f, 370f);
+#else
+            window.minSize = new Vector2(800f, 345f);
+#endif
         }
 
         private void OnEnable()
@@ -46,22 +48,6 @@ namespace UnityGameFramework.Editor.ResourceTools
             m_Controller.OnBuildResourcePacksCompleted += OnBuildResourcePacksCompleted;
             m_Controller.OnBuildResourcePackSuccess += OnBuildResourcePackSuccess;
             m_Controller.OnBuildResourcePackFailure += OnBuildResourcePackFailure;
-
-            m_Controller.Load();
-            RefreshVersionNames();
-
-            m_CompressionHelperTypeNameIndex = 0;
-            string[] compressionHelperTypeNames = m_Controller.GetCompressionHelperTypeNames();
-            for (int i = 0; i < compressionHelperTypeNames.Length; i++)
-            {
-                if (m_Controller.CompressionHelperTypeName == compressionHelperTypeNames[i])
-                {
-                    m_CompressionHelperTypeNameIndex = i;
-                    break;
-                }
-            }
-
-            m_Controller.RefreshCompressionHelper();
         }
 
         private void Update()
@@ -146,64 +132,9 @@ namespace UnityGameFramework.Editor.ResourceTools
                         }
                     }
                     EditorGUILayout.EndHorizontal();
-                    EditorGUILayout.BeginHorizontal();
+                    if (m_Controller.Platform == Platform.Undefined || !m_Controller.IsValidWorkingDirectory)
                     {
-                        EditorGUILayout.LabelField("Compression Helper", GUILayout.Width(160f));
-                        string[] names = m_Controller.GetCompressionHelperTypeNames();
-                        int selectedIndex = EditorGUILayout.Popup(m_CompressionHelperTypeNameIndex, names);
-                        if (selectedIndex != m_CompressionHelperTypeNameIndex)
-                        {
-                            m_CompressionHelperTypeNameIndex = selectedIndex;
-                            m_Controller.CompressionHelperTypeName = selectedIndex <= 0 ? string.Empty : names[selectedIndex];
-                            if (m_Controller.RefreshCompressionHelper())
-                            {
-                                Debug.Log("Set compression helper success.");
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Set compression helper failure.");
-                            }
-                        }
-                    }
-                    EditorGUILayout.EndHorizontal();
-                    if (m_Controller.Platform == Platform.Undefined || string.IsNullOrEmpty(m_Controller.CompressionHelperTypeName) || !m_Controller.IsValidWorkingDirectory)
-                    {
-                        string message = string.Empty;
-                        if (!m_Controller.IsValidWorkingDirectory)
-                        {
-                            if (!string.IsNullOrEmpty(message))
-                            {
-                                message += Environment.NewLine;
-                            }
-
-                            message += "Working directory is invalid.";
-                        }
-
-                        if (m_Controller.Platform == Platform.Undefined)
-                        {
-                            if (!string.IsNullOrEmpty(message))
-                            {
-                                message += Environment.NewLine;
-                            }
-
-                            message += "Platform is invalid.";
-                        }
-
-                        if (string.IsNullOrEmpty(m_Controller.CompressionHelperTypeName))
-                        {
-                            if (!string.IsNullOrEmpty(message))
-                            {
-                                message += Environment.NewLine;
-                            }
-
-                            message += "Compression helper is invalid.";
-                        }
-
-                        EditorGUILayout.HelpBox(message, MessageType.Error);
-                    }
-                    else if (m_VersionNamesForTargetDisplay.Length <= 0)
-                    {
-                        EditorGUILayout.HelpBox("No version was found in the specified working directory and platform.", MessageType.Warning);
+                        EditorGUILayout.HelpBox("Please select a valid working directory and platform first.", MessageType.Warning);
                     }
                     else
                     {
@@ -219,21 +150,6 @@ namespace UnityGameFramework.Editor.ResourceTools
                             GUILayout.Label(m_Controller.OutputPath);
                         }
                         EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.BeginHorizontal();
-                        {
-                            EditorGUILayout.LabelField("Backup Diff", GUILayout.Width(160f));
-                            m_Controller.BackupDiff = EditorGUILayout.Toggle(m_Controller.BackupDiff);
-                        }
-                        EditorGUILayout.EndHorizontal();
-                        if (m_Controller.BackupDiff)
-                        {
-                            EditorGUILayout.BeginHorizontal();
-                            {
-                                EditorGUILayout.LabelField("Backup Version", GUILayout.Width(160f));
-                                m_Controller.BackupVersion = EditorGUILayout.Toggle(m_Controller.BackupVersion);
-                            }
-                            EditorGUILayout.EndHorizontal();
-                        }
                         EditorGUILayout.BeginHorizontal();
                         {
                             EditorGUILayout.LabelField("Length Limit", GUILayout.Width(160f));
@@ -283,71 +199,78 @@ namespace UnityGameFramework.Editor.ResourceTools
                             EditorGUILayout.LabelField("Source Version", GUILayout.Width(160f));
                             EditorGUILayout.BeginVertical();
                             {
-                                EditorGUILayout.BeginHorizontal();
+                                int count = m_VersionNamesForSourceDisplay.Length;
+                                if (count > 0)
                                 {
-                                    EditorGUILayout.LabelField(m_SourceVersionCount.ToString() + (m_SourceVersionCount > 1 ? " items" : " item") + " selected.");
-                                    if (GUILayout.Button("Select All Except <None>", GUILayout.Width(180f)))
+                                    EditorGUILayout.BeginHorizontal();
                                     {
-                                        m_SourceVersionIndexes[0] = false;
-                                        for (int i = 1; i < m_SourceVersionIndexes.Length; i++)
+                                        EditorGUILayout.LabelField(m_SourceVersionCount.ToString() + (m_SourceVersionCount > 1 ? " items" : " item") + " selected.");
+                                        if (GUILayout.Button("Select All Except <None>", GUILayout.Width(180f)))
                                         {
-                                            m_SourceVersionIndexes[i] = true;
-                                        }
-
-                                        RefreshSourceVersionCount();
-                                    }
-                                    if (GUILayout.Button("Select All", GUILayout.Width(100f)))
-                                    {
-                                        for (int i = 0; i < m_SourceVersionIndexes.Length; i++)
-                                        {
-                                            m_SourceVersionIndexes[i] = true;
-                                        }
-
-                                        RefreshSourceVersionCount();
-                                    }
-                                    if (GUILayout.Button("Select None", GUILayout.Width(100f)))
-                                    {
-                                        for (int i = 0; i < m_SourceVersionIndexes.Length; i++)
-                                        {
-                                            m_SourceVersionIndexes[i] = false;
-                                        }
-
-                                        RefreshSourceVersionCount();
-                                    }
-                                }
-                                EditorGUILayout.EndHorizontal();
-                                EditorGUILayout.BeginHorizontal();
-                                {
-                                    int count = m_VersionNamesForSourceDisplay.Length;
-                                    int column = 5;
-                                    int row = (count - 1) / column + 1;
-                                    for (int i = 0; i < column && i < count; i++)
-                                    {
-                                        EditorGUILayout.BeginVertical();
-                                        {
-                                            for (int j = 0; j < row; j++)
+                                            m_SourceVersionIndexes[0] = false;
+                                            for (int i = 1; i < m_SourceVersionIndexes.Length; i++)
                                             {
-                                                int index = j * column + i;
-                                                if (index < count)
+                                                m_SourceVersionIndexes[i] = true;
+                                            }
+
+                                            RefreshSourceVersionCount();
+                                        }
+                                        if (GUILayout.Button("Select All", GUILayout.Width(100f)))
+                                        {
+                                            for (int i = 0; i < m_SourceVersionIndexes.Length; i++)
+                                            {
+                                                m_SourceVersionIndexes[i] = true;
+                                            }
+
+                                            RefreshSourceVersionCount();
+                                        }
+                                        if (GUILayout.Button("Select None", GUILayout.Width(100f)))
+                                        {
+                                            for (int i = 0; i < m_SourceVersionIndexes.Length; i++)
+                                            {
+                                                m_SourceVersionIndexes[i] = false;
+                                            }
+
+                                            RefreshSourceVersionCount();
+                                        }
+                                    }
+                                    EditorGUILayout.EndHorizontal();
+                                    EditorGUILayout.BeginHorizontal();
+                                    {
+                                        int column = 5;
+                                        int row = (count - 1) / column + 1;
+                                        for (int i = 0; i < column && i < count; i++)
+                                        {
+                                            EditorGUILayout.BeginVertical();
+                                            {
+                                                for (int j = 0; j < row; j++)
                                                 {
-                                                    bool isTarget = index - 1 == m_TargetVersionIndex;
-                                                    EditorGUI.BeginDisabledGroup(isTarget);
+                                                    int index = j * column + i;
+                                                    if (index < count)
                                                     {
-                                                        bool selected = GUILayout.Toggle(m_SourceVersionIndexes[index], isTarget ? m_VersionNamesForSourceDisplay[index] + " [Target]" : m_VersionNamesForSourceDisplay[index], "button");
-                                                        if (m_SourceVersionIndexes[index] != selected)
+                                                        bool isTarget = index - 1 == m_TargetVersionIndex;
+                                                        EditorGUI.BeginDisabledGroup(isTarget);
                                                         {
-                                                            m_SourceVersionIndexes[index] = selected;
-                                                            RefreshSourceVersionCount();
+                                                            bool selected = GUILayout.Toggle(m_SourceVersionIndexes[index], isTarget ? m_VersionNamesForSourceDisplay[index] + " [Target]" : m_VersionNamesForSourceDisplay[index], "button");
+                                                            if (m_SourceVersionIndexes[index] != selected)
+                                                            {
+                                                                m_SourceVersionIndexes[index] = selected;
+                                                                RefreshSourceVersionCount();
+                                                            }
                                                         }
+                                                        EditorGUI.EndDisabledGroup();
                                                     }
-                                                    EditorGUI.EndDisabledGroup();
                                                 }
                                             }
+                                            EditorGUILayout.EndVertical();
                                         }
-                                        EditorGUILayout.EndVertical();
                                     }
+                                    EditorGUILayout.EndHorizontal();
                                 }
-                                EditorGUILayout.EndHorizontal();
+                                else
+                                {
+                                    EditorGUILayout.HelpBox("No version exists.", MessageType.Warning);
+                                }
                             }
                             EditorGUILayout.EndVertical();
                         }
@@ -359,7 +282,7 @@ namespace UnityGameFramework.Editor.ResourceTools
                 GUILayout.Space(2f);
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUI.BeginDisabledGroup(m_Controller.Platform == Platform.Undefined || string.IsNullOrEmpty(m_Controller.CompressionHelperTypeName) || !m_Controller.IsValidWorkingDirectory || m_SourceVersionCount <= 0);
+                    EditorGUI.BeginDisabledGroup(m_Controller.Platform == Platform.Undefined || !m_Controller.IsValidWorkingDirectory || m_SourceVersionCount <= 0);
                     {
                         if (GUILayout.Button("Start Build Resource Packs"))
                         {

@@ -16,7 +16,8 @@ namespace FPS
         Scope=40009,
         Silencer=40010,
         Stock=40012,
-        StockLast=40011
+        StockLast=40011,
+        None=0
     }
     
     public class WeaponMod: Entity
@@ -62,6 +63,7 @@ namespace FPS
         protected override void OnHide(bool isShutdown, object userData)
         {
             base.OnHide(isShutdown, userData);
+            
         }
 
         protected override void OnAttached(EntityLogic childEntity, Transform parentTransform, object userData)

@@ -128,4 +128,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f432b6520d5430cad6dfbcf10d68f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextModsTransforms: []
+  modTransform: {fileID: 2474413579791266419}
+  nextModsTransforms:
+    list: []
+  previewPosition: {x: -0.066, y: 0, z: 0.34}
+  previewRotation: {x: -90, y: -90, z: 0}
