@@ -8,12 +8,14 @@ namespace FPS
     public class ItemModUI : ItemLogic
     {
         public Button modButton;
-        public GameObject circleGameObject;
+        public Transform circleTransform;
+        public RectTransform imageTransform;
         public TMP_Text modText;
         public Mod _mod;
         public GameObject modList;
         public GameObject showImage;
         public GameObject hideImage;
+        public LineRenderer lineRenderer;
         public bool isOpened=false;
         
         private Entity m_Owner = null;
@@ -76,6 +78,14 @@ namespace FPS
             base.OnShow(userData);
             _mod = userData is Mod mod ? mod : Mod.None;
             modText.text = _mod.ToString();
+        }
+
+        public void SetLine(Vector3 start,Vector3 end)
+        {
+            lineRenderer.startWidth = 0.002f;
+            lineRenderer.endWidth = 0.002f;
+            lineRenderer.SetPosition(0,start);
+            lineRenderer.SetPosition(1,end);
         }
         
     }

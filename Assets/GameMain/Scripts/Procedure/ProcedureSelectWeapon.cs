@@ -157,6 +157,7 @@ namespace FPS
                 item.transform.SetParent(equipmentForm.previewRect);
                 var rects = activeModUIItem.Values.Select(rect => rect.transform as RectTransform).ToList();
                 MathUtilities.GetRectFormEllipse(600, 300, 0, rects.ToArray());
+                SetCircleTransforms();
             }
             else if (ne.ItemLogicType == typeof(ItemModSelect))
             {
@@ -216,6 +217,7 @@ namespace FPS
                         {
                             Position = new Vector3(i * 100, 0, 0)
                         });
+                    i++;
                 }
             }
             GameEntry.Item.ShowItemModSelect(GameEntry.Item.GenerateSerialId(),mod);
@@ -251,6 +253,18 @@ namespace FPS
             if (!currentMods.TryGetValue(mod,out var weaponMod))
             {
                 GameEntry.Entity.ShowWeaponMod(new WeaponModData(GameEntry.Entity.GenerateSerialId(),typeId,ownerId,CampType.Unknown));
+            }
+        }
+
+        private void SetCircleTransforms()
+        {
+            foreach (var item in activeModUIItem.Values)
+            {
+                if (Camera.main == null) continue;
+                var temp = Camera.main.WorldToScreenPoint(weapon.m_WeaponExData.nextModsTransforms[item._mod].position);
+                item.circleTransform.position=new Vector2(temp.x,temp.y);
+                var transformItem = Camera.main.ScreenToWorldPoint(item.imageTransform.position);
+                item.SetLine(weapon.m_WeaponExData.nextModsTransforms[item._mod].position,transformItem);
             }
         }
     }

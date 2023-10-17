@@ -93,8 +93,6 @@ namespace FPS
             {
                 procedureSelectWeapon.ShowItemModUI(mod);
             }
-
-            UITransformToModTransform();
         }
         
 

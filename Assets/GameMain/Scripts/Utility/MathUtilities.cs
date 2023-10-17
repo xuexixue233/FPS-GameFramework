@@ -85,6 +85,7 @@ namespace FPS
             return result;
         }
 
+        //ToDo:待优化
         public static void GetRectFormEllipse(float a, float b, float offset, RectTransform[] rectTransforms)
         {
             float deltaAngle = 360f / rectTransforms.Length;
