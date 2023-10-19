@@ -12,6 +12,7 @@ namespace FPS
 
         [SerializeField]
         public WeaponData m_WeaponData = null;
+        
         public WeaponExData m_WeaponExData;
         public WeaponAttribute weaponAttribute;
         
@@ -62,6 +63,7 @@ namespace FPS
         private Vector3 currentPosition;
         private Vector3 initialGunPosition;
 
+        [SerializeField]
         public Dictionary<Mod, WeaponMod> weaponMods = new Dictionary<Mod, WeaponMod>();
 
 
@@ -97,7 +99,7 @@ namespace FPS
             soldier.showedWeapon = this;
             transform.transform.localPosition = m_WeaponExData.CameraTransform.localPosition * -1;
             transform.localScale = Vector3.one;
-            initialGunPosition = transform.localPosition;
+            initialGunPosition = m_WeaponExData.recoilTransform.localPosition;
         }
 
         public void Initialise(Player m_player)
@@ -228,7 +230,8 @@ namespace FPS
             targetRortation = Vector3.Lerp(targetRortation, Vector3.zero, Time.deltaTime * m_WeaponExData.returnAmount);
             currentRotation = Vector3.Slerp(currentRotation, targetRortation, Time.fixedDeltaTime * m_WeaponExData.snappiness);
 
-            transform.localRotation = Quaternion.Euler(newWeaponRotation+currentRotation);
+            transform.localRotation = Quaternion.Euler(newWeaponRotation);
+            m_WeaponExData.recoilTransform.localRotation= Quaternion.Euler(currentRotation);
             if (isFire)
             {
                 Recoil();
@@ -296,7 +299,7 @@ namespace FPS
         {
             targetPosition = Vector3.Lerp(targetPosition, initialGunPosition, Time.deltaTime * m_WeaponExData.returnAmount);
             currentPosition = Vector3.Lerp(currentPosition, targetPosition, Time.fixedDeltaTime * m_WeaponExData.snappiness);
-            transform.localPosition = currentPosition;
+            m_WeaponExData.recoilTransform.localPosition= currentPosition;
         }
         
         

@@ -11,7 +11,7 @@ namespace FPS
         
         public PlayerData(int entityId, int typeId) : base(entityId, typeId, CampType.Player)
         {
-            
+            GameEntry.Setting.GetObject<WeaponData>("PlayerWeaponData");
         }
         
         /// <summary>

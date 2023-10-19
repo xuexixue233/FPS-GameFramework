@@ -6,16 +6,17 @@ namespace FPS
 {
     public class PlayerCard : MonoBehaviour
     {
-        public TMP_Text Name;
-        
-        public Slider HP;
-        public Slider HPBackground;
+        public TMP_Text weaponName;
+        public Image HP;
+        public GameObject weaponItem;
+        public TMP_Text currentBullets;
+        public TMP_Text weaponMaxBullets;
+        public TMP_Text playerMaxBullets;
 
         public void PlayerInit()
         {
-            HP.value = HP.maxValue;
-            HPBackground.value = HPBackground.maxValue;
-            Name.text = "Player";
+            
+            
         }
     }
 }

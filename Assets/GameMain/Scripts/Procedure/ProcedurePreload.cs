@@ -23,6 +23,8 @@ namespace FPS
 
         private Dictionary<string, bool> m_LoadedFlag = new Dictionary<string, bool>();
 
+        public PlayerSaveData playerSaveData;
+
         public override bool UseNativeDialog
         {
             get
@@ -30,13 +32,14 @@ namespace FPS
                 return true;
             }
         }
+        
 
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
             
             m_LoadedFlag.Clear();
-
+            
             PreloadResources();
 
             GameEntry.Event.Subscribe(LoadConfigSuccessEventArgs.EventId, OnLoadConfigSuccess);

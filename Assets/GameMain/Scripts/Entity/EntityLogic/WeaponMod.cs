@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityGameFramework.Runtime;
 
 namespace FPS
 {
+    [Serializable]
     public enum Mod : int
     {
         Barrel = 40001,

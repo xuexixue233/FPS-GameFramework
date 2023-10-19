@@ -23,12 +23,20 @@ namespace FPS
             protected set;
         }
 
-        private Player m_Player = null;
+        protected Player m_Player = null;
+        protected PlayerForm _playerForm;
+
+        public virtual void ReadData()
+        {
+            GameEntry.Setting.GetObject<Weapon>("PlayerWeapon");
+        }
 
         public virtual void Initialize()
         {
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Subscribe(ShowEntityFailureEventArgs.EventId, OnShowEntityFailure);
+            
+            GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
 
             // SceneBackground = Object.FindObjectOfType<ScrollableBackground>();
             // if (SceneBackground == null)
@@ -70,6 +78,17 @@ namespace FPS
             if (ne.EntityLogicType == typeof(Player))
             {
                 m_Player = (Player)ne.Entity.Logic;
+                GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
+            }
+        }
+
+        protected virtual void OnOpenUIFormSuccess(object sender, GameEventArgs e)
+        {
+            OpenUIFormSuccessEventArgs ne = (OpenUIFormSuccessEventArgs)e;
+            if (ne.UIForm.Logic is PlayerForm playerForm)
+            {
+                _playerForm = playerForm;
+                return;
             }
         }
 

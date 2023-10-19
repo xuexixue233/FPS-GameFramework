@@ -16,10 +16,10 @@ namespace FPS
         public float recoilX;
         public float recoilY;
         public float recoilZ;
-
         public float kickBackZ;
         public float snappiness;
         public float returnAmount;
+        public Transform recoilTransform;
         
         public Transform sightTarget;
         public float sightOffset;
