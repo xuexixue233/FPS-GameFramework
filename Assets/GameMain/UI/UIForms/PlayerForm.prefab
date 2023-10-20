@@ -846,9 +846,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa15c8a9e81d449eaf97c31b35e06de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: {fileID: 0}
-  HP: {fileID: 0}
-  HPBackground: {fileID: 0}
+  weaponName: {fileID: 6616229808462203486}
+  HP: {fileID: 5228661166114119430}
+  weaponItem: {fileID: 3658318281773045600}
+  currentBullets: {fileID: 6222047544496011661}
+  weaponMaxBullets: {fileID: 0}
+  playerMaxBullets: {fileID: 418461749081578918}
 --- !u!1 &6424986987246688875
 GameObject:
   m_ObjectHideFlags: 0

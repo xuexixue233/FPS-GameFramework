@@ -9,14 +9,14 @@ namespace FPS
         public TMP_Text weaponName;
         public Image HP;
         public GameObject weaponItem;
+        public Image weaponModeImage;
         public TMP_Text currentBullets;
-        public TMP_Text weaponMaxBullets;
         public TMP_Text playerMaxBullets;
 
-        public void PlayerInit()
+        public void Refresh(Player player)
         {
-            
-            
+            HP.fillAmount = (float)player.m_PlayerData.HP / player.m_PlayerData.MaxHP;
+            currentBullets.text = $"{player.showedWeapon.currentBullets}/{player.showedWeapon.currentMaxBullets}";
         }
     }
 }

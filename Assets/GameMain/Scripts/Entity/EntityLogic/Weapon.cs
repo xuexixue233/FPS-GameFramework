@@ -66,6 +66,9 @@ namespace FPS
         [SerializeField]
         public Dictionary<Mod, WeaponMod> weaponMods = new Dictionary<Mod, WeaponMod>();
 
+        public int currentBullets=30;
+        public int currentMaxBullets=30;
+        private float fireTimer;
 
         protected override void OnInit(object userData)
         {
@@ -97,10 +100,21 @@ namespace FPS
 
             GameEntry.Entity.AttachEntity(Entity, m_WeaponData.OwnerId, soldier.soldierExData.WeaponTransform);
             soldier.showedWeapon = this;
+            if (m_WeaponData.weaponModId!=null)
+            {
+                foreach (var modId in m_WeaponData.weaponModId)
+                {
+                    GameEntry.Entity.ShowWeaponMod(new WeaponModData(GameEntry.Entity.GenerateSerialId(),modId.Value,m_WeaponData.Id,CampType.Player));
+                }
+            }
+            
             transform.transform.localPosition = m_WeaponExData.CameraTransform.localPosition * -1;
             transform.localScale = Vector3.one;
             initialGunPosition = m_WeaponExData.recoilTransform.localPosition;
+            
         }
+        
+        
 
         public void Initialise(Player m_player)
         {
@@ -121,6 +135,33 @@ namespace FPS
             SetWeaponAnimations();
             CalculateWeaponSway();
             CalculateAimingIn();
+            if (currentBullets>0 && isFire)
+            {
+                WeaponFire();
+            }
+
+            if (fireTimer<60.0f/m_WeaponData.FiringRate)
+            {
+                fireTimer += Time.deltaTime;
+            }
+        }
+        
+        
+
+        private void WeaponFire()
+        {
+            if (fireTimer<60.0f/m_WeaponData.FiringRate||currentBullets<=0)
+            {
+                return;
+            }
+
+
+            var position = m_WeaponExData.shootPoint.position;
+            if (Physics.Raycast(position,m_WeaponExData.shootPoint.up*-1,out RaycastHit hit,m_WeaponData.EffectiveFiringRange))
+            {
+                
+            }
+            
         }
 
         protected override void OnAttached(EntityLogic childEntity, Transform parentTransform, object userData)

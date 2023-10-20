@@ -57,12 +57,13 @@ namespace FPS
 
         private void BackToMenu()
         {
-            procedureSelectWeapon.playerSaveData.playerWeapon.weaponTypeId = showedWeapon.m_WeaponData.TypeId;
+            procedureSelectWeapon.playerSaveData.playerWeapon.weaponTypeId = showedWeapon.m_WeaponData.TypeId-1;
+            procedureSelectWeapon.playerSaveData.playerWeapon.modTypeIdDictionary.Clear();
             foreach (var mod in showedWeapon.weaponMods)
             {
                 procedureSelectWeapon.playerSaveData.playerWeapon.modTypeIdDictionary.Add(mod.Key,mod.Value.weaponModData.TypeId);
             }
-            GameEntry.Setting.SetObject("PlayerWeapon",procedureSelectWeapon.playerSaveData);
+            GameEntry.Setting.SetObject("PlayerSaveData",procedureSelectWeapon.playerSaveData);
             GameEntry.Event.Fire(this,ChangeSceneEventArgs.Create(1));
         }
 

@@ -56,21 +56,17 @@ namespace FPS
             GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId, ChangeSceneSuccess);
             _BackMenu = false;
             ReadAllModWeaponsData();
-            if (!GameEntry.Setting.HasSetting("PlayerWeapon"))
+            if (!GameEntry.Setting.HasSetting("PlayerSaveData"))
             {
-                GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), 30000, 0,
+                GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), 30001, 0,
                     CampType.Unknown));
                 playerSaveData = new PlayerSaveData();
             }
             else
             {
-                var playerWeapon = GameEntry.Setting.GetObject<PlayerSaveData>("PlayerWeapon");
-                GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), playerWeapon.playerWeapon.weaponTypeId, 0,
+                playerSaveData = GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
+                GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), playerSaveData.playerWeapon.weaponTypeId+1, 0,
                     CampType.Unknown));
-                foreach (var mod in playerWeapon.playerWeapon.modTypeIdDictionary)
-                {
-                    ShowWeaponMod(mod.Key, mod.Value, weapon.m_WeaponData.OwnerId);
-                }
             }
         }
 
@@ -109,7 +105,10 @@ namespace FPS
                 return;
             }
             equipmentForm = (EquipmentForm)ne.UIForm.Logic;
-
+            foreach (var mod in playerSaveData.playerWeapon.modTypeIdDictionary)
+            {
+                ShowWeaponMod(mod.Key, mod.Value, weapon.m_WeaponData.Id);
+            }
             equipmentForm.procedureSelectWeapon = this;
         }
 
@@ -120,6 +119,7 @@ namespace FPS
                 return;
 
             _BackMenu = true;
+            
         }
 
         private void OnShowEntitySuccess(object sender, GameEventArgs e)

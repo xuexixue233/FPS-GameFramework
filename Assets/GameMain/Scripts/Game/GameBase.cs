@@ -25,10 +25,11 @@ namespace FPS
 
         protected Player m_Player = null;
         protected PlayerForm _playerForm;
+        protected PlayerSaveData playerSaveData;
 
         public virtual void ReadData()
         {
-            GameEntry.Setting.GetObject<Weapon>("PlayerWeapon");
+            playerSaveData=GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
         }
 
         public virtual void Initialize()
@@ -78,7 +79,18 @@ namespace FPS
             if (ne.EntityLogicType == typeof(Player))
             {
                 m_Player = (Player)ne.Entity.Logic;
+                
                 GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
+            }
+            else if (ne.EntityLogicType==typeof(Weapon))
+            {
+                var weapon = (Weapon)ne.Entity.Logic;
+                
+            }
+            else if (ne.EntityLogicType==typeof(WeaponMod))
+            {
+                var weaponMod = (WeaponMod)ne.Entity.Logic;
+                
             }
         }
 

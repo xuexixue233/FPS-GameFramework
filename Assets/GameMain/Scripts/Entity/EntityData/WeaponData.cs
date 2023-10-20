@@ -60,6 +60,8 @@ namespace FPS
         [SerializeField] 
         private List<Mod> _nextMods;
 
+        public SerializableDictionary<Mod,int> weaponModId;
+
         public WeaponData(int entityId, int typeId, int ownerId, CampType ownerCamp)
             : base(entityId, typeId, ownerId, ownerCamp)
         {

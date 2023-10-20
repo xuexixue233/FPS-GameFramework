@@ -59,6 +59,11 @@ namespace FPS
 
             transform.localPosition=Vector3.zero;
             transform.localRotation = new Quaternion(0,0,0,0);
+            
+            if (GameEntry.Procedure.CurrentProcedure.GetType()==typeof(ProcedureMain))
+            {
+                transform.localScale=Vector3.one;
+            }
         }
         
 

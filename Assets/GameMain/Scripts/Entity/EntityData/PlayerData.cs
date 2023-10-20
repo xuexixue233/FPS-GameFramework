@@ -11,7 +11,13 @@ namespace FPS
         
         public PlayerData(int entityId, int typeId) : base(entityId, typeId, CampType.Player)
         {
-            GameEntry.Setting.GetObject<WeaponData>("PlayerWeaponData");
+            if (GameEntry.Setting.HasSetting("PlayerSaveData"))
+            {
+                var playerSaveData = GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
+                var weaponData = new WeaponData(GameEntry.Entity.GenerateSerialId(), playerSaveData.playerWeapon.weaponTypeId, Id, Camp);
+                weaponData.weaponModId=playerSaveData.playerWeapon.modTypeIdDictionary;
+                AttachWeaponData(weaponData);
+            }
         }
         
         /// <summary>

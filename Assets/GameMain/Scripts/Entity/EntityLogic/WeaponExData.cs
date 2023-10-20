@@ -20,6 +20,9 @@ namespace FPS
         public float snappiness;
         public float returnAmount;
         public Transform recoilTransform;
+
+        [Header("Fire")] 
+        public Transform shootPoint;
         
         public Transform sightTarget;
         public float sightOffset;

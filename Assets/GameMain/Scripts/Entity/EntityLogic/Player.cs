@@ -14,7 +14,7 @@ namespace FPS
         /// 配置数据
         /// </summary>
         [SerializeField] 
-        private PlayerData m_PlayerData = null;
+        public PlayerData m_PlayerData = null;
 
         /// <summary>
         /// 外部数据
