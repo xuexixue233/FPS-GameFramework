@@ -58,6 +58,9 @@ namespace FPS
         private int m_EffectiveFiringRange;
 
         [SerializeField] 
+        private List<FireMode> _FireMode;
+
+        [SerializeField] 
         private List<Mod> _nextMods;
 
         public SerializableDictionary<Mod,int> weaponModId;
@@ -92,6 +95,24 @@ namespace FPS
                 var modType=(Mod)Enum.Parse(typeof(Mod),modName);
                 _nextMods.Add(modType);
             }
+
+            _FireMode = new List<FireMode>();
+            switch (m_FiringMode)
+            {
+                case "单发，全自动":
+                    _FireMode.Add(FireMode.Single);
+                    _FireMode.Add(FireMode.Auto);
+                    break;
+                case "单发":
+                    _FireMode.Add(FireMode.Single);
+                    break;
+                case "半自动":
+                    _FireMode.Add(FireMode.SemiAuto);
+                    break;
+                case "栓动式":
+                    _FireMode.Add(FireMode.BoltAction);
+                    break;
+            }
         }
 
         public string WeaponName => m_WeaponName;
@@ -121,5 +142,7 @@ namespace FPS
         public int EffectiveFiringRange => m_EffectiveFiringRange;
 
         public List<Mod> NextMods => _nextMods;
+
+        public List<FireMode> WeaponFireMode => _FireMode;
     }
 }

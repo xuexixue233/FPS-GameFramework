@@ -56,6 +56,10 @@ namespace FPS
         public bool isAimingIn;
         [HideInInspector] 
         public bool isFire;
+        [HideInInspector] 
+        public bool isReload;
+        [HideInInspector] 
+        public bool isEmptyReload;
 
         private Vector3 currentRotation;
         private Vector3 targetRortation;
@@ -69,6 +73,8 @@ namespace FPS
         public int currentBullets=30;
         public int currentMaxBullets=30;
         private float fireTimer;
+
+        public FireMode currentFireMode;
 
         protected override void OnInit(object userData)
         {
@@ -89,6 +95,7 @@ namespace FPS
                 return;
             }
 
+            currentFireMode = m_WeaponData.WeaponFireMode[0];
             weaponAttribute = new WeaponAttribute();
             weaponAttribute.Init(m_WeaponData);
             soldier = GameEntry.Entity.GetGameEntity(m_WeaponData.OwnerId) as Soldier;
@@ -139,30 +146,52 @@ namespace FPS
             {
                 WeaponFire();
             }
-
+            
             if (fireTimer<60.0f/m_WeaponData.FiringRate)
             {
-                fireTimer += Time.deltaTime;
+                fireTimer += realElapseSeconds;
             }
         }
         
         
 
-        private void WeaponFire()
+        public void WeaponFire()
         {
             if (fireTimer<60.0f/m_WeaponData.FiringRate||currentBullets<=0)
             {
                 return;
             }
             Recoil();
-            Back();
             var position = m_WeaponExData.shootPoint.position;
             if (Physics.Raycast(position,m_WeaponExData.shootPoint.up*-1,out RaycastHit hit,m_WeaponData.EffectiveFiringRange))
             {
                 
             }
             currentBullets--;
-            
+            if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedureMain)
+            {
+                procedureMain.RefreshUI();
+            }
+            fireTimer = 0;
+        }
+        
+        public void ChangeFireMode()
+        {
+            var index = m_WeaponData.WeaponFireMode.IndexOf(currentFireMode);
+            if (index==m_WeaponData.WeaponFireMode.Count-1)
+            {
+                index = 0;
+            }
+            else
+            {
+                index++;
+            }
+
+            currentFireMode = m_WeaponData.WeaponFireMode[index];
+            if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedureMain)
+            {
+                procedureMain.RefreshUI();
+            }
         }
 
         protected override void OnAttached(EntityLogic childEntity, Transform parentTransform, object userData)
@@ -297,10 +326,18 @@ namespace FPS
                 weaponAnimator.SetTrigger(Falling);
                 isGroundTrigger = false;
             }
-            
+
+            var index = weaponAnimator.GetLayerIndex("Reload Layer");
+            if (weaponAnimator.GetCurrentAnimatorClipInfo(index).Length>0)
+            {
+                isReload = weaponAnimator.GetCurrentAnimatorClipInfo(index)[0].clip.name=="Reload";
+                isEmptyReload = weaponAnimator.GetCurrentAnimatorClipInfo(index)[0].clip.name == "EmptyReload";
+            }
+
             weaponAnimator.SetBool(IsWalking,player.isWalking);
             weaponAnimator.SetBool(IsSprinting,player.isSprinting);
             weaponAnimator.SetFloat(WeaponAnimationSpeed,player.weaponAnimationSpeed);
+            Back();
         }
 
         private void CalculateWeaponSway()

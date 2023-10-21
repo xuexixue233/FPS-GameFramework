@@ -13948,9 +13948,9 @@ MonoBehaviour:
   swayAmountB: 2
   swayScale: 1000
   swayLerpSpeed: 14
-  recoilX: -0.5
+  recoilX: -1
   recoilY: 1
-  recoilZ: 3
+  recoilZ: 4
   kickBackZ: 0.2
   snappiness: 5
   returnAmount: 8

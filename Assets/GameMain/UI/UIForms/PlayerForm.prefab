@@ -849,9 +849,14 @@ MonoBehaviour:
   weaponName: {fileID: 6616229808462203486}
   HP: {fileID: 5228661166114119430}
   weaponItem: {fileID: 3658318281773045600}
+  weaponModeImage: {fileID: 8483971361327038889}
   currentBullets: {fileID: 6222047544496011661}
-  weaponMaxBullets: {fileID: 0}
   playerMaxBullets: {fileID: 418461749081578918}
+  FireModeSprites:
+  - {fileID: 21300000, guid: e06c5e8a44af05041acb51eca267a500, type: 3}
+  - {fileID: 21300000, guid: a4ffb09b9cda3a245b19803e255dcaba, type: 3}
+  - {fileID: 21300000, guid: e0353cac58645a94e82bba3f1433d61c, type: 3}
+  - {fileID: 21300000, guid: 2cebf0c90412d5043b017631d161b738, type: 3}
 --- !u!1 &6424986987246688875
 GameObject:
   m_ObjectHideFlags: 0

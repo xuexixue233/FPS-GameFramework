@@ -84,7 +84,7 @@ namespace FPS
             base.OnLeave(procedureOwner, isShutdown);
         }
         
-        protected virtual void OnShowEntitySuccess(object sender, GameEventArgs e)
+        private void OnShowEntitySuccess(object sender, GameEventArgs e)
         {
             ShowEntitySuccessEventArgs ne = (ShowEntitySuccessEventArgs)e;
             if (ne.EntityLogicType == typeof(Player))
@@ -101,11 +101,11 @@ namespace FPS
             else if (ne.EntityLogicType==typeof(WeaponMod))
             {
                 var weaponMod = (WeaponMod)ne.Entity.Logic;
-                
+                RefreshUI();
             }
         }
         
-        protected virtual void OnOpenUIFormSuccess(object sender, GameEventArgs e)
+        private void OnOpenUIFormSuccess(object sender, GameEventArgs e)
         {
             OpenUIFormSuccessEventArgs ne = (OpenUIFormSuccessEventArgs)e;
             if (ne.UIForm.Logic is PlayerForm _playerForm)
@@ -114,6 +114,11 @@ namespace FPS
                 playerForm.procedureMain = this;
                 return;
             }
+        }
+
+        public void RefreshUI()
+        {
+            playerForm.PlayerCard.Refresh(player);
         }
     }
 }

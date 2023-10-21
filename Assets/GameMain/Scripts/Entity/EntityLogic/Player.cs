@@ -13,25 +13,23 @@ namespace FPS
         /// <summary>
         /// 配置数据
         /// </summary>
-        [SerializeField] 
-        public PlayerData m_PlayerData = null;
+        [SerializeField] public PlayerData m_PlayerData = null;
 
         /// <summary>
         /// 外部数据
         /// </summary>
-        [SerializeField]
-        public PlayerExData m_PlayerExData;
+        [SerializeField] public PlayerExData m_PlayerExData;
 
         private CharacterController m_characterController;
         private DefaultInput _defaultInput;
         public Vector2 input_Movement;
         public Vector2 input_View;
         private Vector3 newCameraRotation;
-        
+
         public float viewClampYMin = -70;
         public float viewClampYMax = 80;
-        
-        public float playerGravity=(float)-9.81;
+
+        public float playerGravity = (float)-9.81;
         private Vector3 movementSpeed;
         private Vector3 newMovementSpeed;
         private Vector3 newMovementSpeedVelocity;
@@ -46,15 +44,11 @@ namespace FPS
         private float stanceHeightVelocity;
         private Vector3 stanceCenterVelocity;
 
-        [HideInInspector]
-        public float weaponAnimationSpeed;
+        [HideInInspector] public float weaponAnimationSpeed;
 
-        [HideInInspector]
-        public bool isGrounded;
-        [HideInInspector]
-        public bool isFalling;
-        [HideInInspector]
-        public bool isAimingIn;
+        [HideInInspector] public bool isGrounded;
+        [HideInInspector] public bool isFalling;
+        [HideInInspector] public bool isAimingIn;
 
         public float currentLean;
         public float targetLean;
@@ -64,6 +58,8 @@ namespace FPS
 
         private bool isFire;
         private bool isReload;
+
+        public int playerMaxBullets = 300;
 
         protected override void OnInit(object userData)
         {
@@ -80,20 +76,18 @@ namespace FPS
             _defaultInput.Character.SprintingReleased.performed += e => StopSprint();
             _defaultInput.Weapon.FireAim.performed += e => AimingIn();
 
-            _defaultInput.Character.LeanLeftPressed.performed += e => { isLeaningLeft = true;};
-            _defaultInput.Character.LeanLeftReleased.performed += e => { isLeaningLeft = false;};
-            _defaultInput.Character.LeanRightPressed.performed += e => { isLeaningRight = true;};
-            _defaultInput.Character.LeanRightReleased.performed += e => { isLeaningRight = false;};
+            _defaultInput.Character.LeanLeftPressed.performed += e => { isLeaningLeft = true; };
+            _defaultInput.Character.LeanLeftReleased.performed += e => { isLeaningLeft = false; };
+            _defaultInput.Character.LeanRightPressed.performed += e => { isLeaningRight = true; };
+            _defaultInput.Character.LeanRightReleased.performed += e => { isLeaningRight = false; };
 
             _defaultInput.Weapon.FirePressed.performed += e => FireStart();
-            _defaultInput.Weapon.FireReleased.performed += e=> FireStop();
-            _defaultInput.Weapon.Reload.performed += e =>
-            {
-                isReload = true;
-            };
-            
+            _defaultInput.Weapon.FireReleased.performed += e => FireStop();
+            _defaultInput.Weapon.Reload.performed += e => WeaponReload();
+            _defaultInput.Weapon.SwitchFireMode.performed += e => showedWeapon.ChangeFireMode();
+
             _defaultInput.Enable();
-            
+
             newCameraRotation = m_PlayerExData.cameraHolder.localRotation.eulerAngles;
             newSoldierRotation = m_PlayerExData.soldierTransform.localRotation.eulerAngles;
             m_characterController = GetComponentInChildren<CharacterController>();
@@ -113,7 +107,6 @@ namespace FPS
             }
 
             m_PlayerData.HP = 100;
-            
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
@@ -121,7 +114,7 @@ namespace FPS
             base.OnUpdate(elapseSeconds, realElapseSeconds);
             SetIsGrounded();
             SetIsFalling();
-            
+
             CalculateView();
             CalculateMovement();
             CalculateJump();
@@ -141,7 +134,7 @@ namespace FPS
         private void AimingIn()
         {
             isAimingIn = !isAimingIn;
-            if (showedWeapon==null)
+            if (showedWeapon == null)
             {
                 return;
             }
@@ -152,31 +145,86 @@ namespace FPS
         private void FireStart()
         {
             isFire = true;
-            if (showedWeapon==null)
+            if (showedWeapon == null)
             {
                 return;
             }
-            showedWeapon.isFire = isFire;
+
+            if (showedWeapon.currentFireMode==FireMode.Auto)
+            {
+                showedWeapon.isFire = isFire;
+            }
+            else
+            {
+                showedWeapon.WeaponFire();
+            }
         }
-        
+
         private void FireStop()
         {
             isFire = false;
-            if (showedWeapon==null)
+            if (showedWeapon == null)
             {
                 return;
             }
+
             showedWeapon.isFire = isFire;
+        }
+
+        private void WeaponReload()
+        {
+            if (isReload || showedWeapon.currentBullets == 31 || playerMaxBullets <= 0)
+            {
+                return;
+            }
+
+            isReload = true;
+            Invoke(nameof(ResetReload), 2.5f);
+            if (showedWeapon == null)
+            {
+                return;
+            }
+
+            if (isAimingIn)
+            {
+                AimingIn();
+            }
+
+            showedWeapon.weaponAnimator.SetTrigger(showedWeapon.currentBullets == 0 ? "EmptyReload" : "Reload");
+            if (showedWeapon.currentBullets == 0)
+            {
+                showedWeapon.currentBullets = 30;
+                playerMaxBullets -= 30;
+            }
+            else
+            {
+                playerMaxBullets = playerMaxBullets - 31 + showedWeapon.currentBullets;
+                showedWeapon.currentBullets = 31;
+            }
+
+            if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedureMain)
+            {
+                procedureMain.RefreshUI();
+            }
+        }
+
+        private void ResetReload()
+        {
+            isReload = false;
         }
 
         private void CalculateView()
         {
-            newSoldierRotation.y += m_PlayerExData.playerSetting.ViewXSensitivity * (isAimingIn ? m_PlayerExData.playerSetting.AimingSpeedEffector : 1)*
-                                    (m_PlayerExData.playerSetting.ViewXInverted ? -input_View.x:input_View.x) * Time.deltaTime;
+            newSoldierRotation.y += m_PlayerExData.playerSetting.ViewXSensitivity *
+                                    (isAimingIn ? m_PlayerExData.playerSetting.AimingSpeedEffector : 1) *
+                                    (m_PlayerExData.playerSetting.ViewXInverted ? -input_View.x : input_View.x) *
+                                    Time.deltaTime;
             m_PlayerExData.soldierTransform.rotation = Quaternion.Euler(newSoldierRotation);
-            
-            newCameraRotation.x += m_PlayerExData.playerSetting.ViewYSensitivity * (isAimingIn ? m_PlayerExData.playerSetting.AimingSpeedEffector : 1)*
-                                   (m_PlayerExData.playerSetting.ViewYInverted ? input_View.y:-input_View.y) * Time.deltaTime;
+
+            newCameraRotation.x += m_PlayerExData.playerSetting.ViewYSensitivity *
+                                   (isAimingIn ? m_PlayerExData.playerSetting.AimingSpeedEffector : 1) *
+                                   (m_PlayerExData.playerSetting.ViewYInverted ? input_View.y : -input_View.y) *
+                                   Time.deltaTime;
             newCameraRotation.x = Mathf.Clamp(newCameraRotation.x, viewClampYMin, viewClampYMax);
 
             m_PlayerExData.cameraHolder.localRotation = Quaternion.Euler(newCameraRotation);
@@ -184,12 +232,11 @@ namespace FPS
 
         private void CalculateMovement()
         {
-            
-            if (input_Movement.y<=0.2f)
+            if (input_Movement.y <= 0.2f)
             {
                 isSprinting = false;
             }
-            
+
             var verticalSpeed = m_PlayerData.WalkingForwardSpeed;
             var horizontalSpeed = m_PlayerData.WalkingStrafeSpeed;
 
@@ -203,11 +250,11 @@ namespace FPS
             {
                 m_PlayerExData.playerSetting.SpeedEffector = m_PlayerExData.playerSetting.FallingSpeedEffector;
             }
-            else if (m_PlayerExData.playerStance==Scr_Models.PlayerStance.Crouch)
+            else if (m_PlayerExData.playerStance == Scr_Models.PlayerStance.Crouch)
             {
                 m_PlayerExData.playerSetting.SpeedEffector = m_PlayerExData.playerSetting.CrouchSpeedEffector;
             }
-            else if(m_PlayerExData.playerStance==Scr_Models.PlayerStance.Prone)
+            else if (m_PlayerExData.playerStance == Scr_Models.PlayerStance.Prone)
             {
                 m_PlayerExData.playerSetting.SpeedEffector = m_PlayerExData.playerSetting.ProneSpeedEffector;
             }
@@ -220,10 +267,11 @@ namespace FPS
                 m_PlayerExData.playerSetting.SpeedEffector = 1;
             }
 
-            weaponAnimationSpeed = m_characterController.velocity.magnitude / (m_PlayerData.WalkingForwardSpeed*m_PlayerExData.playerSetting.SpeedEffector);
+            weaponAnimationSpeed = m_characterController.velocity.magnitude /
+                                   (m_PlayerData.WalkingForwardSpeed * m_PlayerExData.playerSetting.SpeedEffector);
             isWalking = weaponAnimationSpeed != 0;
-            
-            if (weaponAnimationSpeed  > 1)
+
+            if (weaponAnimationSpeed > 1)
             {
                 weaponAnimationSpeed = 1;
             }
@@ -233,7 +281,10 @@ namespace FPS
 
             newMovementSpeed = Vector3.SmoothDamp(newMovementSpeed,
                 new Vector3(horizontalSpeed * input_Movement.x, movementSpeed.y, verticalSpeed * input_Movement.y),
-                ref newMovementSpeedVelocity, isGrounded? m_PlayerExData.playerSetting.MovementSmoothing : m_PlayerExData.playerSetting.FallingSmoothing);
+                ref newMovementSpeedVelocity,
+                isGrounded
+                    ? m_PlayerExData.playerSetting.MovementSmoothing
+                    : m_PlayerExData.playerSetting.FallingSmoothing);
 
             movementSpeed = m_characterController.transform.TransformDirection(newMovementSpeed);
 
@@ -241,12 +292,12 @@ namespace FPS
             {
                 movementSpeed.y = 0f;
             }
-            
+
             movementSpeed.y += playerGravity * Time.deltaTime;
-            
+
             movementSpeed += jumpingForce;
 
-            m_characterController.Move(movementSpeed*Time.deltaTime);
+            m_characterController.Move(movementSpeed * Time.deltaTime);
         }
 
         private void CalculateLeaning()
@@ -263,9 +314,10 @@ namespace FPS
             {
                 targetLean = 0;
             }
+
             currentLean = Mathf.SmoothDamp(currentLean, targetLean, ref leanVelocity, m_PlayerExData.leanSmoothing);
-            
-            m_PlayerExData.leanPivot.localRotation=Quaternion.Euler(new Vector3(0,0,currentLean));
+
+            m_PlayerExData.leanPivot.localRotation = Quaternion.Euler(new Vector3(0, 0, currentLean));
         }
 
         private void CalculateJump()
@@ -277,11 +329,11 @@ namespace FPS
         private void CalculateStance()
         {
             var stance = m_PlayerExData.standStance;
-            if (m_PlayerExData.playerStance==Scr_Models.PlayerStance.Crouch)
+            if (m_PlayerExData.playerStance == Scr_Models.PlayerStance.Crouch)
             {
                 stance = m_PlayerExData.crouchStance;
             }
-            else if (m_PlayerExData.playerStance==Scr_Models.PlayerStance.Prone)
+            else if (m_PlayerExData.playerStance == Scr_Models.PlayerStance.Prone)
             {
                 stance = m_PlayerExData.proneStance;
             }
@@ -312,12 +364,13 @@ namespace FPS
                 {
                     return;
                 }
+
                 m_PlayerExData.playerStance = Scr_Models.PlayerStance.Stand;
                 return;
             }
-            
 
-            jumpingForce = Vector3.up*m_PlayerExData.playerSetting.JumpingHeight;
+
+            jumpingForce = Vector3.up * m_PlayerExData.playerSetting.JumpingHeight;
             showedWeapon.TriggerJump();
         }
 
@@ -335,12 +388,13 @@ namespace FPS
 
         private void Crouch()
         {
-            if (m_PlayerExData.playerStance==Scr_Models.PlayerStance.Crouch)
+            if (m_PlayerExData.playerStance == Scr_Models.PlayerStance.Crouch)
             {
                 if (StanceCheck(m_PlayerExData.standStance.CharacterHeight))
                 {
                     return;
                 }
+
                 m_PlayerExData.playerStance = Scr_Models.PlayerStance.Stand;
                 return;
             }
@@ -349,22 +403,23 @@ namespace FPS
             {
                 return;
             }
-            
+
             m_PlayerExData.playerStance = Scr_Models.PlayerStance.Crouch;
-            
         }
 
         private void Prone()
         {
-            if (m_PlayerExData.playerStance==Scr_Models.PlayerStance.Prone)
+            if (m_PlayerExData.playerStance == Scr_Models.PlayerStance.Prone)
             {
                 if (StanceCheck(m_PlayerExData.standStance.CharacterHeight))
                 {
                     return;
                 }
+
                 m_PlayerExData.playerStance = Scr_Models.PlayerStance.Stand;
                 return;
             }
+
             m_PlayerExData.playerStance = Scr_Models.PlayerStance.Prone;
         }
 
@@ -372,21 +427,24 @@ namespace FPS
         {
             var feetPosition = m_PlayerExData.feetTransform.position;
             var radius = m_characterController.radius;
-            var start = new Vector3(feetPosition.x,feetPosition.y+radius+stanceCheckErrorMargin,feetPosition.z);
-            var end = new Vector3(feetPosition.x,feetPosition.y-radius-stanceCheckErrorMargin+stanceCheckHeight,feetPosition.z);
-            
-            return Physics.CheckCapsule(start,end,radius,m_PlayerExData.playerMask);
+            var start = new Vector3(feetPosition.x, feetPosition.y + radius + stanceCheckErrorMargin, feetPosition.z);
+            var end = new Vector3(feetPosition.x, feetPosition.y - radius - stanceCheckErrorMargin + stanceCheckHeight,
+                feetPosition.z);
+
+            return Physics.CheckCapsule(start, end, radius, m_PlayerExData.playerMask);
         }
 
         private void ToggleSprint()
         {
-            if (input_Movement.y<=0.2f)
+            if (input_Movement.y <= 0.2f)
             {
                 isSprinting = false;
                 return;
             }
+
             isSprinting = !isSprinting;
         }
+
         private void StopSprint()
         {
             if (m_PlayerExData.playerSetting.SprintingHold)
@@ -394,9 +452,10 @@ namespace FPS
                 isSprinting = false;
             }
         }
+
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireSphere(m_PlayerExData.feetTransform.position,m_PlayerExData.playerSetting.isGroundedRadius);
+            Gizmos.DrawWireSphere(m_PlayerExData.feetTransform.position, m_PlayerExData.playerSetting.isGroundedRadius);
         }
     }
 }
