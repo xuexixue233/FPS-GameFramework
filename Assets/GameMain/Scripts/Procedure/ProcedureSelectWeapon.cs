@@ -12,6 +12,8 @@ namespace FPS
 {
     public class ProcedureSelectWeapon : ProcedureBase
     {
+        public PlayerSaveData playerSaveData;
+        
         private EquipmentForm equipmentForm;
         private Weapon weapon;
         private List<RenderTexture> modTextures = new List<RenderTexture>();
@@ -52,10 +54,20 @@ namespace FPS
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Subscribe(ShowItemSuccessEventArgs.EventId, OnShowItemSuccess);
             GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId, ChangeSceneSuccess);
-            ReadAllModWeaponsData();
             _BackMenu = false;
-            GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), 30000, 0,
-                CampType.Unknown));
+            ReadAllModWeaponsData();
+            if (!GameEntry.Setting.HasSetting("PlayerSaveData"))
+            {
+                GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), 30001, 0,
+                    CampType.Unknown));
+                playerSaveData = new PlayerSaveData();
+            }
+            else
+            {
+                playerSaveData = GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
+                GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), playerSaveData.playerWeapon.weaponTypeId+1, 0,
+                    CampType.Unknown));
+            }
         }
 
         protected override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds,
@@ -76,7 +88,11 @@ namespace FPS
             GameEntry.Event.Unsubscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Unsubscribe(ShowItemSuccessEventArgs.EventId, OnShowItemSuccess);
             GameEntry.Event.Unsubscribe(ChangeSceneEventArgs.EventId, ChangeSceneSuccess);
-
+            modTextures.Clear();
+            previewMods.Clear();
+            currentMods.Clear();
+            activeSelects.Clear();
+            activeModUIItem.Clear();
             GameEntry.UI.CloseAllLoadedUIForms();
             equipmentForm = null;
         }
@@ -89,7 +105,10 @@ namespace FPS
                 return;
             }
             equipmentForm = (EquipmentForm)ne.UIForm.Logic;
-
+            foreach (var mod in playerSaveData.playerWeapon.modTypeIdDictionary)
+            {
+                ShowWeaponMod(mod.Key, mod.Value, weapon.m_WeaponData.Id);
+            }
             equipmentForm.procedureSelectWeapon = this;
         }
 
@@ -100,6 +119,7 @@ namespace FPS
                 return;
 
             _BackMenu = true;
+            
         }
 
         private void OnShowEntitySuccess(object sender, GameEventArgs e)

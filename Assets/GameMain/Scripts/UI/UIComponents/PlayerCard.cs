@@ -6,16 +6,17 @@ namespace FPS
 {
     public class PlayerCard : MonoBehaviour
     {
-        public TMP_Text Name;
-        
-        public Slider HP;
-        public Slider HPBackground;
+        public TMP_Text weaponName;
+        public Image HP;
+        public GameObject weaponItem;
+        public Image weaponModeImage;
+        public TMP_Text currentBullets;
+        public TMP_Text playerMaxBullets;
 
-        public void PlayerInit()
+        public void Refresh(Player player)
         {
-            HP.value = HP.maxValue;
-            HPBackground.value = HPBackground.maxValue;
-            Name.text = "Player";
+            HP.fillAmount = (float)player.m_PlayerData.HP / player.m_PlayerData.MaxHP;
+            currentBullets.text = $"{player.showedWeapon.currentBullets}/{player.showedWeapon.currentMaxBullets}";
         }
     }
 }

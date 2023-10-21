@@ -14,7 +14,7 @@ namespace FPS
         /// 配置数据
         /// </summary>
         [SerializeField] 
-        private PlayerData m_PlayerData = null;
+        public PlayerData m_PlayerData = null;
 
         /// <summary>
         /// 外部数据
@@ -63,7 +63,7 @@ namespace FPS
         private bool isLeaningRight;
 
         private bool isFire;
-
+        private bool isReload;
 
         protected override void OnInit(object userData)
         {
@@ -87,6 +87,10 @@ namespace FPS
 
             _defaultInput.Weapon.FirePressed.performed += e => FireStart();
             _defaultInput.Weapon.FireReleased.performed += e=> FireStop();
+            _defaultInput.Weapon.Reload.performed += e =>
+            {
+                isReload = true;
+            };
             
             _defaultInput.Enable();
             

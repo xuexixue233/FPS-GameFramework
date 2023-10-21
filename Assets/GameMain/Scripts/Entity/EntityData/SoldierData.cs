@@ -9,7 +9,7 @@ namespace FPS
     public abstract class SoldierData : TargetableObjectData
     {
         [SerializeField]
-        private List<WeaponData> m_WeaponDatas = new List<WeaponData>();
+        protected List<WeaponData> m_WeaponDatas = new List<WeaponData>();
         
         [SerializeField]
         private int m_MaxHP = 0;

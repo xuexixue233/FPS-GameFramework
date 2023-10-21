@@ -12,6 +12,7 @@ namespace FPS
 
         [SerializeField]
         public WeaponData m_WeaponData = null;
+        
         public WeaponExData m_WeaponExData;
         public WeaponAttribute weaponAttribute;
         
@@ -62,8 +63,12 @@ namespace FPS
         private Vector3 currentPosition;
         private Vector3 initialGunPosition;
 
+        [SerializeField]
         public Dictionary<Mod, WeaponMod> weaponMods = new Dictionary<Mod, WeaponMod>();
 
+        public int currentBullets=30;
+        public int currentMaxBullets=30;
+        private float fireTimer;
 
         protected override void OnInit(object userData)
         {
@@ -95,10 +100,21 @@ namespace FPS
 
             GameEntry.Entity.AttachEntity(Entity, m_WeaponData.OwnerId, soldier.soldierExData.WeaponTransform);
             soldier.showedWeapon = this;
+            if (m_WeaponData.weaponModId!=null)
+            {
+                foreach (var modId in m_WeaponData.weaponModId)
+                {
+                    GameEntry.Entity.ShowWeaponMod(new WeaponModData(GameEntry.Entity.GenerateSerialId(),modId.Value,m_WeaponData.Id,CampType.Player));
+                }
+            }
+            
             transform.transform.localPosition = m_WeaponExData.CameraTransform.localPosition * -1;
             transform.localScale = Vector3.one;
-            initialGunPosition = transform.localPosition;
+            initialGunPosition = m_WeaponExData.recoilTransform.localPosition;
+            
         }
+        
+        
 
         public void Initialise(Player m_player)
         {
@@ -119,6 +135,34 @@ namespace FPS
             SetWeaponAnimations();
             CalculateWeaponSway();
             CalculateAimingIn();
+            if (currentBullets>0 && isFire)
+            {
+                WeaponFire();
+            }
+
+            if (fireTimer<60.0f/m_WeaponData.FiringRate)
+            {
+                fireTimer += Time.deltaTime;
+            }
+        }
+        
+        
+
+        private void WeaponFire()
+        {
+            if (fireTimer<60.0f/m_WeaponData.FiringRate||currentBullets<=0)
+            {
+                return;
+            }
+            Recoil();
+            Back();
+            var position = m_WeaponExData.shootPoint.position;
+            if (Physics.Raycast(position,m_WeaponExData.shootPoint.up*-1,out RaycastHit hit,m_WeaponData.EffectiveFiringRange))
+            {
+                
+            }
+            currentBullets--;
+            
         }
 
         protected override void OnAttached(EntityLogic childEntity, Transform parentTransform, object userData)
@@ -228,13 +272,8 @@ namespace FPS
             targetRortation = Vector3.Lerp(targetRortation, Vector3.zero, Time.deltaTime * m_WeaponExData.returnAmount);
             currentRotation = Vector3.Slerp(currentRotation, targetRortation, Time.fixedDeltaTime * m_WeaponExData.snappiness);
 
-            transform.localRotation = Quaternion.Euler(newWeaponRotation+currentRotation);
-            if (isFire)
-            {
-                Recoil();
-            }
-
-            Back();
+            transform.localRotation = Quaternion.Euler(newWeaponRotation);
+            m_WeaponExData.recoilTransform.localRotation= Quaternion.Euler(currentRotation);
         }
 
         private void SetWeaponAnimations()
@@ -296,7 +335,7 @@ namespace FPS
         {
             targetPosition = Vector3.Lerp(targetPosition, initialGunPosition, Time.deltaTime * m_WeaponExData.returnAmount);
             currentPosition = Vector3.Lerp(currentPosition, targetPosition, Time.fixedDeltaTime * m_WeaponExData.snappiness);
-            transform.localPosition = currentPosition;
+            m_WeaponExData.recoilTransform.localPosition= currentPosition;
         }
         
         

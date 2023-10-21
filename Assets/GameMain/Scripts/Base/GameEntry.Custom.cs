@@ -22,10 +22,10 @@ namespace FPS
             private set;
         }
         
+        
         private static void InitCustomComponents()
         {
             Item=UnityGameFramework.Runtime.GameEntry.GetComponent<ItemComponent>();
-            
         }
     }
 }
