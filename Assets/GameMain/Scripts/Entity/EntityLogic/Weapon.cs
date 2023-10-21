@@ -154,13 +154,14 @@ namespace FPS
             {
                 return;
             }
-
-
+            Recoil();
+            Back();
             var position = m_WeaponExData.shootPoint.position;
             if (Physics.Raycast(position,m_WeaponExData.shootPoint.up*-1,out RaycastHit hit,m_WeaponData.EffectiveFiringRange))
             {
                 
             }
+            currentBullets--;
             
         }
 
@@ -273,12 +274,6 @@ namespace FPS
 
             transform.localRotation = Quaternion.Euler(newWeaponRotation);
             m_WeaponExData.recoilTransform.localRotation= Quaternion.Euler(currentRotation);
-            if (isFire)
-            {
-                Recoil();
-            }
-
-            Back();
         }
 
         private void SetWeaponAnimations()
