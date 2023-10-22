@@ -73,7 +73,8 @@ namespace FPS
         public int currentBullets=30;
         public int currentMaxBullets=30;
         private float fireTimer;
-
+        private bool isPlayerFireSound;
+        private int soundId;
         public FireMode currentFireMode;
 
         protected override void OnInit(object userData)
@@ -142,26 +143,47 @@ namespace FPS
             SetWeaponAnimations();
             CalculateWeaponSway();
             CalculateAimingIn();
-            if (currentBullets>0 && isFire)
+            
+            if (currentBullets>=0 && isFire)
             {
                 WeaponFire();
             }
+            
             
             if (fireTimer<60.0f/m_WeaponData.FiringRate)
             {
                 fireTimer += realElapseSeconds;
             }
         }
-        
-        
 
+        public void PlayerFireSound()
+        {
+            soundId=(int)GameEntry.Sound.PlaySound(10001);
+        }
+
+        public void StopFireSound()
+        {
+            GameEntry.Sound.StopSound(soundId);
+        }
+
+        public void PlayerFireSoundSingle()
+        {
+            soundId=(int)GameEntry.Sound.PlaySound(10006);
+        }
+        
         public void WeaponFire()
         {
+            if (currentBullets==0 && currentFireMode == FireMode.Auto)
+            {
+                StopFireSound();
+                return;
+            }
             if (fireTimer<60.0f/m_WeaponData.FiringRate||currentBullets<=0)
             {
                 return;
             }
             Recoil();
+            
             var position = m_WeaponExData.shootPoint.position;
             if (Physics.Raycast(position,m_WeaponExData.shootPoint.up*-1,out RaycastHit hit,m_WeaponData.EffectiveFiringRange))
             {
@@ -188,6 +210,7 @@ namespace FPS
             }
 
             currentFireMode = m_WeaponData.WeaponFireMode[index];
+            GameEntry.Sound.PlaySound(10002);
             if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedureMain)
             {
                 procedureMain.RefreshUI();

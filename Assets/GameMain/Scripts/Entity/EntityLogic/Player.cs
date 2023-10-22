@@ -150,13 +150,20 @@ namespace FPS
                 return;
             }
 
+            if (showedWeapon.currentBullets == 0)
+            {
+                showedWeapon.isFire = false;
+                return;
+            }
             if (showedWeapon.currentFireMode==FireMode.Auto)
             {
                 showedWeapon.isFire = isFire;
+                showedWeapon.PlayerFireSound();
             }
             else
             {
                 showedWeapon.WeaponFire();
+                showedWeapon.PlayerFireSoundSingle();
             }
         }
 
@@ -169,6 +176,10 @@ namespace FPS
             }
 
             showedWeapon.isFire = isFire;
+            if (showedWeapon.currentFireMode==FireMode.Auto)
+            {
+                showedWeapon.StopFireSound();
+            }
         }
 
         private void WeaponReload()

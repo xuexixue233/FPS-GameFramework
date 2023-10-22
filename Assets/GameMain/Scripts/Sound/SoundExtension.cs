@@ -118,6 +118,11 @@ namespace FPS
             GameEntry.Setting.Save();
         }
 
+        public static void FadeToStopSound()
+        {
+            //TODO:淡出声音
+        }
+
         public static float GetVolume(this SoundComponent soundComponent, string soundGroupName)
         {
             if (string.IsNullOrEmpty(soundGroupName))
