@@ -5,8 +5,8 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
-using GameFramework.Event;
-using UnityEngine;
+using FPSFramework;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
@@ -20,6 +20,7 @@ namespace FPS
         public Button StartButton;
         public Button EquipmentButton;
         public Button QuitButton;
+        public CommonButton c_StartButton;
 
         public void OnStartButtonClick()
         {
@@ -46,13 +47,25 @@ namespace FPS
         {
             base.OnInit(userData);
             StartButton.onClick.RemoveAllListeners();
-            StartButton.onClick.AddListener(OnStartButtonClick);
+            StartButton.onClick.AddListener(() =>
+            {
+                PlayUISound(10001);
+                OnStartButtonClick();
+            });
             
             QuitButton.onClick.RemoveAllListeners();
-            QuitButton.onClick.AddListener(OnQuitButtonClick);
+            QuitButton.onClick.AddListener(() =>
+            {
+                PlayUISound(10001);
+                OnQuitButtonClick();
+            });
             
             EquipmentButton.onClick.RemoveAllListeners();
-            EquipmentButton.onClick.AddListener(EquipmentButtonClick);
+            EquipmentButton.onClick.AddListener(() =>
+            {
+                PlayUISound(10001);
+                EquipmentButtonClick();
+            });
         }
 
         protected override void OnOpen(object userData)

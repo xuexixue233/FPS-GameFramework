@@ -12,11 +12,13 @@ namespace FPS
 
         private void BackMenu()
         {
+            PlayUISound(10001);
             Close();
         }
 
         private void StartGame()
         {
+            PlayUISound(10001);
             GameEntry.Event.Fire(this,ChangeSceneEventArgs.Create(2));
         }
         

@@ -190,8 +190,8 @@ GameObject:
   - component: {fileID: 3485692213574597004}
   - component: {fileID: 3485692213574597005}
   - component: {fileID: 3485692213574597006}
-  - component: {fileID: 3485692213574597007}
   - component: {fileID: 3485692213574597000}
+  - component: {fileID: 1189749190238080291}
   m_Layer: 5
   m_Name: Play
   m_TagString: Untagged
@@ -302,20 +302,22 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3485692213574597005}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
---- !u!114 &3485692213574597007
+      m_Calls: []
+--- !u!114 &3485692213574597000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3485692213574597002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding: {x: 0, y: 0, z: 0, w: 0}
+  m_Softness: {x: 0, y: 0}
+--- !u!114 &1189749190238080291
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -336,22 +338,8 @@ MonoBehaviour:
   movementSpeed: 2
   imageFadeSpeed: 5
   fadeSpeed: 20
-  pointerEnterSFX: {fileID: 0}
+  pointerEnterSFX: {fileID: 8300000, guid: e830964cdb85ff3429bca484c16bab44, type: 3}
   buttonDownSFX: {fileID: 0}
---- !u!114 &3485692213574597000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3485692213574597002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding: {x: 0, y: 0, z: 0, w: 0}
-  m_Softness: {x: 0, y: 0}
 --- !u!1 &3485692213782829440
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,19 +464,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3485692213782829467}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: Quit
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &3485692213782829445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -510,7 +486,7 @@ MonoBehaviour:
   movementSpeed: 2
   imageFadeSpeed: 5
   fadeSpeed: 20
-  pointerEnterSFX: {fileID: 0}
+  pointerEnterSFX: {fileID: 8300000, guid: e830964cdb85ff3429bca484c16bab44, type: 3}
   buttonDownSFX: {fileID: 0}
 --- !u!114 &3485692213782829446
 MonoBehaviour:
@@ -941,6 +917,7 @@ MonoBehaviour:
   StartButton: {fileID: 3485692213574597006}
   EquipmentButton: {fileID: 5905255392377920377}
   QuitButton: {fileID: 3485692213782829444}
+  c_StartButton: {fileID: 0}
 --- !u!1 &3485692215009487881
 GameObject:
   m_ObjectHideFlags: 0
@@ -1140,19 +1117,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4764629376731167705}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &5398564968181619147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1174,7 +1139,7 @@ MonoBehaviour:
   movementSpeed: 2
   imageFadeSpeed: 5
   fadeSpeed: 20
-  pointerEnterSFX: {fileID: 0}
+  pointerEnterSFX: {fileID: 8300000, guid: e830964cdb85ff3429bca484c16bab44, type: 3}
   buttonDownSFX: {fileID: 0}
 --- !u!114 &1556438813700488067
 MonoBehaviour:

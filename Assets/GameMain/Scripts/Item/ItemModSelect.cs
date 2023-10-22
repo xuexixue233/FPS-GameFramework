@@ -19,6 +19,7 @@ namespace FPS
             selectButton.onClick.RemoveAllListeners();
             selectButton.onClick.AddListener((() =>
             {
+                GameEntry.Sound.PlayUISound(10001);
                 _equipmentForm.procedureSelectWeapon.ShowWeaponMod(mod, modId, _equipmentForm.showedWeapon.Id);
                 _equipmentForm.procedureSelectWeapon.HideAllSelectButton();
             }));

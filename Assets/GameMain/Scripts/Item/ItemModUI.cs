@@ -29,6 +29,7 @@ namespace FPS
             modButton.onClick.RemoveAllListeners();
             modButton.onClick.AddListener((() =>
             {
+                GameEntry.Sound.PlayUISound(10001);
                 if (isOpened)
                 {
                     CloseList();

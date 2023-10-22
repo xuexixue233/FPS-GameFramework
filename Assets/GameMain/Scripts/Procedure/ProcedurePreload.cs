@@ -18,7 +18,9 @@ namespace FPS
             "Soldier",
             "Weapon",
             "WeaponMod",
-            "Item"
+            "Item",
+            "Sound",
+            "UISound"
         };
 
         private Dictionary<string, bool> m_LoadedFlag = new Dictionary<string, bool>();

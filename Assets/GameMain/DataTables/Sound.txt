@@ -1,0 +1,10 @@
+﻿#	声音配置表							
+#	Id		AssetName	Priority	Loop	Volume	SpatialBlend	MaxDistance
+#	int		string	int	bool	float	float	float
+#	声音编号		资源名称	优先级	是否循环	音量	声音空间混合量	声音最大距离
+	10000	M4A1枪声（未消音）	M4A1_Fire	0	TRUE	1	1	100
+	10001	M4A1枪声（消音）	M4A1_Fire_Silence	0	TRUE	1	1	100
+	10002	M4A1扳机声	M4A1_FireMode	0	FALSE	1	1	100
+	10003	装备武器声	Weapon_Equip	0	FALSE	1	1	100
+	10004	换弹夹（出）	Mag_Out	0	FALSE	1	1	100
+	10005	换弹夹（入）	Mag_In	0	FALSE	1	1	100

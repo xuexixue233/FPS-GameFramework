@@ -134,7 +134,6 @@ GameObject:
   m_Component:
   - component: {fileID: 70864867}
   - component: {fileID: 70864866}
-  - component: {fileID: 70864865}
   - component: {fileID: 70864864}
   m_Layer: 0
   m_Name: MainCamera
@@ -178,14 +177,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!81 &70864865
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 70864863}
-  m_Enabled: 1
 --- !u!20 &70864866
 Camera:
   m_ObjectHideFlags: 0
@@ -254,7 +245,6 @@ GameObject:
   m_Component:
   - component: {fileID: 646655777}
   - component: {fileID: 646655776}
-  - component: {fileID: 646655775}
   - component: {fileID: 646655774}
   m_Layer: 0
   m_Name: PreviewCamera
@@ -297,14 +287,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!81 &646655775
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 646655773}
-  m_Enabled: 1
 --- !u!20 &646655776
 Camera:
   m_ObjectHideFlags: 0
@@ -373,7 +355,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1053185952}
   - component: {fileID: 1053185949}
-  - component: {fileID: 1053185951}
   - component: {fileID: 1053185950}
   m_Layer: 0
   m_Name: BackGroundCamera
@@ -458,14 +439,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!81 &1053185951
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1053185948}
-  m_Enabled: 1
 --- !u!4 &1053185952
 Transform:
   m_ObjectHideFlags: 0
