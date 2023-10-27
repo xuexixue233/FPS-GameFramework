@@ -13948,10 +13948,10 @@ MonoBehaviour:
   swayAmountB: 2
   swayScale: 1000
   swayLerpSpeed: 14
-  recoilX: -1
-  recoilY: 1
-  recoilZ: 4
-  kickBackZ: 0.2
+  recoilX: -2
+  recoilY: 4
+  recoilZ: 5
+  kickBackZ: 1
   snappiness: 5
   returnAmount: 8
   recoilTransform: {fileID: 8850008319864346285}
