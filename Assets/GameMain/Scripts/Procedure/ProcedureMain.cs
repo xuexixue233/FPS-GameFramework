@@ -19,6 +19,8 @@ namespace FPS
         public Player player;
         public bool GameOver;
 
+        public GameObject enemySpawnPoints;
+
         public override bool UseNativeDialog => false;
 
         public void GotoMenu()
@@ -29,11 +31,13 @@ namespace FPS
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
+            enemySpawnPoints = GameObject.Find("EnemySpawn");
             playerSaveData=GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
             
             m_GotoMenu = false;
+            //生成玩家
             GameEntry.Entity.ShowPlayer(new PlayerData(GameEntry.Entity.GenerateSerialId(), 10000)
             {
                 Name = "Player",
@@ -42,6 +46,17 @@ namespace FPS
             GameOver = false;
             player = null;
             GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
+            
+            //生成敌人
+            var enemyPoints = enemySpawnPoints.GetComponentsInChildren<Transform>();
+            for (var i = 1; i < enemyPoints.Length; i++)
+            {
+                GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
+                {
+                    Name = $"Enemy{i}",
+                    Position = enemyPoints[i].position
+                });
+            }
         }
         
 

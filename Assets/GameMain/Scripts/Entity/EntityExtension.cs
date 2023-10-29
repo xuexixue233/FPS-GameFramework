@@ -30,6 +30,8 @@ namespace FPS
         {
             entityComponent.HideEntity(entity.Entity);
         }
+        
+        
 
         public static void AttachEntity(this EntityComponent entityComponent, Entity entity, int ownerId, string parentTransformPath = null, object userData = null)
         {
@@ -45,10 +47,10 @@ namespace FPS
         {
             entityComponent.ShowEntity(typeof(Player), "Player", Constant.AssetPriority.PlayerAsset, data);
         }
-        
-        public static void ShowAircraft(this EntityComponent entityComponent, SoldierData data)
+
+        public static void ShowEnemy(this EntityComponent entityComponent, EnemyData data)
         {
-            entityComponent.ShowEntity(typeof(Soldier), "Soldier", Constant.AssetPriority.SoldierAsset, data);
+            entityComponent.ShowEntity(typeof(Entity),"Enemy",Constant.AssetPriority.EnemyAsset,data);
         }
         
         public static void ShowWeapon(this EntityComponent entityComponent, WeaponData data)
