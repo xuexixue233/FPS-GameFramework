@@ -54,6 +54,8 @@ namespace FPS
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Subscribe(ShowItemSuccessEventArgs.EventId, OnShowItemSuccess);
             GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId, ChangeSceneSuccess);
+            GameEntry.Event.Subscribe(ShowAllSelectButtonEventArgs.EventId,ShowAllSelectButton);
+            GameEntry.Event.Subscribe(HideAllSelectButtonEventArgs.EventId,HideAllSelectButton);
             _BackMenu = false;
             ReadAllModWeaponsData();
             if (!GameEntry.Setting.HasSetting("PlayerSaveData"))
@@ -88,6 +90,8 @@ namespace FPS
             GameEntry.Event.Unsubscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Unsubscribe(ShowItemSuccessEventArgs.EventId, OnShowItemSuccess);
             GameEntry.Event.Unsubscribe(ChangeSceneEventArgs.EventId, ChangeSceneSuccess);
+            GameEntry.Event.Unsubscribe(ShowAllSelectButtonEventArgs.EventId,ShowAllSelectButton);
+            GameEntry.Event.Unsubscribe(HideAllSelectButtonEventArgs.EventId,HideAllSelectButton);
             modTextures.Clear();
             previewMods.Clear();
             currentMods.Clear();
@@ -201,8 +205,14 @@ namespace FPS
             }
         }
         
-        public void HideAllSelectButton()
+        public void HideAllSelectButton(object sender,GameEventArgs e)
         {
+            HideAllSelectButtonEventArgs ne = (HideAllSelectButtonEventArgs)e;
+            if (ne==null)
+            {
+                return;
+            }
+            
             foreach (var select in activeSelects)
             {
                 GameEntry.Item.HideItem(select.Item);
@@ -224,9 +234,16 @@ namespace FPS
             modTextures.Clear();
         }
         
-        public void ShowAllSelectButton(Mod mod)
+        public void ShowAllSelectButton(object sender, GameEventArgs e)
         {
-            HideAllSelectButton();
+            ShowAllSelectButtonEventArgs ne = (ShowAllSelectButtonEventArgs)e;
+
+            if (ne==null)
+            {
+                return;
+            }
+            var mod = ne.ShowMod;
+            showedItem = sender as ItemModUI;
             int i = 1;
             if (modItemsDictionary.TryGetValue(mod, out var list))
             {

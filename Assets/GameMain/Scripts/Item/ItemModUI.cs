@@ -46,11 +46,8 @@ namespace FPS
             modList.SetActive(true);
             showImage.SetActive(false);
             hideImage.SetActive(true);
-            if (GameEntry.Procedure.CurrentProcedure is ProcedureSelectWeapon procedure)
-            {
-                procedure.ShowAllSelectButton(_mod);
-                procedure.showedItem = this;
-            }
+            GameEntry.Event.Fire(this,HideAllSelectButtonEventArgs.Create());
+            GameEntry.Event.Fire(this,ShowAllSelectButtonEventArgs.Create(_mod));
             isOpened = true;
         }
 
@@ -59,10 +56,7 @@ namespace FPS
             modList.SetActive(false);
             showImage.SetActive(true);
             hideImage.SetActive(false);
-            if (GameEntry.Procedure.CurrentProcedure is ProcedureSelectWeapon procedure)
-            {
-                procedure.HideAllSelectButton();
-            }
+            GameEntry.Event.Fire(this,HideAllSelectButtonEventArgs.Create());
             isOpened = false;
         }
 

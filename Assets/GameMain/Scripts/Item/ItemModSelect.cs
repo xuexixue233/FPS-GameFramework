@@ -21,7 +21,7 @@ namespace FPS
             {
                 GameEntry.Sound.PlayUISound(10001);
                 _equipmentForm.procedureSelectWeapon.ShowWeaponMod(mod, modId, _equipmentForm.showedWeapon.Id);
-                _equipmentForm.procedureSelectWeapon.HideAllSelectButton();
+                GameEntry.Event.Fire(this,HideAllSelectButtonEventArgs.Create());
             }));
         }
 
@@ -37,7 +37,7 @@ namespace FPS
                 selectButton.onClick.AddListener((() =>
                 {
                     _equipmentForm.procedureSelectWeapon.HideItemModUI(mod);
-                    _equipmentForm.procedureSelectWeapon.HideAllSelectButton();
+                    GameEntry.Event.Fire(this,HideAllSelectButtonEventArgs.Create());
                 }));
                 return;
             }
