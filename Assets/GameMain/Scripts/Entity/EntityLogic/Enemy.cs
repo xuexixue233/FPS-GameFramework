@@ -34,6 +34,12 @@ namespace FPS
             _behaviorTree.Start();
         }
 
+        protected override void OnDead(Entity attacker)
+        {
+            _behaviorTree.OnDestroy();
+            base.OnDead(attacker);
+        }
+
         protected override void OnHide(bool isShutdown, object userData)
         {
             base.OnHide(isShutdown, userData);

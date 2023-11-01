@@ -16,7 +16,7 @@ namespace FPS
 
         public List<Sprite> FireModeSprites;
 
-        public void Refresh(Player player)
+        public void OnInit(Player player)
         {
             weaponModeImage.sprite = FireModeSprites[(int)player.showedWeapon.currentFireMode];
             HP.fillAmount = (float)player.m_PlayerData.HP / player.m_PlayerData.MaxHP;

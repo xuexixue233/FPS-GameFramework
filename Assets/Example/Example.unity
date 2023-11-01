@@ -779,6 +779,11 @@ MonoBehaviour:
     m_InstanceCapacity: 0
     m_InstanceExpireTime: 0
     m_InstancePriority: 0
+  - m_Name: Enemy
+    m_InstanceAutoReleaseInterval: 0
+    m_InstanceCapacity: 0
+    m_InstanceExpireTime: 0
+    m_InstancePriority: 0
 --- !u!1 &1155631010
 GameObject:
   m_ObjectHideFlags: 0

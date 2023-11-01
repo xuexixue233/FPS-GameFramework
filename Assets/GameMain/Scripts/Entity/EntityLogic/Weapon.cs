@@ -17,7 +17,8 @@ namespace FPS
         public WeaponAttribute weaponAttribute;
         
         public Soldier soldier;
-        public Player player;
+        private Player player;
+        private Enemy enemy;
         private bool isPlayerWeapon;
 
         public Animator weaponAnimator;
@@ -185,20 +186,35 @@ namespace FPS
             Recoil();
             
             var position = m_WeaponExData.shootPoint.position;
+            //射线检测为直线，按照现实逻辑应为抛物线，TODO:修改射线
+            //射击有效距离确定分最进距离为最远距离，分别为射线三点成一线与子弹抛物线的交点
             if (Physics.Raycast(position,m_WeaponExData.shootPoint.up*-1,out RaycastHit hit,m_WeaponData.EffectiveFiringRange))
             {
-                
+                if (hit.transform.CompareTag("Enemy"))
+                {
+                    Enemy enemy = hit.transform.GetComponent<Enemy>();
+                    AIUtility.AttackCollision(player,enemy,GetAttack());
+                }
+                else if (hit.transform.CompareTag("Untagged"))
+                {
+                    //TODO:生成弹孔
+                }
+                else if (hit.transform.CompareTag("Player"))
+                {
+                    Player player = hit.transform.GetComponent<Player>();
+                    AIUtility.AttackCollision(enemy,player,GetAttack());
+                }
             }
+
+            int lastBullets = currentBullets;
             currentBullets--;
-            if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedureMain)
-            {
-                procedureMain.RefreshUI();
-            }
+            GameEntry.Event.Fire(this,WeaponBulletsChangeEventArgs.Create(lastBullets,currentBullets));
             fireTimer = 0;
         }
         
         public void ChangeFireMode()
         {
+            var lastFireMode = currentFireMode;
             var index = m_WeaponData.WeaponFireMode.IndexOf(currentFireMode);
             if (index==m_WeaponData.WeaponFireMode.Count-1)
             {
@@ -211,10 +227,7 @@ namespace FPS
 
             currentFireMode = m_WeaponData.WeaponFireMode[index];
             GameEntry.Sound.PlaySound(10002);
-            if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedureMain)
-            {
-                procedureMain.RefreshUI();
-            }
+            GameEntry.Event.Fire(this,WeaponFireModeChangeEventArgs.Create(lastFireMode,currentFireMode));
         }
 
         protected override void OnAttached(EntityLogic childEntity, Transform parentTransform, object userData)
@@ -397,7 +410,32 @@ namespace FPS
             currentPosition = Vector3.Lerp(currentPosition, targetPosition, Time.fixedDeltaTime * m_WeaponExData.snappiness);
             m_WeaponExData.recoilTransform.localPosition= currentPosition;
         }
-        
-        
+
+        private int GetAttack()
+        {
+            int attack = 0;
+            switch (m_WeaponData.Caliber)
+            {
+                case "556*45NATO":
+                    attack = 20;
+                    break;
+                case "762*39":
+                    attack = 25;
+                    break;
+                case "545*39":
+                    attack = 15;
+                    break;
+                case "9*19":
+                    attack = 5;
+                    break;
+                case "762*51":
+                    attack = 30;
+                    break;
+                case "762*54":
+                    attack = 35;
+                    break;
+            }
+            return attack;
+        }
     }
 }

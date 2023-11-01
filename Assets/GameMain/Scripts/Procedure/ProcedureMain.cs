@@ -48,15 +48,15 @@ namespace FPS
             GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
             
             //生成敌人
-            var enemyPoints = enemySpawnPoints.GetComponentsInChildren<Transform>();
-            for (var i = 1; i < enemyPoints.Length; i++)
-            {
-                GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
-                {
-                    Name = $"Enemy{i}",
-                    Position = enemyPoints[i].position
-                });
-            }
+            // var enemyPoints = enemySpawnPoints.GetComponentsInChildren<Transform>();
+            // for (var i = 1; i < enemyPoints.Length; i++)
+            // {
+            //     GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
+            //     {
+            //         Name = $"Enemy{i}",
+            //         Position = enemyPoints[i].position
+            //     });
+            // }
         }
         
 
@@ -116,7 +116,7 @@ namespace FPS
             else if (ne.EntityLogicType==typeof(WeaponMod))
             {
                 var weaponMod = (WeaponMod)ne.Entity.Logic;
-                RefreshUI();
+                playerForm.PlayerCard.OnInit(player);
             }
         }
         
@@ -129,11 +129,6 @@ namespace FPS
                 playerForm.procedureMain = this;
                 return;
             }
-        }
-
-        public void RefreshUI()
-        {
-            playerForm.PlayerCard.Refresh(player);
         }
     }
 }

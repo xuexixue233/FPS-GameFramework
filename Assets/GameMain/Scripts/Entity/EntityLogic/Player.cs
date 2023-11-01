@@ -201,22 +201,23 @@ namespace FPS
                 AimingIn();
             }
 
+            int lastBullets=playerMaxBullets;
+            int weaponLastBullets = showedWeapon.currentBullets;
+
             showedWeapon.weaponAnimator.SetTrigger(showedWeapon.currentBullets == 0 ? "EmptyReload" : "Reload");
             if (showedWeapon.currentBullets == 0)
             {
                 showedWeapon.currentBullets = 30;
                 playerMaxBullets -= 30;
+                
             }
             else
             {
                 playerMaxBullets = playerMaxBullets - 31 + showedWeapon.currentBullets;
                 showedWeapon.currentBullets = 31;
             }
-
-            if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedureMain)
-            {
-                procedureMain.RefreshUI();
-            }
+            GameEntry.Event.Fire(this,PlayerBulletsChangeEventArgs.Create(lastBullets,playerMaxBullets));
+            GameEntry.Event.Fire(showedWeapon,WeaponBulletsChangeEventArgs.Create(weaponLastBullets,showedWeapon.currentBullets));
         }
 
         private void ResetReload()
