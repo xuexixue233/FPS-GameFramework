@@ -352,6 +352,11 @@ MonoBehaviour:
     m_InstanceCapacity: 0
     m_InstanceExpireTime: 0
     m_InstancePriority: 0
+  - m_Name: ItemBulletHole
+    m_InstanceAutoReleaseInterval: 0
+    m_InstanceCapacity: 0
+    m_InstanceExpireTime: 0
+    m_InstancePriority: 0
 --- !u!114 &1145954394
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -103,7 +103,16 @@ namespace FPS
 
         public static void AttackCollision(Entity attacker,Entity other,int reducedHP)
         {
-            
+            if (other==null || attacker == null)
+            {
+                return;
+            }
+
+            var target = other as TargetableObject;
+            if (target!=null)
+            {
+                
+            }
         }
 
         // public static void PerformCollision(TargetableObject entity, Entity other)

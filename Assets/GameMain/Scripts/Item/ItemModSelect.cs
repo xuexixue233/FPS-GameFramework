@@ -20,7 +20,7 @@ namespace FPS
             selectButton.onClick.AddListener((() =>
             {
                 GameEntry.Sound.PlayUISound(10001);
-                _equipmentForm.procedureSelectWeapon.ShowWeaponMod(mod, modId, _equipmentForm.showedWeapon.Id);
+                GameEntry.Event.Fire(this,ShowWeaponModEventArgs.Create(mod, modId, _equipmentForm.showedWeapon.Id));
                 GameEntry.Event.Fire(this,HideAllSelectButtonEventArgs.Create());
             }));
         }
@@ -36,7 +36,7 @@ namespace FPS
                 selectButton.onClick.RemoveAllListeners();
                 selectButton.onClick.AddListener((() =>
                 {
-                    _equipmentForm.procedureSelectWeapon.HideItemModUI(mod);
+                    GameEntry.Event.Fire(this,HideItemModUIEventArgs.Create(mod));
                     GameEntry.Event.Fire(this,HideAllSelectButtonEventArgs.Create());
                 }));
                 return;
