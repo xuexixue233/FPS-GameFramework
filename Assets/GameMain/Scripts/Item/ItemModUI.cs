@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using GameFramework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
@@ -47,7 +48,7 @@ namespace FPS
             showImage.SetActive(false);
             hideImage.SetActive(true);
             GameEntry.Event.Fire(this,HideAllSelectButtonEventArgs.Create());
-            GameEntry.Event.Fire(this,ShowAllSelectButtonEventArgs.Create(_mod));
+            GameEntry.Event.Fire(this,ShowAllSelectButtonEventArgs.Create(_mod,this));
             isOpened = true;
         }
 
@@ -82,6 +83,5 @@ namespace FPS
             lineRenderer.SetPosition(0,start);
             lineRenderer.SetPosition(1,end);
         }
-        
     }
 }

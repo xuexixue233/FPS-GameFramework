@@ -30,8 +30,11 @@ namespace FPS
         {
             entityComponent.HideEntity(entity.Entity);
         }
-        
-        
+
+        public static void ShowEffect(this EntityComponent entityComponent, EffectData data)
+        {
+            entityComponent.ShowEntity(typeof(Effect),"Effect",Constant.AssetPriority.EffectAsset,data);
+        }
 
         public static void AttachEntity(this EntityComponent entityComponent, Entity entity, int ownerId, string parentTransformPath = null, object userData = null)
         {

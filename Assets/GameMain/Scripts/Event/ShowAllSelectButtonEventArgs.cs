@@ -10,6 +10,7 @@ namespace FPS
         public override void Clear()
         {
             ShowMod = Mod.None;
+            ItemModUI = null;
         }
         
         public Mod ShowMod
@@ -17,19 +18,26 @@ namespace FPS
             get;
             private set;
         }
-        
 
+        public ItemModUI ItemModUI
+        {
+            get;
+            private set;
+        }
+        
         public override int Id => EventId;
         
         public ShowAllSelectButtonEventArgs()
         {
             ShowMod = Mod.None;
+            ItemModUI = null;
         }
         
-        public static ShowAllSelectButtonEventArgs Create(Mod mod, object userData = null)
+        public static ShowAllSelectButtonEventArgs Create(Mod mod,ItemModUI itemModUI, object userData = null)
         {
             ShowAllSelectButtonEventArgs showAllSelectButtonEventArgs = ReferencePool.Acquire<ShowAllSelectButtonEventArgs>();
             showAllSelectButtonEventArgs.ShowMod = mod;
+            showAllSelectButtonEventArgs.ItemModUI = itemModUI;
             return showAllSelectButtonEventArgs;
         }
     }

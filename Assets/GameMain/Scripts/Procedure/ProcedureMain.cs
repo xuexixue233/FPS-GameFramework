@@ -35,7 +35,7 @@ namespace FPS
             playerSaveData=GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
-            GameEntry.Event.Subscribe(ShowItemSuccessEventArgs.EventId,OnShowItemSuccess);
+            
             
             m_GotoMenu = false;
             //生成玩家

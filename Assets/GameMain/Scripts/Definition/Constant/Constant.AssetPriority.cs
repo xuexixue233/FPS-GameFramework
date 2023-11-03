@@ -28,6 +28,7 @@ namespace FPS
             public const int EnemyAsset = 80;
             public const int WeaponAsset = 30;
             public const int WeaponModAsset = 20;
+            public const int EffectAsset = 70;
 
 
             public const int ItemModUIAsset = 10;
