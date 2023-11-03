@@ -49,15 +49,15 @@ namespace FPS
             GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
             
             //生成敌人
-            // var enemyPoints = enemySpawnPoints.GetComponentsInChildren<Transform>();
-            // for (var i = 1; i < enemyPoints.Length; i++)
-            // {
-            //     GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
-            //     {
-            //         Name = $"Enemy{i}",
-            //         Position = enemyPoints[i].position
-            //     });
-            // }
+            var enemyPoints = enemySpawnPoints.GetComponentsInChildren<Transform>();
+            for (var i = 1; i < enemyPoints.Length; i++)
+            {
+                GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
+                {
+                    Name = $"Enemy{i}",
+                    Position = enemyPoints[i].position
+                });
+            }
         }
         
 

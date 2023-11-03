@@ -9,7 +9,7 @@ namespace FPS
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
-            _behaviorTree=gameObject.GetComponent<BehaviorTree>();
+            //_behaviorTree=gameObject.GetComponent<BehaviorTree>();
         }
 
         private void InitBehaviorTree()
@@ -30,13 +30,15 @@ namespace FPS
                 return;
             }
             //启动行为树
-            InitBehaviorTree();
-            _behaviorTree.Start();
+            //InitBehaviorTree();
+            //_behaviorTree.Start();
+            gameObject.SetLayerRecursively(Constant.Layer.EnemyLayerId);
+            enemyData.HP = 100;
         }
 
         protected override void OnDead(Entity attacker)
         {
-            _behaviorTree.OnDestroy();
+            //_behaviorTree.OnDestroy();
             base.OnDead(attacker);
         }
 

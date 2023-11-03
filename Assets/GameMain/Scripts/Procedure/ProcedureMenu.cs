@@ -46,7 +46,6 @@ namespace FPS
             if (_ChangeScene)
             {
                 procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt(SceneName));
-                procedureOwner.SetData<VarByte>("GameMode", (byte)GameMode.Survival);
                 ChangeState<ProcedureChangeScene>(procedureOwner);
             }
         }

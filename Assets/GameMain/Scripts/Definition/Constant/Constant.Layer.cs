@@ -27,6 +27,9 @@ namespace FPS
 
             public const string PlayerLayerName = "Player";
             public static readonly int PlayerLayerId = LayerMask.NameToLayer(PlayerLayerName);
+
+            public const string EnemyLayerName = "Default";
+            public static readonly int EnemyLayerId=LayerMask.NameToLayer(EnemyLayerName);
         }
     }
 }

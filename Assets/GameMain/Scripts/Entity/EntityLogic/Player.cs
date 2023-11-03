@@ -107,6 +107,7 @@ namespace FPS
             }
 
             m_PlayerData.HP = 100;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)

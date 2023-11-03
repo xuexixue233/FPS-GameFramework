@@ -101,17 +101,23 @@ namespace FPS
             return (toTransform.position - fromTransform.position).magnitude;
         }
 
-        public static void AttackCollision(Entity attacker,Entity other,int reducedHP)
+        public static void AttackCollision(TargetableObject attacker,TargetableObject other,int reducedHP)
         {
             if (other==null || attacker == null)
             {
                 return;
             }
 
-            var target = other as TargetableObject;
-            if (target!=null)
+            if (other!=null)
             {
+                ImpactData attackImpactData = attacker.GetImpactData();
+                ImpactData targetImpactData = other.GetImpactData();
+                if (GetRelation(attackImpactData.Camp,targetImpactData.Camp)==RelationType.Friendly)
+                {
+                    return;
+                }
                 
+                other.ApplyDamage(attacker,reducedHP);
             }
         }
 
@@ -165,20 +171,20 @@ namespace FPS
         //     }
         // }
 
-        private static int CalcDamageHP(int attack, int defense)
-        {
-            if (attack <= 0)
-            {
-                return 0;
-            }
-
-            if (defense < 0)
-            {
-                defense = 0;
-            }
-
-            return attack * attack / (attack + defense);
-        }
+        // private static int CalcDamageHP(int attack, int defense)
+        // {
+        //     if (attack <= 0)
+        //     {
+        //         return 0;
+        //     }
+        //
+        //     if (defense < 0)
+        //     {
+        //         defense = 0;
+        //     }
+        //
+        //     return attack * attack / (attack + defense);
+        // }
 
         [StructLayout(LayoutKind.Auto)]
         private struct CampPair

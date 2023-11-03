@@ -20,6 +20,12 @@ namespace FPS
             get;
             private set;
         }
+
+        public ShowEffectSuccessEventArgs()
+        {
+            EffectData = null;
+            UserData = null;
+        }
         
         public static ShowEffectSuccessEventArgs Create(EffectData effectData, object userData = null)
         {
@@ -32,7 +38,8 @@ namespace FPS
         
         public override void Clear()
         {
-            
+            EffectData = null;
+            UserData = null;
         }
     }
 }

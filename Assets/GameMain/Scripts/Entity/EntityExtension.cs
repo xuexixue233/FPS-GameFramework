@@ -53,7 +53,7 @@ namespace FPS
 
         public static void ShowEnemy(this EntityComponent entityComponent, EnemyData data)
         {
-            entityComponent.ShowEntity(typeof(Entity),"Enemy",Constant.AssetPriority.EnemyAsset,data);
+            entityComponent.ShowEntity(typeof(Enemy),"Enemy",Constant.AssetPriority.EnemyAsset,data);
         }
         
         public static void ShowWeapon(this EntityComponent entityComponent, WeaponData data)

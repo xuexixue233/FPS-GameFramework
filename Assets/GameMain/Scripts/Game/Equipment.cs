@@ -47,7 +47,11 @@ namespace FPS
         {
             ReadAllModWeaponsData();
             GameEntry.Entity.ShowWeapon(new WeaponData(GameEntry.Entity.GenerateSerialId(), playerSaveData.playerWeapon.weaponTypeId+1, 0,
-                CampType.Unknown));
+                CampType.Unknown)
+                {
+                    Position = new Vector3(0.2f,0,0)
+                }
+            );
         }
 
         public void OnUpdate()
@@ -94,6 +98,7 @@ namespace FPS
             }
             var rects = activeModUIItem.Values.Select(rect => rect.transform as RectTransform).ToList();
             MathUtilities.GetRectFormEllipse(600, 300, 0, rects.ToArray());
+            SetCircleTransforms();
         }
 
         public void ShowWeaponMod(Mod mod, int typeId, int ownerId)

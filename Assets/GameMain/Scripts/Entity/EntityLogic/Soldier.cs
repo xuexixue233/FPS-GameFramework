@@ -35,8 +35,11 @@ namespace FPS
 
             List<WeaponData> weaponDatas = m_SoldierData.GetAllWeaponDatas();
 
-            GameEntry.Entity.ShowWeapon(weaponDatas[0]);
-            
+            if (!CompareTag("Enemy"))
+            {
+                GameEntry.Entity.ShowWeapon(weaponDatas[0]);
+            }
+
         }
 
         protected override void OnHide(bool isShutdown, object userData)
@@ -66,7 +69,7 @@ namespace FPS
 
         public override ImpactData GetImpactData()
         {
-            return new ImpactData(m_SoldierData.Camp, m_SoldierData.HP, 0);
+            return new ImpactData(m_SoldierData.Camp, m_SoldierData.HP);
         }
     }
 }
