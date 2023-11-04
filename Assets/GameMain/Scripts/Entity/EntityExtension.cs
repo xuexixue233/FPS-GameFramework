@@ -66,6 +66,11 @@ namespace FPS
             entityComponent.ShowEntity(typeof(WeaponMod), "WeaponMod", Constant.AssetPriority.WeaponModAsset, data);
         }
 
+        public static void ShowTestEntity(this EntityComponent entityComponent,TestData data)
+        {
+            entityComponent.ShowEntity(typeof(Test), "Test", Constant.AssetPriority.WeaponModAsset, data);
+        }
+
         private static void ShowEntity(this EntityComponent entityComponent, Type logicType, string entityGroup, int priority, EntityData data)
         {
             if (data == null)

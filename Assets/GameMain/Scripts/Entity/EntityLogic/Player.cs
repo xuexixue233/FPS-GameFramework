@@ -94,6 +94,7 @@ namespace FPS
 
             cameraHeight = m_PlayerExData.cameraHolder.localPosition.y;
             gameObject.SetLayerRecursively(Constant.Layer.PlayerLayerId);
+            if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedure) transform.position = procedure.playerSpawnPoint.transform.position;
         }
 
         protected override void OnShow(object userData)
@@ -108,6 +109,7 @@ namespace FPS
 
             m_PlayerData.HP = 100;
             Cursor.lockState = CursorLockMode.Locked;
+            m_characterController.enabled = true;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)

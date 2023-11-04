@@ -56,9 +56,12 @@ namespace FPS
             }
 
             Name = Utility.Text.Format("[Entity {0}]", Id);
-            CachedTransform.localPosition = m_EntityData.Position;
-            CachedTransform.localRotation = m_EntityData.Rotation;
-            CachedTransform.localScale = Vector3.one;
+            if (!CompareTag("Player"))
+            {
+                CachedTransform.localPosition = m_EntityData.Position;
+                CachedTransform.localRotation = m_EntityData.Rotation;
+                CachedTransform.localScale = Vector3.one;
+            }
         }
         
         protected override void OnHide(bool isShutdown, object userData)
