@@ -22,6 +22,7 @@ namespace FPS
         private bool GameOver;
 
         private GameObject enemySpawnPoints;
+        public GameObject playerSpawnPoint;
 
         public override bool UseNativeDialog => false;
         
@@ -29,7 +30,8 @@ namespace FPS
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
-            enemySpawnPoints = GameObject.Find("EnemySpawn");
+            
+            playerSpawnPoint=GameObject.Find("PlayerSpawn");
             playerSaveData=GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
             GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId,OnChangeScene);
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
@@ -41,22 +43,25 @@ namespace FPS
             GameEntry.Entity.ShowPlayer(new PlayerData(GameEntry.Entity.GenerateSerialId(), 10000)
             {
                 Name = "Player",
-                Position = new Vector3(0,10,2)
+                
             });
+            
+            //GameEntry.Entity.ShowTestEntity(new TestData(GameEntry.Entity.GenerateSerialId(),11111));
+            
             GameOver = false;
             player = null;
             GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
             
             //生成敌人
-            var enemyPoints = enemySpawnPoints.GetComponentsInChildren<Transform>();
-            for (var i = 1; i < enemyPoints.Length; i++)
-            {
-                GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
-                {
-                    Name = $"Enemy{i}",
-                    Position = enemyPoints[i].position
-                });
-            }
+            // var enemyPoints = enemySpawnPoints.GetComponentsInChildren<Transform>();
+            // for (var i = 1; i < enemyPoints.Length; i++)
+            // {
+            //     GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
+            //     {
+            //         Name = $"Enemy{i}",
+            //         Position = enemyPoints[i].position
+            //     });
+            // }
         }
         
 
@@ -65,13 +70,13 @@ namespace FPS
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
             if (!GameOver)
             {
-                if (player != null && player.IsDead)
-                {
-                    GameOver = true;
-                    m_ShowGameOverSeconds = 0;
-                    Cursor.lockState = CursorLockMode.None;
-                    return;
-                }
+                // if (player != null && player.IsDead)
+                // {
+                //     GameOver = true;
+                //     m_ShowGameOverSeconds = 0;
+                //     Cursor.lockState = CursorLockMode.None;
+                //     return;
+                // }
                 return;
             }
 
