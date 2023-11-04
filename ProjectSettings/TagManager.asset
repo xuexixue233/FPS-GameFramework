@@ -14,9 +14,9 @@ TagManager:
   - Water
   - UI
   - Targetable Object
-  - Enemy
+  - 
   - Player
-  - Hidden
+  - Enemy
   - Stencil
   - Post-Procssing
   - FPS Object
