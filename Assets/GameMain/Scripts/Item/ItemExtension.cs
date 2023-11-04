@@ -18,7 +18,7 @@ namespace FPS
 
         public static void ShowItemModSelect(this ItemComponent itemComponent,int itemId, object userData=null)
         {
-            itemComponent.ShowItem<ItemModSelect>(itemId,EnumItem.ItemModSelect,"ItemModSelect",Constant.AssetPriority.ItemModUIAsset,userData);
+            itemComponent.ShowItem<ItemModSelect>(itemId,EnumItem.ItemModSelect,"ItemModSelect",Constant.AssetPriority.ItemModSelectAsset,userData);
         }
 
         #region ShowItem

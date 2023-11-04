@@ -20,7 +20,8 @@ namespace FPS
             "WeaponMod",
             "Item",
             "Sound",
-            "UISound"
+            "UISound",
+            "Enemy"
         };
 
         private Dictionary<string, bool> m_LoadedFlag = new Dictionary<string, bool>();

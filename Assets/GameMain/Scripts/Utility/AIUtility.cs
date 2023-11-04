@@ -13,7 +13,7 @@ using UnityGameFramework.Runtime;
 
 namespace FPS
 {
-    /*
+    
     /// <summary>
     /// AI 工具类。
     /// </summary>
@@ -27,29 +27,11 @@ namespace FPS
             s_CampPairToRelation.Add(new CampPair(CampType.Player, CampType.Player), RelationType.Friendly);
             s_CampPairToRelation.Add(new CampPair(CampType.Player, CampType.Enemy), RelationType.Hostile);
             s_CampPairToRelation.Add(new CampPair(CampType.Player, CampType.Neutral), RelationType.Neutral);
-            s_CampPairToRelation.Add(new CampPair(CampType.Player, CampType.Player2), RelationType.Hostile);
-            s_CampPairToRelation.Add(new CampPair(CampType.Player, CampType.Enemy2), RelationType.Hostile);
-            s_CampPairToRelation.Add(new CampPair(CampType.Player, CampType.Neutral2), RelationType.Neutral);
 
             s_CampPairToRelation.Add(new CampPair(CampType.Enemy, CampType.Enemy), RelationType.Friendly);
             s_CampPairToRelation.Add(new CampPair(CampType.Enemy, CampType.Neutral), RelationType.Neutral);
-            s_CampPairToRelation.Add(new CampPair(CampType.Enemy, CampType.Player2), RelationType.Hostile);
-            s_CampPairToRelation.Add(new CampPair(CampType.Enemy, CampType.Enemy2), RelationType.Hostile);
-            s_CampPairToRelation.Add(new CampPair(CampType.Enemy, CampType.Neutral2), RelationType.Neutral);
 
             s_CampPairToRelation.Add(new CampPair(CampType.Neutral, CampType.Neutral), RelationType.Neutral);
-            s_CampPairToRelation.Add(new CampPair(CampType.Neutral, CampType.Player2), RelationType.Neutral);
-            s_CampPairToRelation.Add(new CampPair(CampType.Neutral, CampType.Enemy2), RelationType.Neutral);
-            s_CampPairToRelation.Add(new CampPair(CampType.Neutral, CampType.Neutral2), RelationType.Hostile);
-
-            s_CampPairToRelation.Add(new CampPair(CampType.Player2, CampType.Player2), RelationType.Friendly);
-            s_CampPairToRelation.Add(new CampPair(CampType.Player2, CampType.Enemy2), RelationType.Hostile);
-            s_CampPairToRelation.Add(new CampPair(CampType.Player2, CampType.Neutral2), RelationType.Neutral);
-
-            s_CampPairToRelation.Add(new CampPair(CampType.Enemy2, CampType.Enemy2), RelationType.Friendly);
-            s_CampPairToRelation.Add(new CampPair(CampType.Enemy2, CampType.Neutral2), RelationType.Neutral);
-
-            s_CampPairToRelation.Add(new CampPair(CampType.Neutral2, CampType.Neutral2), RelationType.Neutral);
         }
 
         /// <summary>
@@ -62,13 +44,10 @@ namespace FPS
         {
             if (first > second)
             {
-                CampType temp = first;
-                first = second;
-                second = temp;
+                (first, second) = (second, first);
             }
 
-            RelationType relationType;
-            if (s_CampPairToRelation.TryGetValue(new CampPair(first, second), out relationType))
+            if (s_CampPairToRelation.TryGetValue(new CampPair(first, second), out var relationType))
             {
                 return relationType;
             }
@@ -122,70 +101,90 @@ namespace FPS
             return (toTransform.position - fromTransform.position).magnitude;
         }
 
-        public static void PerformCollision(TargetableObject entity, Entity other)
+        public static void AttackCollision(TargetableObject attacker,TargetableObject other,int reducedHP)
         {
-            if (entity == null || other == null)
+            if (other==null || attacker == null)
             {
                 return;
             }
 
-            TargetableObject target = other as TargetableObject;
-            if (target != null)
+            if (other!=null)
             {
-                ImpactData entityImpactData = entity.GetImpactData();
-                ImpactData targetImpactData = target.GetImpactData();
-                if (GetRelation(entityImpactData.Camp, targetImpactData.Camp) == RelationType.Friendly)
+                ImpactData attackImpactData = attacker.GetImpactData();
+                ImpactData targetImpactData = other.GetImpactData();
+                if (GetRelation(attackImpactData.Camp,targetImpactData.Camp)==RelationType.Friendly)
                 {
                     return;
                 }
-
-                int entityDamageHP = CalcDamageHP(targetImpactData.Attack, entityImpactData.Defense);
-                int targetDamageHP = CalcDamageHP(entityImpactData.Attack, targetImpactData.Defense);
-
-                int delta = Mathf.Min(entityImpactData.HP - entityDamageHP, targetImpactData.HP - targetDamageHP);
-                if (delta > 0)
-                {
-                    entityDamageHP += delta;
-                    targetDamageHP += delta;
-                }
-
-                entity.ApplyDamage(target, entityDamageHP);
-                target.ApplyDamage(entity, targetDamageHP);
-                return;
-            }
-
-            Bullet bullet = other as Bullet;
-            if (bullet != null)
-            {
-                ImpactData entityImpactData = entity.GetImpactData();
-                ImpactData bulletImpactData = bullet.GetImpactData();
-                if (GetRelation(entityImpactData.Camp, bulletImpactData.Camp) == RelationType.Friendly)
-                {
-                    return;
-                }
-
-                int entityDamageHP = CalcDamageHP(bulletImpactData.Attack, entityImpactData.Defense);
-
-                entity.ApplyDamage(bullet, entityDamageHP);
-                GameEntry.Entity.HideEntity(bullet);
-                return;
+                
+                other.ApplyDamage(attacker,reducedHP);
             }
         }
 
-        private static int CalcDamageHP(int attack, int defense)
-        {
-            if (attack <= 0)
-            {
-                return 0;
-            }
+        // public static void PerformCollision(TargetableObject entity, Entity other)
+        // {
+        //     if (entity == null || other == null)
+        //     {
+        //         return;
+        //     }
+        //
+        //     TargetableObject target = other as TargetableObject;
+        //     if (target != null)
+        //     {
+        //         ImpactData entityImpactData = entity.GetImpactData();
+        //         ImpactData targetImpactData = target.GetImpactData();
+        //         if (GetRelation(entityImpactData.Camp, targetImpactData.Camp) == RelationType.Friendly)
+        //         {
+        //             return;
+        //         }
+        //
+        //         int entityDamageHP = CalcDamageHP(targetImpactData.Attack, entityImpactData.Defense);
+        //         int targetDamageHP = CalcDamageHP(entityImpactData.Attack, targetImpactData.Defense);
+        //
+        //         int delta = Mathf.Min(entityImpactData.HP - entityDamageHP, targetImpactData.HP - targetDamageHP);
+        //         if (delta > 0)
+        //         {
+        //             entityDamageHP += delta;
+        //             targetDamageHP += delta;
+        //         }
+        //
+        //         entity.ApplyDamage(target, entityDamageHP);
+        //         target.ApplyDamage(entity, targetDamageHP);
+        //         return;
+        //     }
+        //
+        //     Bullet bullet = other as Bullet;
+        //     if (bullet != null)
+        //     {
+        //         ImpactData entityImpactData = entity.GetImpactData();
+        //         ImpactData bulletImpactData = bullet.GetImpactData();
+        //         if (GetRelation(entityImpactData.Camp, bulletImpactData.Camp) == RelationType.Friendly)
+        //         {
+        //             return;
+        //         }
+        //
+        //         int entityDamageHP = CalcDamageHP(bulletImpactData.Attack, entityImpactData.Defense);
+        //
+        //         entity.ApplyDamage(bullet, entityDamageHP);
+        //         GameEntry.Entity.HideEntity(bullet);
+        //         return;
+        //     }
+        // }
 
-            if (defense < 0)
-            {
-                defense = 0;
-            }
-
-            return attack * attack / (attack + defense);
-        }
+        // private static int CalcDamageHP(int attack, int defense)
+        // {
+        //     if (attack <= 0)
+        //     {
+        //         return 0;
+        //     }
+        //
+        //     if (defense < 0)
+        //     {
+        //         defense = 0;
+        //     }
+        //
+        //     return attack * attack / (attack + defense);
+        // }
 
         [StructLayout(LayoutKind.Auto)]
         private struct CampPair
@@ -215,5 +214,5 @@ namespace FPS
                 }
             }
         }
-    }*/
+    }
 }

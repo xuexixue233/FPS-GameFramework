@@ -12,28 +12,28 @@ namespace FPS
         protected List<WeaponData> m_WeaponDatas = new List<WeaponData>();
         
         [SerializeField]
-        private int m_MaxHP = 0;
+        protected int m_MaxHP = 0;
         
         [SerializeField]
-        private float m_WalkingForwardSpeed = 0;
+        protected float m_WalkingForwardSpeed = 0;
         
         [SerializeField]
-        private float m_WalkingBackSpeed = 0;
+        protected float m_WalkingBackSpeed = 0;
         
         [SerializeField]
-        private float m_WalkingStrafeSpeed = 0;
+        protected float m_WalkingStrafeSpeed = 0;
         
         [SerializeField]
-        private float m_RunningForwardSpeed = 0;
+        protected float m_RunningForwardSpeed = 0;
         
         [SerializeField]
-        private float m_RunningStrafeSpeed = 0;
+        protected float m_RunningStrafeSpeed = 0;
         
         [SerializeField]
-        private int m_DeadEffectId = 0;
+        protected int m_DeadEffectId = 0;
 
         [SerializeField]
-        private int m_DeadSoundId = 0;
+        protected int m_DeadSoundId = 0;
         
         protected SoldierData(int entityId, int typeId, CampType camp) : base(entityId, typeId, camp)
         {

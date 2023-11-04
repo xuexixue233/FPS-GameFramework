@@ -13,7 +13,7 @@ namespace FPS
 {
     public class EquipmentForm : UGuiForm
     {
-        public ProcedureSelectWeapon procedureSelectWeapon;
+
         public Weapon showedWeapon;
         public GameObject attributeList;
 
@@ -57,13 +57,6 @@ namespace FPS
 
         private void BackToMenu()
         {
-            procedureSelectWeapon.playerSaveData.playerWeapon.weaponTypeId = showedWeapon.m_WeaponData.TypeId-1;
-            procedureSelectWeapon.playerSaveData.playerWeapon.modTypeIdDictionary.Clear();
-            foreach (var mod in showedWeapon.weaponMods)
-            {
-                procedureSelectWeapon.playerSaveData.playerWeapon.modTypeIdDictionary.Add(mod.Key,mod.Value.weaponModData.TypeId);
-            }
-            GameEntry.Setting.SetObject("PlayerSaveData",procedureSelectWeapon.playerSaveData);
             GameEntry.Event.Fire(this,ChangeSceneEventArgs.Create(1));
         }
 
@@ -91,26 +84,9 @@ namespace FPS
             durabilityText.text = "100/100(100)";
             RefreshText();
             RefreshImage();
-            procedureSelectWeapon=GameEntry.Procedure.CurrentProcedure as ProcedureSelectWeapon;
-            if (procedureSelectWeapon==null)
-            {
-                return;
-            }
             foreach (var mod in showedWeapon.m_WeaponData.NextMods)
             {
-                procedureSelectWeapon.ShowItemModUI(mod);
-            }
-        }
-        
-
-        private void UITransformToModTransform()
-        {
-            foreach (var mod in showedWeapon.m_WeaponData.NextMods)
-            {
-                if (Camera.main == null) continue;
-                var temp = Camera.main.WorldToScreenPoint(showedWeapon.m_WeaponExData.nextModsTransforms[mod].position);
-                var modUIItem = Instantiate(circleGameObject, previewRect, true);
-                modUIItem.GetComponent<RectTransform>().anchoredPosition=new Vector2(temp.x,temp.y);
+                GameEntry.Event.Fire(this,ShowItemModUIEventArgs.Create(mod));
             }
         }
 

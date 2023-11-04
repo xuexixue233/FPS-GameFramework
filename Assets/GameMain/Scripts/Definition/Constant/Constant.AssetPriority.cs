@@ -25,14 +25,11 @@ namespace FPS
             public const int UISoundAsset = 30;
 
             public const int PlayerAsset = 90;
-            public const int SoldierAsset = 80;
-            public const int ThrusterAsset = 30;
+            public const int EnemyAsset = 80;
             public const int WeaponAsset = 30;
             public const int WeaponModAsset = 20;
-            public const int ArmorAsset = 30;
-            public const int BulletAsset = 80;
-            public const int AsteroiAsset = 80;
-            public const int EffectAsset = 80;
+            public const int EffectAsset = 70;
+
 
             public const int ItemModUIAsset = 10;
             public const int ItemModSelectAsset = 10;

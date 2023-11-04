@@ -17,9 +17,14 @@ namespace FPS
                 return m_TargetableObjectData.HP <= 0;
             }
         }
-        public void ApplyDamage(Entity attacker, int damageHP)
+        public virtual void ApplyDamage(Entity attacker, int damageHP)
         {
-            
+            Log.Info(m_TargetableObjectData.HP);
+            m_TargetableObjectData.HP -= damageHP;
+            if (m_TargetableObjectData.HP<=0)
+            {
+                OnDead(attacker);
+            }
         }
 
         protected override void OnInit(object userData)
