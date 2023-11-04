@@ -8,6 +8,7 @@ namespace FPS
     {
         public ProcedureMain procedureMain;
         public PlayerCard PlayerCard;
+        public GameOver gameOver;
 
         protected override void OnInit(object userData)
         {
@@ -21,8 +22,6 @@ namespace FPS
             GameEntry.Event.Subscribe(WeaponBulletsChangeEventArgs.EventId,OnWeaponBulletsChange);
             GameEntry.Event.Subscribe(PlayerHPChangeEventArgs.EventId,OnPlayerHPChange);
             GameEntry.Event.Subscribe(WeaponFireModeChangeEventArgs.EventId,OnWeaponFireModeChange);
-            
-            
         }
 
         protected override void OnClose(bool isShutdown, object userData)
@@ -31,8 +30,6 @@ namespace FPS
             GameEntry.Event.Unsubscribe(WeaponBulletsChangeEventArgs.EventId,OnWeaponBulletsChange);
             GameEntry.Event.Unsubscribe(PlayerHPChangeEventArgs.EventId,OnPlayerHPChange);
             GameEntry.Event.Unsubscribe(WeaponFireModeChangeEventArgs.EventId,OnWeaponFireModeChange);
-            
-            
             base.OnClose(isShutdown, userData);
         }
         
@@ -70,6 +67,12 @@ namespace FPS
                 return;
 
             PlayerCard.weaponModeImage.sprite = PlayerCard.FireModeSprites[(int)ne.CurrentFireMode];
+        }
+
+        public void ShowGameOver()
+        {
+            gameOver.gameObject.SetActive(true);
+            gameOver.OnShow();
         }
     }
 }

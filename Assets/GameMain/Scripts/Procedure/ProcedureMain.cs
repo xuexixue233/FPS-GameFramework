@@ -12,32 +12,31 @@ namespace FPS
     {
         private const float GameOverDelayedSeconds = 2f;
         
-        private bool m_GotoMenu = false;
-        private float m_GotoMenuDelaySeconds = 0f;
+        private string SceneName;
+        private bool _ChangeScene;
+        
+        private float m_ShowGameOverSeconds = 0f;
         public PlayerSaveData playerSaveData;
-        public PlayerForm playerForm;
-        public Player player;
-        public bool GameOver;
+        private PlayerForm playerForm;
+        private Player player;
+        private bool GameOver;
 
-        public GameObject enemySpawnPoints;
+        private GameObject enemySpawnPoints;
 
         public override bool UseNativeDialog => false;
-
-        public void GotoMenu()
-        {
-            m_GotoMenu = true;
-        }
+        
 
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
             enemySpawnPoints = GameObject.Find("EnemySpawn");
             playerSaveData=GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
+            GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId,OnChangeScene);
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
             
             
-            m_GotoMenu = false;
+            _ChangeScene = false;
             //生成玩家
             GameEntry.Entity.ShowPlayer(new PlayerData(GameEntry.Entity.GenerateSerialId(), 10000)
             {
@@ -69,21 +68,22 @@ namespace FPS
                 if (player != null && player.IsDead)
                 {
                     GameOver = true;
+                    m_ShowGameOverSeconds = 0;
+                    Cursor.lockState = CursorLockMode.None;
                     return;
                 }
                 return;
             }
 
-            if (!m_GotoMenu)
+            if (m_ShowGameOverSeconds>GameOverDelayedSeconds)
             {
-                m_GotoMenu = true;
-                m_GotoMenuDelaySeconds = 0;
+                playerForm.ShowGameOver();
             }
 
-            m_GotoMenuDelaySeconds += elapseSeconds;
-            if (m_GotoMenuDelaySeconds >= GameOverDelayedSeconds)
+            m_ShowGameOverSeconds += elapseSeconds;
+            if (_ChangeScene)
             {
-                procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Menu"));
+                procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt(SceneName));
                 ChangeState<ProcedureChangeScene>(procedureOwner);
             }
         }
@@ -130,6 +130,24 @@ namespace FPS
                 playerForm.procedureMain = this;
                 return;
             }
+        }
+
+        private void OnChangeScene(object sender, GameEventArgs e)
+        {
+            ChangeSceneEventArgs ne = (ChangeSceneEventArgs)e;
+            if (ne==null)
+            {
+                return;
+            }
+            
+            SceneName = ne.SceneId switch
+            {
+                1 => "Scene.Menu",
+                2 => "Scene.Main",
+                3 => "Scene.Equipment",
+                _ => SceneName
+            };
+            _ChangeScene = true;
         }
 
         private void OnShowItemSuccess(object sender, GameEventArgs e)

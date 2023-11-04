@@ -465,6 +465,7 @@ namespace FPS
                 isSprinting = false;
             }
         }
+        
 
         private void OnDrawGizmos()
         {
