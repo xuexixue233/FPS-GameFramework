@@ -40,6 +40,11 @@ namespace FPS
         LevelForm = 103,
         
         /// <summary>
+        /// 加载
+        /// </summary>
+        LoadingForm = 103,
+        
+        /// <summary>
         /// 玩家UI
         /// </summary>
         PlayerForm=200,

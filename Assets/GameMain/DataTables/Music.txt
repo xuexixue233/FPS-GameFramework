@@ -1,0 +1,6 @@
+﻿#	音乐配置表		
+#	Id		AssetName
+#	int		String
+#	音乐编号		资源名称
+	1	菜单音乐	music_Menu
+	2	装备音乐	music_Equipment

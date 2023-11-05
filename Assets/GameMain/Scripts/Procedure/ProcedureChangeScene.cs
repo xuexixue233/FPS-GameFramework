@@ -107,7 +107,7 @@ namespace FPS
 
             if (m_BackgroundMusicId > 0)
             {
-                //GameEntry.Sound.PlayMusic(m_BackgroundMusicId);
+                GameEntry.Sound.PlayMusic(m_BackgroundMusicId);
             }
 
             m_IsChangeSceneComplete = true;

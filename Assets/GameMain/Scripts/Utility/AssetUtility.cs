@@ -39,7 +39,7 @@ namespace FPS
 
         public static string GetMusicAsset(string assetName)
         {
-            return Utility.Text.Format("Assets/GameMain/Music/{0}.mp3", assetName);
+            return Utility.Text.Format("Assets/GameMain/Music/{0}.wav", assetName);
         }
 
         public static string GetSoundAsset(string assetName)

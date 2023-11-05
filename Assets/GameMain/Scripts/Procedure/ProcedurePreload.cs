@@ -21,12 +21,13 @@ namespace FPS
             "Item",
             "Sound",
             "UISound",
-            "Enemy"
+            "Enemy",
+            "Music"
         };
 
         private Dictionary<string, bool> m_LoadedFlag = new Dictionary<string, bool>();
 
-        public PlayerSaveData playerSaveData;
+        
 
         public override bool UseNativeDialog
         {
@@ -35,7 +36,6 @@ namespace FPS
                 return true;
             }
         }
-        
 
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
@@ -51,7 +51,7 @@ namespace FPS
             GameEntry.Event.Subscribe(LoadDataTableFailureEventArgs.EventId, OnLoadDataTableFailure);
             // GameEntry.Event.Subscribe(LoadDictionarySuccessEventArgs.EventId, OnLoadDictionarySuccess);
             // GameEntry.Event.Subscribe(LoadDictionaryFailureEventArgs.EventId, OnLoadDictionaryFailure);
-            
+
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
@@ -69,6 +69,8 @@ namespace FPS
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
+            
+            
 
             foreach (KeyValuePair<string, bool> loadedFlag in m_LoadedFlag)
             {
@@ -138,6 +140,7 @@ namespace FPS
             //         Log.Error("Can not load font '{0}' from '{1}' with error message '{2}'.", fontName, assetName, errorMessage);
             //     }));
         }
+        
 
         private void OnLoadConfigSuccess(object sender, GameEventArgs e)
         {
