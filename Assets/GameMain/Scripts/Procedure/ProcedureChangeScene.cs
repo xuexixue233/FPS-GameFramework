@@ -103,8 +103,12 @@ namespace FPS
                     Log.Warning("Can not load scene '{0}' from data table.", sceneId.ToString());
                     return;
                 }
-                GameEntry.Scene.LoadScene(AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset, this);
-            
+
+                GameEntry.Scene.LoadScene(
+                    sceneId == 2
+                        ? "Assets/AtmosphericHouse/Scenes/Main.unity"
+                        : AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset, this);
+
                 m_BackgroundMusicId = drScene.BackgroundMusicId;
             }
         }
