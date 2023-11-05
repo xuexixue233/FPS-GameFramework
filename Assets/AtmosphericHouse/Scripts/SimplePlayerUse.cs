@@ -18,9 +18,9 @@ public class SimplePlayerUse : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(OpenClose)) // Open and close action
-            {
-                RaycastCheck();
-            }
+        {
+            RaycastCheck();
+        }
 
         if (Input.GetKeyDown(Flashlight)) // Toggle flashlight
         {

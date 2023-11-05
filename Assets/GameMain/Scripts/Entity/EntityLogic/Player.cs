@@ -86,6 +86,8 @@ namespace FPS
             _defaultInput.Weapon.Reload.performed += e => WeaponReload();
             _defaultInput.Weapon.SwitchFireMode.performed += e => showedWeapon.ChangeFireMode();
 
+            _defaultInput.Character.OpenDoor.performed += e => OpenDoor();
+
             _defaultInput.Enable();
 
             newCameraRotation = m_PlayerExData.cameraHolder.localRotation.eulerAngles;
@@ -131,6 +133,19 @@ namespace FPS
             if (childEntity is Weapon entity)
             {
                 entity.Initialise(this);
+            }
+        }
+
+        private void OpenDoor()
+        {
+            RaycastHit hit;
+            var mainCamera = Camera.main;
+            if (mainCamera != null && Physics.Raycast(mainCamera.transform.position, mainCamera.transform.TransformDirection(Vector3.forward), out hit, 2.3f))
+            {
+                if (hit.collider.gameObject.GetComponent<SimpleOpenClose>())
+                {
+                    hit.collider.gameObject.BroadcastMessage("ObjectClicked");
+                }
             }
         }
 

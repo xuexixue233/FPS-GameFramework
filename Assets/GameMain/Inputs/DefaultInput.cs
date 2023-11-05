@@ -125,6 +125,15 @@ public partial class @DefaultInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenDoor"",
+                    ""type"": ""Button"",
+                    ""id"": ""a861d8d1-a533-4ab5-9e28-6c9e76c54c12"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -303,6 +312,17 @@ public partial class @DefaultInput : IInputActionCollection2, IDisposable
                     ""action"": ""LeanRightReleased"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4f7ff2e3-5c7b-40b8-b4b9-716c40c86fac"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenDoor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -430,6 +450,7 @@ public partial class @DefaultInput : IInputActionCollection2, IDisposable
         m_Character_LeanRightPressed = m_Character.FindAction("LeanRightPressed", throwIfNotFound: true);
         m_Character_LeanLeftReleased = m_Character.FindAction("LeanLeftReleased", throwIfNotFound: true);
         m_Character_LeanRightReleased = m_Character.FindAction("LeanRightReleased", throwIfNotFound: true);
+        m_Character_OpenDoor = m_Character.FindAction("OpenDoor", throwIfNotFound: true);
         // Weapon
         m_Weapon = asset.FindActionMap("Weapon", throwIfNotFound: true);
         m_Weapon_FireAim = m_Weapon.FindAction("FireAim", throwIfNotFound: true);
@@ -507,6 +528,7 @@ public partial class @DefaultInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Character_LeanRightPressed;
     private readonly InputAction m_Character_LeanLeftReleased;
     private readonly InputAction m_Character_LeanRightReleased;
+    private readonly InputAction m_Character_OpenDoor;
     public struct CharacterActions
     {
         private @DefaultInput m_Wrapper;
@@ -522,6 +544,7 @@ public partial class @DefaultInput : IInputActionCollection2, IDisposable
         public InputAction @LeanRightPressed => m_Wrapper.m_Character_LeanRightPressed;
         public InputAction @LeanLeftReleased => m_Wrapper.m_Character_LeanLeftReleased;
         public InputAction @LeanRightReleased => m_Wrapper.m_Character_LeanRightReleased;
+        public InputAction @OpenDoor => m_Wrapper.m_Character_OpenDoor;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -564,6 +587,9 @@ public partial class @DefaultInput : IInputActionCollection2, IDisposable
                 @LeanRightReleased.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLeanRightReleased;
                 @LeanRightReleased.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLeanRightReleased;
                 @LeanRightReleased.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnLeanRightReleased;
+                @OpenDoor.started -= m_Wrapper.m_CharacterActionsCallbackInterface.OnOpenDoor;
+                @OpenDoor.performed -= m_Wrapper.m_CharacterActionsCallbackInterface.OnOpenDoor;
+                @OpenDoor.canceled -= m_Wrapper.m_CharacterActionsCallbackInterface.OnOpenDoor;
             }
             m_Wrapper.m_CharacterActionsCallbackInterface = instance;
             if (instance != null)
@@ -601,6 +627,9 @@ public partial class @DefaultInput : IInputActionCollection2, IDisposable
                 @LeanRightReleased.started += instance.OnLeanRightReleased;
                 @LeanRightReleased.performed += instance.OnLeanRightReleased;
                 @LeanRightReleased.canceled += instance.OnLeanRightReleased;
+                @OpenDoor.started += instance.OnOpenDoor;
+                @OpenDoor.performed += instance.OnOpenDoor;
+                @OpenDoor.canceled += instance.OnOpenDoor;
             }
         }
     }
@@ -683,6 +712,7 @@ public partial class @DefaultInput : IInputActionCollection2, IDisposable
         void OnLeanRightPressed(InputAction.CallbackContext context);
         void OnLeanLeftReleased(InputAction.CallbackContext context);
         void OnLeanRightReleased(InputAction.CallbackContext context);
+        void OnOpenDoor(InputAction.CallbackContext context);
     }
     public interface IWeaponActions
     {

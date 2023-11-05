@@ -485,6 +485,11 @@ MonoBehaviour:
     m_Mute: 0
     m_Volume: 1
     m_AgentHelperCount: 4
+  - m_Name: Music
+    m_AvoidBeingReplacedBySamePriority: 0
+    m_Mute: 0
+    m_Volume: 1
+    m_AgentHelperCount: 4
 --- !u!114 &1145985416
 MonoBehaviour:
   m_ObjectHideFlags: 0
