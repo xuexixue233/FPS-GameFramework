@@ -10,25 +10,22 @@ namespace FPS
         private int _ChangedSceneId;
         private bool m_IsChangeSceneComplete = false;
         private int m_BackgroundMusicId = 0;
-
-        public override bool UseNativeDialog
-        {
-            get
-            {
-                return false;
-            }
-        }
+        private LoadingForm _loadingForm;
+        
+        public override bool UseNativeDialog => false;
 
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
 
             m_IsChangeSceneComplete = false;
+            _loadingForm = null;
 
             GameEntry.Event.Subscribe(LoadSceneSuccessEventArgs.EventId, OnLoadSceneSuccess);
             GameEntry.Event.Subscribe(LoadSceneFailureEventArgs.EventId, OnLoadSceneFailure);
             GameEntry.Event.Subscribe(LoadSceneUpdateEventArgs.EventId, OnLoadSceneUpdate);
             GameEntry.Event.Subscribe(LoadSceneDependencyAssetEventArgs.EventId, OnLoadSceneDependencyAsset);
+            GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
 
             // 停止所有声音
             GameEntry.Sound.StopAllLoadingSounds();
@@ -37,29 +34,9 @@ namespace FPS
             // 隐藏所有实体
             GameEntry.Entity.HideAllLoadingEntities();
             GameEntry.Entity.HideAllLoadedEntities();
-
-            // 卸载所有场景
-            string[] loadedSceneAssetNames = GameEntry.Scene.GetLoadedSceneAssetNames();
-            for (int i = 0; i < loadedSceneAssetNames.Length; i++)
-            {
-                GameEntry.Scene.UnloadScene(loadedSceneAssetNames[i]);
-            }
-
-            // 还原游戏速度
-            GameEntry.Base.ResetNormalGameSpeed();
-
-            int sceneId = procedureOwner.GetData<VarInt32>("NextSceneId");
-            _ChangedSceneId = sceneId;
-            IDataTable<DRScene> dtScene = GameEntry.DataTable.GetDataTable<DRScene>();
-            DRScene drScene = dtScene.GetDataRow(sceneId);
-            if (drScene == null)
-            {
-                Log.Warning("Can not load scene '{0}' from data table.", sceneId.ToString());
-                return;
-            }
-
-            GameEntry.Scene.LoadScene(AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset, this);
-            m_BackgroundMusicId = drScene.BackgroundMusicId;
+            
+            GameEntry.UI.OpenUIForm(UIFormId.LoadingForm,procedureOwner);
+            
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
@@ -68,7 +45,8 @@ namespace FPS
             GameEntry.Event.Unsubscribe(LoadSceneFailureEventArgs.EventId, OnLoadSceneFailure);
             GameEntry.Event.Unsubscribe(LoadSceneUpdateEventArgs.EventId, OnLoadSceneUpdate);
             GameEntry.Event.Unsubscribe(LoadSceneDependencyAssetEventArgs.EventId, OnLoadSceneDependencyAsset);
-
+            GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
+            GameEntry.UI.CloseUIForm(_loadingForm);
             base.OnLeave(procedureOwner, isShutdown);
         }
 
@@ -95,6 +73,42 @@ namespace FPS
             }
         }
 
+        private void OnOpenUIFormSuccess(object sender, GameEventArgs e)
+        {
+            OpenUIFormSuccessEventArgs ne = (OpenUIFormSuccessEventArgs)e;
+            if (ne==null)
+            {
+                return;
+            }
+
+            _loadingForm = (LoadingForm)ne.UIForm.Logic;
+            // 卸载所有场景
+            string[] loadedSceneAssetNames = GameEntry.Scene.GetLoadedSceneAssetNames();
+            for (int i = 0; i < loadedSceneAssetNames.Length; i++)
+            {
+                GameEntry.Scene.UnloadScene(loadedSceneAssetNames[i]);
+            }
+
+            // 还原游戏速度
+            GameEntry.Base.ResetNormalGameSpeed();
+
+            if (ne.UserData is ProcedureOwner procedureOwner)
+            {
+                int sceneId = procedureOwner.GetData<VarInt32>("NextSceneId");
+                _ChangedSceneId = sceneId;
+                IDataTable<DRScene> dtScene = GameEntry.DataTable.GetDataTable<DRScene>();
+                DRScene drScene = dtScene.GetDataRow(sceneId);
+                if (drScene == null)
+                {
+                    Log.Warning("Can not load scene '{0}' from data table.", sceneId.ToString());
+                    return;
+                }
+                GameEntry.Scene.LoadScene(AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset, this);
+            
+                m_BackgroundMusicId = drScene.BackgroundMusicId;
+            }
+        }
+
         private void OnLoadSceneSuccess(object sender, GameEventArgs e)
         {
             LoadSceneSuccessEventArgs ne = (LoadSceneSuccessEventArgs)e;
@@ -109,7 +123,7 @@ namespace FPS
             {
                 GameEntry.Sound.PlayMusic(m_BackgroundMusicId);
             }
-
+            GameEntry.Event.Fire(this,LoadingChangeEventArgs.Create(1));
             m_IsChangeSceneComplete = true;
         }
 
@@ -120,7 +134,7 @@ namespace FPS
             {
                 return;
             }
-
+            
             Log.Error("Load scene '{0}' failure, error message '{1}'.", ne.SceneAssetName, ne.ErrorMessage);
         }
 
@@ -131,7 +145,8 @@ namespace FPS
             {
                 return;
             }
-
+            
+            GameEntry.Event.Fire(this,LoadingChangeEventArgs.Create(ne.Progress));
             Log.Info("Load scene '{0}' update, progress '{1}'.", ne.SceneAssetName, ne.Progress.ToString("P2"));
         }
 
@@ -142,7 +157,7 @@ namespace FPS
             {
                 return;
             }
-
+            
             Log.Info("Load scene '{0}' dependency asset '{1}', count '{2}/{3}'.", ne.SceneAssetName, ne.DependencyAssetName, ne.LoadedCount.ToString(), ne.TotalCount.ToString());
         }
     }

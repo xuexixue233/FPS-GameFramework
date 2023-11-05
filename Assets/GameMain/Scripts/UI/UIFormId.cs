@@ -42,7 +42,7 @@ namespace FPS
         /// <summary>
         /// 加载
         /// </summary>
-        LoadingForm = 103,
+        LoadingForm = 104,
         
         /// <summary>
         /// 玩家UI
