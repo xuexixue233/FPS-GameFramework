@@ -88,6 +88,9 @@ namespace FPS
             {
                 GameEntry.Event.Fire(this,ShowItemModUIEventArgs.Create(mod));
             }
+
+            var loadingForm = GameEntry.UI.GetUIForm(UIFormId.LoadingForm);
+            GameEntry.UI.CloseUIForm(loadingForm);
         }
 
         public void RefreshText()

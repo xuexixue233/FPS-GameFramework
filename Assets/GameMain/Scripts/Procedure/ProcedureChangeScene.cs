@@ -35,7 +35,34 @@ namespace FPS
             GameEntry.Entity.HideAllLoadingEntities();
             GameEntry.Entity.HideAllLoadedEntities();
             
-            GameEntry.UI.OpenUIForm(UIFormId.LoadingForm,procedureOwner);
+            GameEntry.UI.OpenUIForm(UIFormId.LoadingForm);
+
+            // 卸载所有场景
+            string[] loadedSceneAssetNames = GameEntry.Scene.GetLoadedSceneAssetNames();
+            for (int i = 0; i < loadedSceneAssetNames.Length; i++)
+            {
+                GameEntry.Scene.UnloadScene(loadedSceneAssetNames[i]);
+            }
+
+            // 还原游戏速度
+            GameEntry.Base.ResetNormalGameSpeed();
+            
+            int sceneId = procedureOwner.GetData<VarInt32>("NextSceneId");
+            _ChangedSceneId = sceneId;
+            IDataTable<DRScene> dtScene = GameEntry.DataTable.GetDataTable<DRScene>();
+            DRScene drScene = dtScene.GetDataRow(sceneId);
+            if (drScene == null)
+            {
+                Log.Warning("Can not load scene '{0}' from data table.", sceneId.ToString());
+                return;
+            }
+
+            GameEntry.Scene.LoadScene(
+                sceneId == 2
+                    ? "Assets/AtmosphericHouse/Scenes/House_worn_night.unity"
+                    : AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset, this);
+
+            m_BackgroundMusicId = drScene.BackgroundMusicId;
             
         }
 
@@ -46,7 +73,7 @@ namespace FPS
             GameEntry.Event.Unsubscribe(LoadSceneUpdateEventArgs.EventId, OnLoadSceneUpdate);
             GameEntry.Event.Unsubscribe(LoadSceneDependencyAssetEventArgs.EventId, OnLoadSceneDependencyAsset);
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
-            GameEntry.UI.CloseUIForm(_loadingForm);
+            
             base.OnLeave(procedureOwner, isShutdown);
         }
 
@@ -82,35 +109,6 @@ namespace FPS
             }
 
             _loadingForm = (LoadingForm)ne.UIForm.Logic;
-            // 卸载所有场景
-            string[] loadedSceneAssetNames = GameEntry.Scene.GetLoadedSceneAssetNames();
-            for (int i = 0; i < loadedSceneAssetNames.Length; i++)
-            {
-                GameEntry.Scene.UnloadScene(loadedSceneAssetNames[i]);
-            }
-
-            // 还原游戏速度
-            GameEntry.Base.ResetNormalGameSpeed();
-
-            if (ne.UserData is ProcedureOwner procedureOwner)
-            {
-                int sceneId = procedureOwner.GetData<VarInt32>("NextSceneId");
-                _ChangedSceneId = sceneId;
-                IDataTable<DRScene> dtScene = GameEntry.DataTable.GetDataTable<DRScene>();
-                DRScene drScene = dtScene.GetDataRow(sceneId);
-                if (drScene == null)
-                {
-                    Log.Warning("Can not load scene '{0}' from data table.", sceneId.ToString());
-                    return;
-                }
-
-                GameEntry.Scene.LoadScene(
-                    sceneId == 2
-                        ? "Assets/AtmosphericHouse/Scenes/Main.unity"
-                        : AssetUtility.GetSceneAsset(drScene.AssetName), Constant.AssetPriority.SceneAsset, this);
-
-                m_BackgroundMusicId = drScene.BackgroundMusicId;
-            }
         }
 
         private void OnLoadSceneSuccess(object sender, GameEventArgs e)

@@ -13,8 +13,6 @@ namespace FPS
 {
     public class ProcedureSelectWeapon : ProcedureBase
     {
-        
-        
         public override bool UseNativeDialog { get; }
 
         private bool _BackMenu;

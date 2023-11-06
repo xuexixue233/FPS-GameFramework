@@ -12,14 +12,14 @@ EditorBuildSettings:
     path: Assets/GameMain/Scenes/Menu.unity
     guid: ca0154f8d4ac5994583536c856f7e4f5
   - enabled: 1
-    path: Assets/GameMain/Scenes/Main.unity
-    guid: bd6bcf7907654de4b866e07af11e2098
+    path: Assets/AtmosphericHouse/Scenes/House_worn_night.unity
+    guid: 7e84c87e3a530aa49a14e9f51bcfcd1d
   - enabled: 1
     path: Assets/GameMain/Scenes/Equipment.unity
     guid: 67f64381054c7c446954b6b1b649b152
   - enabled: 1
-    path: Assets/AtmosphericHouse/Scenes/Main.unity
-    guid: 69341aa2f2a506540b1e6e7ca2eab5e4
+    path: Assets/GameMain/Scenes/Main.unity
+    guid: bd6bcf7907654de4b866e07af11e2098
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05

@@ -152,8 +152,8 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 1.8
+  m_Radius: 0.25
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -633,16 +633,16 @@ MonoBehaviour:
   playerStanceSmoothing: 0.35
   standStance:
     CameraHeight: 0.7
-    CharacterHeight: 2
-    CharacterCenter: {x: 0, y: 0, z: 0}
+    CharacterHeight: 1.8
+    CharacterCenter: {x: 0, y: -0.1, z: 0}
   crouchStance:
     CameraHeight: 0
-    CharacterHeight: 1.5
-    CharacterCenter: {x: 0, y: -0.25, z: 0}
+    CharacterHeight: 1.3
+    CharacterCenter: {x: 0, y: -0.35, z: 0}
   proneStance:
     CameraHeight: -0.6
-    CharacterHeight: 1
-    CharacterCenter: {x: 0, y: -0.5, z: 0}
+    CharacterHeight: 0.8
+    CharacterCenter: {x: 0, y: -0.6, z: 0}
   modelTransform: {fileID: 3111509773349904759}
   cameraHolder: {fileID: 5276887009306321364}
   cameraTransform: {fileID: 217366099347474507}
