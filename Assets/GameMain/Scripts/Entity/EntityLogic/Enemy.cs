@@ -41,19 +41,18 @@ namespace FPS
 
         public override void ApplyDamage(Entity attacker, int damageHP)
         {
-            base.ApplyDamage(attacker, damageHP);
             GameEntry.Sound.PlaySound(10008);
+            enemyData.HP -= damageHP;
+            if (enemyData.HP<=0)
+            {
+                GameEntry.Event.Fire(this,EnemyDeadEventArgs.Create(this));
+                OnDead(attacker);
+            }
         }
 
         protected override void OnDead(Entity attacker)
         {
             GameEntry.Sound.PlaySound(10007);
-            var procedure = GameEntry.Procedure.CurrentProcedure as ProcedureMain;
-            procedure.enemies.Remove(this);
-            if (procedure.enemies.Count==0)
-            {
-                GameEntry.Event.Fire(this,GameWinEventArgs.Create(1));
-            }
             _behaviorTree.OnDestroy();
             base.OnDead(attacker);
         }

@@ -6,7 +6,6 @@ namespace FPS
 {
     public class PlayerForm : UGuiForm
     {
-        public ProcedureMain procedureMain;
         public PlayerCard PlayerCard;
         public GameOver gameOver;
         public GameWin gameWin;
@@ -81,7 +80,7 @@ namespace FPS
 
         public void ShowGameWin()
         {
-            gameWin.gameObject.SetActive(false);
+            gameWin.gameObject.SetActive(true);
             gameWin.OnShow();
         }
     }

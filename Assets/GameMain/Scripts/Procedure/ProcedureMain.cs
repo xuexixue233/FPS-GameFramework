@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GameFramework;
 using GameFramework.Event;
 using GameFramework.Fsm;
 using GameFramework.Procedure;
@@ -16,15 +17,8 @@ namespace FPS
         private bool _ChangeScene;
         
         private float m_ShowSeconds = 0f;
-        public PlayerSaveData playerSaveData;
-        private PlayerForm playerForm;
-        private Player player;
-        public List<Enemy> enemies=new List<Enemy>();
-        private bool GameOver;
-        private bool GameWin;
 
-        private GameObject enemySpawnPoints;
-        public GameObject playerSpawnPoint;
+        private LevelGame levelGame;
 
         public override bool UseNativeDialog => false;
         
@@ -33,39 +27,32 @@ namespace FPS
         {
             base.OnEnter(procedureOwner);
             
-            playerSpawnPoint=GameObject.Find("PlayerSpawn");
-            enemySpawnPoints=GameObject.Find("EnemySpawn");
-            playerSaveData=GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
+            var playerSpawnPoint=GameObject.Find("PlayerSpawn").transform;
+            var enemySpawnPoints=GameObject.Find("EnemySpawn").transform;
+            var playerSaveData=GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
+            
             GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId,OnChangeScene);
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
+            GameEntry.Event.Subscribe(EnemyDeadEventArgs.EventId,OnEnemyDead);
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
             GameEntry.Event.Subscribe(GameOverEventArgs.EventId,OnGameOver);
             GameEntry.Event.Subscribe(GameWinEventArgs.EventId,OnGameWin);
+            GameEntry.Event.Subscribe(GameReStartEventArgs.EventId,OnGameRestart);
 
-            _ChangeScene = false;
-            //生成玩家
-            GameEntry.Entity.ShowPlayer(new PlayerData(GameEntry.Entity.GenerateSerialId(), 10000)
-            {
-                Name = "Player",
-                
-            });
-
-            GameOver = false;
-            GameWin = false;
-            player = null;
-            GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
+            levelGame = LevelGame.Create(playerSaveData,playerSpawnPoint,enemySpawnPoints);
             
-            //生成敌人
-            var enemyPoints = enemySpawnPoints.GetComponentsInChildren<Transform>();
-            for (var i = 1; i < enemyPoints.Length; i++)
+            levelGame.OnEnable();
+        }
+
+        private void OnGameRestart(object sender, GameEventArgs e)
+        {
+            GameReStartEventArgs ne = (GameReStartEventArgs)e;
+            if (ne==null)
             {
-                GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
-                {
-                    Name = $"Enemy{i}",
-                    Position = enemyPoints[i].position,
-                    Rotation = enemyPoints[i].rotation
-                });
+                return;
             }
+            
+            levelGame.ReStart();
         }
 
         private void OnGameOver(object sender, GameEventArgs e)
@@ -76,13 +63,8 @@ namespace FPS
             {
                 return;
             }
-            GameOver = true;
-            m_ShowSeconds = 0;
-            Cursor.lockState = CursorLockMode.None;
-            foreach (var enemy in enemies)
-            {
-                enemy._behaviorTree.DisableBehavior();
-            }
+            
+            levelGame.ShowGameOver();
         }
 
         private void OnGameWin(object sender, GameEventArgs e)
@@ -92,32 +74,17 @@ namespace FPS
             {
                 return;
             }
-            GameWin = true;
-            m_ShowSeconds = 0;
-            Cursor.lockState = CursorLockMode.None;
+            
+            levelGame.ShowGameWin();
         }
 
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
-            if (!GameOver&&!GameWin)
-            {
-                return;
-            }
-
-            m_ShowSeconds += elapseSeconds;
-            if (m_ShowSeconds>DelayedSeconds)
-            {
-                if (GameOver)
-                {
-                    playerForm.ShowGameOver();
-                }
-                else if (GameWin)
-                {
-                    playerForm.ShowGameWin();
-                }
-            }
+            
+            levelGame.OnUpdate(elapseSeconds);
+            
             if (_ChangeScene)
             {
                 procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt(SceneName));
@@ -134,48 +101,56 @@ namespace FPS
         {
             GameEntry.Event.Unsubscribe(ChangeSceneEventArgs.EventId,OnChangeScene);
             GameEntry.Event.Unsubscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
+            GameEntry.Event.Unsubscribe(EnemyDeadEventArgs.EventId,OnEnemyDead);
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
             GameEntry.Event.Unsubscribe(GameOverEventArgs.EventId,OnGameOver);
             GameEntry.Event.Unsubscribe(GameWinEventArgs.EventId,OnGameWin);
+            GameEntry.Event.Unsubscribe(GameReStartEventArgs.EventId,OnGameRestart);
+            levelGame.OnLeave();
+            ReferencePool.Release(levelGame);
             base.OnLeave(procedureOwner, isShutdown);
         }
-        
+
+        private void OnEnemyDead(object sender, GameEventArgs e)
+        {
+            EnemyDeadEventArgs ne = (EnemyDeadEventArgs)e;
+            if (ne==null)
+            {
+                return;
+            }
+
+            levelGame.RemoveEnemy(ne.enemy);
+        }
+
         private void OnShowEntitySuccess(object sender, GameEventArgs e)
         {
             ShowEntitySuccessEventArgs ne = (ShowEntitySuccessEventArgs)e;
             if (ne.EntityLogicType == typeof(Player))
             {
-                player = (Player)ne.Entity.Logic;
-                var form = GameEntry.UI.GetUIForm(UIFormId.LoadingForm);
-                GameEntry.UI.CloseUIForm(form);
-                GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
+                levelGame.ShowPlayer(ne.Entity.Logic);
             }
             else if (ne.EntityLogicType==typeof(Weapon))
             {
-                var weapon = (Weapon)ne.Entity.Logic;
-                
+                levelGame.ShowWeapon();
             }
             else if (ne.EntityLogicType==typeof(WeaponMod))
             {
-                var weaponMod = (WeaponMod)ne.Entity.Logic;
-                playerForm.PlayerCard.OnInit(player);
+                levelGame.ShowWeaponMod();
             }
             else if (ne.EntityLogicType==typeof(Enemy))
             {
-                var enemy = ne.Entity.Logic as Enemy;
-                enemies.Add(enemy);
+                levelGame.ShowEnemy(ne.Entity.Logic);
             }
         }
         
         private void OnOpenUIFormSuccess(object sender, GameEventArgs e)
         {
             OpenUIFormSuccessEventArgs ne = (OpenUIFormSuccessEventArgs)e;
-            if (ne.UIForm.Logic is PlayerForm form)
+            if (ne==null)
             {
-                playerForm = form;
-                playerForm.procedureMain = this;
                 return;
             }
+            levelGame.ShowPlayerForm(ne.UIForm.Logic);
         }
 
         private void OnChangeScene(object sender, GameEventArgs e)
@@ -194,15 +169,6 @@ namespace FPS
                 _ => SceneName
             };
             _ChangeScene = true;
-        }
-
-        private void OnShowItemSuccess(object sender, GameEventArgs e)
-        {
-            ShowItemSuccessEventArgs ne = (ShowItemSuccessEventArgs)e;
-            if (ne.ItemLogicType==typeof(ItemBulletHole))
-            {
-                
-            }
         }
     }
 }

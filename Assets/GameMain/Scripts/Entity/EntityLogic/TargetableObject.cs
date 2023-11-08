@@ -19,11 +19,7 @@ namespace FPS
         }
         public virtual void ApplyDamage(Entity attacker, int damageHP)
         {
-            m_TargetableObjectData.HP -= damageHP;
-            if (m_TargetableObjectData.HP<=0)
-            {
-                OnDead(attacker);
-            }
+            
         }
 
         protected override void OnInit(object userData)
