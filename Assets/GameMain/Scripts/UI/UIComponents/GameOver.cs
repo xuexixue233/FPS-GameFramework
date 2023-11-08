@@ -16,23 +16,24 @@ public class GameOver : MonoBehaviour
 
     public void OnShow()
     {
-        showSequence.Append(Title.transform.DOScale(new Vector3(1, 1, 0.5f), 1f).From());
-        showSequence.Append(ReStartButton.transform.DOScale(new Vector3(1, 1, 0.5f), 1f).From().OnComplete((() =>
+        Title.transform.DOScale(new Vector3(1, 1, 0.5f), 1f).From();
+        ReStartButton.transform.DOScale(new Vector3(1, 1, 0.5f), 1f).From().OnComplete((() =>
         {
             ReStartButton.onClick.RemoveAllListeners();
             ReStartButton.onClick.AddListener((() =>
             {
-                
+                GameEntry.Event.Fire(this, GameReStartEventArgs.Create(1));
             }));
-        })));
-        showSequence.Append(BackButton.transform.DOScale(new Vector3(1, 1, 0.5f), 1f).From().OnComplete((() =>
+        }));
+        BackButton.transform.DOScale(new Vector3(1, 1, 0.5f), 1f).From().OnComplete((() =>
         {
             BackButton.onClick.RemoveAllListeners();
             BackButton.onClick.AddListener((() =>
             {
                 GameEntry.Event.Fire(this,ChangeSceneEventArgs.Create(1));
             }));
-        })));
+        }));
+        
     }
     
 }

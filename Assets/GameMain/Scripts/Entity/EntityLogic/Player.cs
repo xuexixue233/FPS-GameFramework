@@ -20,7 +20,7 @@ namespace FPS
         /// </summary>
         [SerializeField] public PlayerExData m_PlayerExData;
 
-        private CharacterController m_characterController;
+        public CharacterController m_characterController;
         private DefaultInput _defaultInput;
         public Vector2 input_Movement;
         public Vector2 input_View;
@@ -65,6 +65,18 @@ namespace FPS
         {
             base.OnInit(userData);
             m_PlayerExData = GetComponent<PlayerExData>();
+
+            newCameraRotation = m_PlayerExData.cameraHolder.localRotation.eulerAngles;
+            newSoldierRotation = m_PlayerExData.soldierTransform.localRotation.eulerAngles;
+            m_characterController = GetComponentInChildren<CharacterController>();
+
+            cameraHeight = m_PlayerExData.cameraHolder.localPosition.y;
+            gameObject.SetLayerRecursively(Constant.Layer.PlayerLayerId);
+            
+        }
+
+        public void InputInit()
+        {
             _defaultInput = new DefaultInput();
             _defaultInput.Character.Movement.performed += e => input_Movement = e.ReadValue<Vector2>();
             _defaultInput.Character.View.performed += e => input_View = e.ReadValue<Vector2>();
@@ -89,14 +101,6 @@ namespace FPS
             _defaultInput.Character.OpenDoor.performed += e => OpenDoor();
 
             _defaultInput.Enable();
-
-            newCameraRotation = m_PlayerExData.cameraHolder.localRotation.eulerAngles;
-            newSoldierRotation = m_PlayerExData.soldierTransform.localRotation.eulerAngles;
-            m_characterController = GetComponentInChildren<CharacterController>();
-
-            cameraHeight = m_PlayerExData.cameraHolder.localPosition.y;
-            gameObject.SetLayerRecursively(Constant.Layer.PlayerLayerId);
-            if (GameEntry.Procedure.CurrentProcedure is ProcedureMain procedure) transform.position = procedure.playerSpawnPoint.transform.position;
         }
 
         protected override void OnShow(object userData)
@@ -108,10 +112,11 @@ namespace FPS
                 Log.Error("m_PlayerData is invalid.");
                 return;
             }
+            
+            InputInit();
 
             m_PlayerData.HP = 100;
             Cursor.lockState = CursorLockMode.Locked;
-            m_characterController.enabled = true;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
@@ -140,12 +145,17 @@ namespace FPS
         {
             var lastHP = m_PlayerData.HP;
             m_PlayerData.HP -= damageHP;
-            Debug.Log(m_PlayerData.HP);
             GameEntry.Event.Fire(this,PlayerHPChangeEventArgs.Create(lastHP,m_PlayerData.HP));
             if (m_PlayerData.HP<=0)
             {
                 GameEntry.Event.Fire(this,GameOverEventArgs.Create(1));
             }
+        }
+
+        protected override void OnHide(bool isShutdown, object userData)
+        {
+            _defaultInput.Disable();
+            base.OnHide(isShutdown, userData);
         }
 
         private void OpenDoor()
