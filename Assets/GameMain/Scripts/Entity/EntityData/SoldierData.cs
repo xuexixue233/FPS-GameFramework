@@ -12,7 +12,7 @@ namespace FPS
         protected List<WeaponData> m_WeaponDatas = new List<WeaponData>();
         
         [SerializeField]
-        protected int m_MaxHP = 0;
+        protected int m_MaxHP = 100;
         
         [SerializeField]
         protected float m_WalkingForwardSpeed = 0;

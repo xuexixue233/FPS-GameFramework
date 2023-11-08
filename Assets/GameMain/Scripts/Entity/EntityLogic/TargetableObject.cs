@@ -19,7 +19,6 @@ namespace FPS
         }
         public virtual void ApplyDamage(Entity attacker, int damageHP)
         {
-            Log.Info(m_TargetableObjectData.HP);
             m_TargetableObjectData.HP -= damageHP;
             if (m_TargetableObjectData.HP<=0)
             {

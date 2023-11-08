@@ -27,7 +27,6 @@ namespace FPS
 
             _ChangeScene = false;
             GameEntry.UI.OpenUIForm(UIFormId.MenuForm, this);
-            
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)

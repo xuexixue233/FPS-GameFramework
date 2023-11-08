@@ -31,10 +31,9 @@ namespace FPS
             currentTime += Time.deltaTime;
             if (currentTime>attackInterval.Value)
             {
-                Debug.Log("敌人射击一次");
+                GameEntry.Sound.PlaySound(10010);
                 if (ShootOnSuccess())
                 {
-                    Debug.Log("敌人射中");
                     enemy.ShootSuccess(target.Value);
                 }
                 successOn += successOn/2;

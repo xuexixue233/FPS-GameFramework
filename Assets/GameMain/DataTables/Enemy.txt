@@ -2,4 +2,4 @@
 #	Id		ViewDistance	FieldOfViewAngle	WaitMinTime	WaitMaxTime	Attack	AttackInterval	PatrolViewAngle
 #	int		float	float	float	float	int	float	float
 #	敌人编号	策划备注	视线距离	视野范围	反应最小时间	反应最大时间时间	攻击力	攻击间隔	巡逻视线角度
-	10001	普通Ai（站桩式）	50	60	0.5	1.5	10	0.5	15
+	10001	普通Ai（站桩式）	10	60	0.5	1.5	10	1.5	15

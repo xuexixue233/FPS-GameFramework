@@ -8,6 +8,7 @@ namespace FPS
         public BehaviorTree _behaviorTree;
         public EnemyData enemyData;
         public int Attack=10;
+        public bool isSpeak = false;
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
@@ -38,8 +39,21 @@ namespace FPS
             enemyData.HP = 100;
         }
 
+        public override void ApplyDamage(Entity attacker, int damageHP)
+        {
+            base.ApplyDamage(attacker, damageHP);
+            GameEntry.Sound.PlaySound(10008);
+        }
+
         protected override void OnDead(Entity attacker)
         {
+            GameEntry.Sound.PlaySound(10007);
+            var procedure = GameEntry.Procedure.CurrentProcedure as ProcedureMain;
+            procedure.enemies.Remove(this);
+            if (procedure.enemies.Count==0)
+            {
+                GameEntry.Event.Fire(this,GameWinEventArgs.Create(1));
+            }
             _behaviorTree.OnDestroy();
             base.OnDead(attacker);
         }

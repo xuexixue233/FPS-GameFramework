@@ -31,7 +31,6 @@ namespace FPS
             {
                 return TaskStatus.Success;
             }
-
             return TaskStatus.Running;
         }
     }

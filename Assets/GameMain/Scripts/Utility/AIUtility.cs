@@ -107,7 +107,7 @@ namespace FPS
             {
                 return;
             }
-
+            
             if (other!=null)
             {
                 ImpactData attackImpactData = attacker.GetImpactData();
@@ -116,7 +116,12 @@ namespace FPS
                 {
                     return;
                 }
-                
+
+                if (other is Player player)
+                {
+                    player.ApplyDamage(attacker,reducedHP);
+                    return;
+                }
                 other.ApplyDamage(attacker,reducedHP);
             }
         }

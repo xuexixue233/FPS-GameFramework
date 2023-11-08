@@ -136,6 +136,18 @@ namespace FPS
             }
         }
 
+        public override void ApplyDamage(Entity attacker, int damageHP)
+        {
+            var lastHP = m_PlayerData.HP;
+            m_PlayerData.HP -= damageHP;
+            Debug.Log(m_PlayerData.HP);
+            GameEntry.Event.Fire(this,PlayerHPChangeEventArgs.Create(lastHP,m_PlayerData.HP));
+            if (m_PlayerData.HP<=0)
+            {
+                GameEntry.Event.Fire(this,GameOverEventArgs.Create(1));
+            }
+        }
+
         private void OpenDoor()
         {
             RaycastHit hit;

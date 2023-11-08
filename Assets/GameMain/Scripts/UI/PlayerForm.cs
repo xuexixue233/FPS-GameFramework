@@ -9,6 +9,7 @@ namespace FPS
         public ProcedureMain procedureMain;
         public PlayerCard PlayerCard;
         public GameOver gameOver;
+        public GameWin gameWin;
 
         protected override void OnInit(object userData)
         {
@@ -56,7 +57,10 @@ namespace FPS
             PlayerHPChangeEventArgs ne = (PlayerHPChangeEventArgs)e;
             if (ne == null||sender is not Player player)
                 return;
-
+            if (ne.CurrentHP!=ne.LastHP)
+            {
+                PlayerCard.ShowHurt();
+            }
             PlayerCard.HP.fillAmount = (float)ne.CurrentHP / player.m_PlayerData.MaxHP;
         }
         
@@ -73,6 +77,12 @@ namespace FPS
         {
             gameOver.gameObject.SetActive(true);
             gameOver.OnShow();
+        }
+
+        public void ShowGameWin()
+        {
+            gameWin.gameObject.SetActive(false);
+            gameWin.OnShow();
         }
     }
 }

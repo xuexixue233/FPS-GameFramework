@@ -10,16 +10,18 @@ namespace FPS
 {
     public class ProcedureMain : ProcedureBase
     {
-        private const float GameOverDelayedSeconds = 2f;
+        private const float DelayedSeconds = 0.5f;
         
         private string SceneName;
         private bool _ChangeScene;
         
-        private float m_ShowGameOverSeconds = 0f;
+        private float m_ShowSeconds = 0f;
         public PlayerSaveData playerSaveData;
         private PlayerForm playerForm;
         private Player player;
+        public List<Enemy> enemies=new List<Enemy>();
         private bool GameOver;
+        private bool GameWin;
 
         private GameObject enemySpawnPoints;
         public GameObject playerSpawnPoint;
@@ -32,12 +34,14 @@ namespace FPS
             base.OnEnter(procedureOwner);
             
             playerSpawnPoint=GameObject.Find("PlayerSpawn");
+            enemySpawnPoints=GameObject.Find("EnemySpawn");
             playerSaveData=GameEntry.Setting.GetObject<PlayerSaveData>("PlayerSaveData");
             GameEntry.Event.Subscribe(ChangeSceneEventArgs.EventId,OnChangeScene);
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
-            
-            
+            GameEntry.Event.Subscribe(GameOverEventArgs.EventId,OnGameOver);
+            GameEntry.Event.Subscribe(GameWinEventArgs.EventId,OnGameWin);
+
             _ChangeScene = false;
             //生成玩家
             GameEntry.Entity.ShowPlayer(new PlayerData(GameEntry.Entity.GenerateSerialId(), 10000)
@@ -47,6 +51,7 @@ namespace FPS
             });
 
             GameOver = false;
+            GameWin = false;
             player = null;
             GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
             
@@ -57,33 +62,62 @@ namespace FPS
                 GameEntry.Entity.ShowEnemy(new EnemyData(GameEntry.Entity.GenerateSerialId(),10001)
                 {
                     Name = $"Enemy{i}",
-                    Position = enemyPoints[i].position
+                    Position = enemyPoints[i].position,
+                    Rotation = enemyPoints[i].rotation
                 });
             }
         }
-        
+
+        private void OnGameOver(object sender, GameEventArgs e)
+        {
+            GameOverEventArgs ne = (GameOverEventArgs)e;
+            
+            if (ne==null)
+            {
+                return;
+            }
+            GameOver = true;
+            m_ShowSeconds = 0;
+            Cursor.lockState = CursorLockMode.None;
+            foreach (var enemy in enemies)
+            {
+                enemy._behaviorTree.DisableBehavior();
+            }
+        }
+
+        private void OnGameWin(object sender, GameEventArgs e)
+        {
+            GameWinEventArgs ne = (GameWinEventArgs)e;
+            if (ne==null)
+            {
+                return;
+            }
+            GameWin = true;
+            m_ShowSeconds = 0;
+            Cursor.lockState = CursorLockMode.None;
+        }
+
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
-            if (!GameOver)
+            if (!GameOver&&!GameWin)
             {
-                // if (player != null && player.IsDead)
-                // {
-                //     GameOver = true;
-                //     m_ShowGameOverSeconds = 0;
-                //     Cursor.lockState = CursorLockMode.None;
-                //     return;
-                // }
                 return;
             }
 
-            if (m_ShowGameOverSeconds>GameOverDelayedSeconds)
+            m_ShowSeconds += elapseSeconds;
+            if (m_ShowSeconds>DelayedSeconds)
             {
-                playerForm.ShowGameOver();
+                if (GameOver)
+                {
+                    playerForm.ShowGameOver();
+                }
+                else if (GameWin)
+                {
+                    playerForm.ShowGameWin();
+                }
             }
-
-            m_ShowGameOverSeconds += elapseSeconds;
             if (_ChangeScene)
             {
                 procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt(SceneName));
@@ -98,8 +132,11 @@ namespace FPS
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
         {
+            GameEntry.Event.Unsubscribe(ChangeSceneEventArgs.EventId,OnChangeScene);
             GameEntry.Event.Unsubscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId,OnOpenUIFormSuccess);
+            GameEntry.Event.Unsubscribe(GameOverEventArgs.EventId,OnGameOver);
+            GameEntry.Event.Unsubscribe(GameWinEventArgs.EventId,OnGameWin);
             base.OnLeave(procedureOwner, isShutdown);
         }
         
@@ -109,7 +146,8 @@ namespace FPS
             if (ne.EntityLogicType == typeof(Player))
             {
                 player = (Player)ne.Entity.Logic;
-                
+                var form = GameEntry.UI.GetUIForm(UIFormId.LoadingForm);
+                GameEntry.UI.CloseUIForm(form);
                 GameEntry.UI.OpenUIForm(UIFormId.PlayerForm);
             }
             else if (ne.EntityLogicType==typeof(Weapon))
@@ -122,14 +160,19 @@ namespace FPS
                 var weaponMod = (WeaponMod)ne.Entity.Logic;
                 playerForm.PlayerCard.OnInit(player);
             }
+            else if (ne.EntityLogicType==typeof(Enemy))
+            {
+                var enemy = ne.Entity.Logic as Enemy;
+                enemies.Add(enemy);
+            }
         }
         
         private void OnOpenUIFormSuccess(object sender, GameEventArgs e)
         {
             OpenUIFormSuccessEventArgs ne = (OpenUIFormSuccessEventArgs)e;
-            if (ne.UIForm.Logic is PlayerForm _playerForm)
+            if (ne.UIForm.Logic is PlayerForm form)
             {
-                playerForm = _playerForm;
+                playerForm = form;
                 playerForm.procedureMain = this;
                 return;
             }

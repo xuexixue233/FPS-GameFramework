@@ -22,12 +22,12 @@ namespace FPS
         public Button QuitButton;
         public CommonButton c_StartButton;
 
-        public void OnStartButtonClick()
+        private void OnStartButtonClick()
         {
             GameEntry.UI.OpenUIForm(UIFormId.LevelForm);
         }
 
-        public void OnQuitButtonClick()
+        private void OnQuitButtonClick()
         {
             GameEntry.UI.OpenDialog(new DialogParams()
             {
@@ -38,7 +38,7 @@ namespace FPS
             });
         }
 
-        public void EquipmentButtonClick()
+        private void EquipmentButtonClick()
         {
             GameEntry.Event.Fire(this,ChangeSceneEventArgs.Create(3));
         }
