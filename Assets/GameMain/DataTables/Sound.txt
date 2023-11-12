@@ -9,7 +9,7 @@
 	10004	换弹夹（出）	Mag_Out	0	FALSE	1	1	100
 	10005	换弹夹（入）	Mag_In	0	FALSE	1	1	100
 	10006	M4A1枪声（消音、单个）	M4A1_Fire_Silence_Single	0	FALSE	1	1	100
-	10007	敌人死亡	Enemy_Die	0	FALSE	1	1	100
-	10008	敌人受击	Enemy_Hit	0	FALSE	1	1	100
+	10007	敌人死亡	Enemy_Die	2	FALSE	1	1	100
+	10008	敌人受击	Enemy_Hit	1	FALSE	1	1	100
 	10009	敌人发现	Enemy_Find	0	FALSE	1	1	100
 	10010	敌人攻击	Enemy_Attack	0	FALSE	1	1	100

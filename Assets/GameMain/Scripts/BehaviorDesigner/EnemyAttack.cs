@@ -31,7 +31,7 @@ namespace FPS
             currentTime += Time.deltaTime;
             if (currentTime>attackInterval.Value)
             {
-                GameEntry.Sound.PlaySound(10010);
+                GameEntry.Sound.PlaySound(10010,"Sound");
                 if (ShootOnSuccess())
                 {
                     enemy.ShootSuccess(target.Value);

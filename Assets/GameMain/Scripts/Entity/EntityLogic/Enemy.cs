@@ -9,6 +9,7 @@ namespace FPS
         public EnemyData enemyData;
         public int Attack=10;
         public bool isSpeak = false;
+        public int soundId;
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
@@ -41,7 +42,8 @@ namespace FPS
 
         public override void ApplyDamage(Entity attacker, int damageHP)
         {
-            GameEntry.Sound.PlaySound(10008);
+            GameEntry.Sound.PlaySound(10008,"Enemy");
+            soundId = 10008;
             enemyData.HP -= damageHP;
             if (enemyData.HP<=0)
             {
@@ -52,7 +54,8 @@ namespace FPS
 
         protected override void OnDead(Entity attacker)
         {
-            GameEntry.Sound.PlaySound(10007);
+            GameEntry.Sound.PlaySound(10007,"Enemy");
+            
             _behaviorTree.OnDestroy();
             base.OnDead(attacker);
         }

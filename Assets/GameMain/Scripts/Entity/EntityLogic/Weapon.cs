@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DG.Tweening;
 using FPSFramework;
 using GameFramework;
 using UnityEngine;
@@ -159,17 +160,22 @@ namespace FPS
 
         public void PlayerFireSound()
         {
-            soundId=(int)GameEntry.Sound.PlaySound(10001);
+            GameEntry.Sound.PlaySound(10001,"PlayerWeapon");
         }
 
         public void StopFireSound()
         {
-            GameEntry.Sound.StopSound(soundId);
+            var group = GameEntry.Sound.GetSoundGroup("PlayerWeapon");
+            DOTween.To(() => group.Volume, x => group.Volume = x, 0, 0.2f).OnComplete((() =>
+            {
+                group.StopAllLoadedSounds();
+                group.Volume = 1;
+            }));
         }
 
         public void PlayerFireSoundSingle()
         {
-            soundId=(int)GameEntry.Sound.PlaySound(10006);
+            GameEntry.Sound.PlaySound(10006,"PlayerWeapon");
         }
         
         public void WeaponFire()
@@ -226,7 +232,7 @@ namespace FPS
             }
 
             currentFireMode = m_WeaponData.WeaponFireMode[index];
-            GameEntry.Sound.PlaySound(10002);
+            GameEntry.Sound.PlaySound(10002,"PlayerWeapon");
             GameEntry.Event.Fire(this,WeaponFireModeChangeEventArgs.Create(lastFireMode,currentFireMode));
         }
 

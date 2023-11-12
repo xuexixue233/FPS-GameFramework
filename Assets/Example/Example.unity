@@ -490,6 +490,16 @@ MonoBehaviour:
     m_Mute: 0
     m_Volume: 1
     m_AgentHelperCount: 4
+  - m_Name: Enemy
+    m_AvoidBeingReplacedBySamePriority: 1
+    m_Mute: 0
+    m_Volume: 1
+    m_AgentHelperCount: 1
+  - m_Name: PlayerWeapon
+    m_AvoidBeingReplacedBySamePriority: 1
+    m_Mute: 0
+    m_Volume: 1
+    m_AgentHelperCount: 1
 --- !u!114 &1145985416
 MonoBehaviour:
   m_ObjectHideFlags: 0

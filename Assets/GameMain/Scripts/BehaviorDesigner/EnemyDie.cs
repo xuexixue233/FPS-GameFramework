@@ -15,7 +15,7 @@ public class EnemyDie : Action
     {
         if (enemy.enemyData.HP<=0)
         {
-            GameEntry.Sound.PlaySound(10007);
+            GameEntry.Sound.PlaySound(10007,"Enemy");
             return TaskStatus.Success;
         }
         return TaskStatus.Failure;

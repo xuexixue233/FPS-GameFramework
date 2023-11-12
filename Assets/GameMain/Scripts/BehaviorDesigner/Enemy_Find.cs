@@ -7,12 +7,11 @@ namespace FPS
     public class Enemy_Find : Action
     {
         public SharedInt soundId;
+        public Enemy enemy;
         public override void OnStart()
         {
-            if (!GameEntry.Sound.IsLoadingSound(soundId.Value))
-            {
-                soundId.Value = (int)GameEntry.Sound.PlaySound(10009);
-            }
+            enemy = GetComponent<Enemy>();
+            GameEntry.Sound.PlaySound(10009,"Enemy");
         }
 
         public override TaskStatus OnUpdate()

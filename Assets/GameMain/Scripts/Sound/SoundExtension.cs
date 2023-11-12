@@ -1,3 +1,4 @@
+using DG.Tweening;
 using GameFramework;
 using GameFramework.DataTable;
 using GameFramework.Sound;
@@ -43,7 +44,7 @@ namespace FPS
             s_MusicSerialId = null;
         }
 
-        public static int? PlaySound(this SoundComponent soundComponent, int soundId, Entity bindingEntity = null, object userData = null)
+        public static int? PlaySound(this SoundComponent soundComponent, int soundId,string soundGroup , Entity bindingEntity = null, object userData = null)
         {
             IDataTable<DRSound> dtSound = GameEntry.DataTable.GetDataTable<DRSound>();
             DRSound drSound = dtSound.GetDataRow(soundId);
@@ -58,9 +59,9 @@ namespace FPS
             playSoundParams.Loop = drSound.Loop;
             playSoundParams.VolumeInSoundGroup = drSound.Volume;
             playSoundParams.SpatialBlend = drSound.SpatialBlend;
-            return soundComponent.PlaySound(AssetUtility.GetSoundAsset(drSound.AssetName), "Sound", Constant.AssetPriority.SoundAsset, playSoundParams, bindingEntity != null ? bindingEntity.Entity : null, userData);
+            return soundComponent.PlaySound(AssetUtility.GetSoundAsset(drSound.AssetName), soundGroup, Constant.AssetPriority.SoundAsset, playSoundParams, bindingEntity != null ? bindingEntity.Entity : null, userData);
         }
-        
+
         public static int? PlayUISound(this SoundComponent soundComponent, int uiSoundId, object userData = null)
         {
             IDataTable<DRUISound> dtUISound = GameEntry.DataTable.GetDataTable<DRUISound>();
@@ -118,10 +119,7 @@ namespace FPS
             GameEntry.Setting.Save();
         }
 
-        public static void FadeToStopSound()
-        {
-            //TODO:淡出声音
-        }
+        
 
         public static float GetVolume(this SoundComponent soundComponent, string soundGroupName)
         {
